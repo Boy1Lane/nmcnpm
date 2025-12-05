@@ -5,6 +5,14 @@ const db = require("./config/db")
 const User = require('./models/User');
 const Movie = require('./models/Movie');
 const Cinema = require('./models/Cinema');
+const Room = require('./models/Room');
+const Seat = require('./models/Seat');
+
+Cinema.hasMany(Room, { foreignKey: 'cinemaId' });
+Room.belongsTo(Cinema, { foreignKey: 'cinemaId' });
+
+Room.hasMany(Seat, { foreignKey: 'roomId' });
+Seat.belongsTo(Room, { foreignKey: 'roomId' });
 
 dotenv.config()
 
@@ -16,7 +24,7 @@ app.use(express.json());
 db.authenticate()
   .then(() => {
     console.log('Connected to PostgreSQL');
-    return db.sync({ force: false });
+    return db.sync({ alter: true });
   })
   .then(() => {
     console.log('Synced Models with DB');
