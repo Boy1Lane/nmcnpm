@@ -7,12 +7,19 @@ const Movie = require('./models/Movie');
 const Cinema = require('./models/Cinema');
 const Room = require('./models/Room');
 const Seat = require('./models/Seat');
+const Showtime = require('./models/Showtime');
 
 Cinema.hasMany(Room, { foreignKey: 'cinemaId' });
 Room.belongsTo(Cinema, { foreignKey: 'cinemaId' });
 
 Room.hasMany(Seat, { foreignKey: 'roomId' });
 Seat.belongsTo(Room, { foreignKey: 'roomId' });
+
+Movie.hasMany(Showtime, { foreignKey: 'movieId' });
+Showtime.belongsTo(Movie, { foreignKey: 'movieId' });
+
+Room.hasMany(Showtime, { foreignKey: 'roomId' });
+Showtime.belongsTo(Room, { foreignKey: 'roomId' });
 
 dotenv.config()
 
