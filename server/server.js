@@ -3,6 +3,8 @@ const cors = require("cors")
 const dotenv = require('dotenv');
 const db = require("./config/db")
 const User = require('./models/User');
+const Movie = require('./models/Movie');
+const Cinema = require('./models/Cinema');
 
 dotenv.config()
 
