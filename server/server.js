@@ -2,6 +2,8 @@ const express = require("express")
 const cors = require("cors")
 const dotenv = require('dotenv');
 const db = require("./config/db")
+const User = require('./models/User');
+
 dotenv.config()
 
 const app = express();
@@ -12,6 +14,10 @@ app.use(express.json());
 db.authenticate()
   .then(() => {
     console.log('Connected to PostgreSQL');
+    return db.sync({ force: false });
+  })
+  .then(() => {
+    console.log('Synced Models with DB');
   })
   .catch((err) => {
     console.error('Failed connection:', err);
