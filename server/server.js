@@ -49,6 +49,9 @@ app.use(express.json());
 const movieRoutes = require('./routes/movieRoutes');
 app.use('/api/movies', movieRoutes);
 
+const showtimeRoutes = require('./routes/showtimeRoutes');
+app.use('/api/showtimes', showtimeRoutes);
+
 db.authenticate()
   .then(() => {
     console.log('Connected to PostgreSQL');
