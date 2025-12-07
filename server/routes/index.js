@@ -1,6 +1,6 @@
 const adminRoutes = require('./admin/index');
 const apiRoutes = require('./api/index');
-const authRoutes = require('./authRoutes');
+const authRoutes = require('./authRoute');
 
 function Routes(app) {
     app.use('/api', apiRoutes);

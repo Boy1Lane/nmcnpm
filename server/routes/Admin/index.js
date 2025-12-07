@@ -1,4 +1,4 @@
-const movieRoutes = require('./movieRoutes');
+const movieRoutes = require('./movieRoute');
 const router = require('express').Router();
 
 

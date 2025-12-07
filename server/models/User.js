@@ -30,6 +30,10 @@ const User = sequelize.define('User', {
   role: {
     type: DataTypes.ENUM('customer', 'admin', 'staff'),
     defaultValue: 'customer'
+  },
+  refreshToken: {
+    type: DataTypes.TEXT,
+    allowNull: true
   }
 }, {
   timestamps: true

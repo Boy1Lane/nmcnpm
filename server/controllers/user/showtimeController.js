@@ -1,8 +1,8 @@
-const Showtime = require('../models/Showtime');
-const Room = require('../models/Room');
-const Seat = require('../models/Seat');
-const ShowtimeSeat = require('../models/ShowtimeSeat');
-const Movie = require('../models/Movie')
+const Showtime = require('../../models/Showtime');
+const Room = require('../../models/Room');
+const Seat = require('../../models/Seat');
+const ShowtimeSeat = require('../../models/ShowtimeSeat');
+const Movie = require('../../models/Movie')
 
 exports.createShowtime = async (req, res) => {
     try {

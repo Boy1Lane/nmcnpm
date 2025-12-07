@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const db = require("./config/db")
 const { User, Movie, Cinema, Room, Seat, Showtime, ShowtimeSeat } = require('./models');
 const Routes = require("./routes/index");
+const cookieParser = require("cookie-parser");
 
 dotenv.config()
 
@@ -11,6 +12,8 @@ const app = express();
 
 app.use(cors())
 app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 
 // Initialize Routes
 Routes(app);
