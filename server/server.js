@@ -3,6 +3,7 @@ const cors = require("cors")
 const dotenv = require('dotenv');
 const db = require("./config/db")
 const { User, Movie, Cinema, Room, Seat, Showtime, ShowtimeSeat } = require('./models');
+const Routes = require("./routes/index");
 
 dotenv.config()
 
@@ -11,11 +12,8 @@ const app = express();
 app.use(cors())
 app.use(express.json());
 
-const movieRoutes = require('./routes/movieRoutes');
-app.use('/api/movies', movieRoutes);
-
-const showtimeRoutes = require('./routes/showtimeRoutes');
-app.use('/api/showtimes', showtimeRoutes);
+// Initialize Routes
+Routes(app);
 
 db.authenticate()
   .then(() => {
