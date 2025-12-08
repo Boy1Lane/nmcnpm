@@ -42,11 +42,18 @@ const ClientLayout = () => {
               Đăng Xuất ({userRole})
             </Button>
           ) : (
-            <Link to="/login">
-              <Button type="primary" style={{ marginLeft: 20 }}>
-                Đăng Nhập
-              </Button>
-            </Link>
+            <> 
+              <Link to="/login">
+                <Button type="primary" style={{ marginLeft: 10 }}>
+                  Đăng Nhập
+                </Button>
+              </Link>
+              <Link to="/register">
+                <Button type="default" style={{ marginLeft: 10 }}>
+                  Đăng Ký
+                </Button>
+              </Link>
+            </>
           )}
         </div>
       </Header>
@@ -60,6 +67,7 @@ const ClientLayout = () => {
             marginTop: 20,
           }}
         >
+          {}
           <Outlet />
         </div>
       </Content>
