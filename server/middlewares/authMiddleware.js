@@ -10,7 +10,7 @@ function authMiddleware(req, res, next) {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     req.user = decoded; // { id, role }
     next();
-  } catch {
+  } catch { 
     return res.status(403).json({ message: "Invalid token" });
   }
 }

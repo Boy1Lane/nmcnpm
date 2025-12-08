@@ -1,5 +1,6 @@
 const Movie = require('../../models/Movie');
 
+// /POST /api/movies -> createMovie
 exports.createMovie = async (req, res) => {
   try {
     const { title, description, director, actor, genre, duration, releaseDate, posterUrl, trailerUrl } = req.body;
@@ -32,11 +33,75 @@ exports.createMovie = async (req, res) => {
   }
 };
 
+// /GET /api/movies -> getAllMovies
 exports.getAllMovies = async (req, res) => {
   try {
     const movies = await Movie.findAll();
     res.status(200).json(movies);
   } catch (error) {
     res.status(500).json({ message: 'getAllMovies error' });
+  }
+};
+
+// GET /api/movies/:id -> getAMovie
+exports.getAMovie = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const movie = await Movie.findByPk(id);
+    if (!movie) {
+      return res.status(404).json({ message: 'Movie not found' });
+    }
+    res.status(200).json(movie);
+  } catch (error) {
+    res.status(500).json({ message: 'getAMovie error' });
+  }
+};
+
+// PUT /api/movies/:id -> updateMovie
+exports.updateMovie = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { 
+      title, description, director, 
+      actor, genre, duration, releaseDate, 
+      posterUrl, trailerUrl, status 
+    } = req.body;
+    const movie = await Movie.findByPk(id);
+    if (!movie) {
+      return res.status(404).json({ message: 'Movie not found' });
+    }
+    await movie.update({
+      title,
+      description,
+      director,
+      actor,
+      genre,
+      duration,
+      releaseDate,
+      posterUrl,
+      trailerUrl,
+      status
+    });
+    res.status(200).json({
+      message: 'Update movie successfully!',
+      data: movie
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'updateMovie error' });
+  }
+};
+
+// DELETE /api/movies/:id -> deleteMovie
+exports.deleteMovie = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const movie = await Movie.findByPk(id);
+    if (!movie) {
+      return res.status(404).json({ message: 'Movie not found' });
+    }
+    await movie.destroy();
+    res.status(200).json({ message: 'Delete movie successfully!' });
+  } catch (error) {
+    res.status(500).json({ message: 'deleteMovie error' });
   }
 };
