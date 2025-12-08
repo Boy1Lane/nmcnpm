@@ -16,8 +16,6 @@ export default function AdminLayout() {
           <Outlet />
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

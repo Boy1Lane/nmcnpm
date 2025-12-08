@@ -65,7 +65,7 @@ export default function MovieManagement() {
     {
       key: "6",
       title: "Hành động",
-      render: (record) => (
+      render: (_, record) => (
         <>
           <EditOutlined
             onClick={() => onEditMovie(record)}
@@ -161,6 +161,7 @@ export default function MovieManagement() {
   };
 
   const onDeleteMovie = (movie) => {
+    console.log("🟡 FE chuẩn bị xoá:", movie);
     Modal.confirm({
       title: "Bạn có chắc muốn xóa phim này?",
       okText: "Xóa",
@@ -169,7 +170,8 @@ export default function MovieManagement() {
         try {
           await axios.delete(`http://localhost:5000/api/movies/${movie.id}`);
           message.success("Đã xóa phim!");
-          fetchMovies();
+          // ⭐ Cập nhật danh sách mà không cần fetch lại
+          setMovies((prev) => prev.filter((m) => m.id !== movie.id));
         } catch (err) {
           message.error("Xóa thất bại!");
         }
@@ -201,7 +203,7 @@ export default function MovieManagement() {
           style={{ marginTop: 10 }}
           rowKey="id"
           columns={columns}
-          dataSource={movies}
+          dataSource={filteredMovies}
           pagination={{ pageSize: 10 }}
         />
       </div>
