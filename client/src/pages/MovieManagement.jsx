@@ -9,6 +9,7 @@ export default function MovieManagement() {
   const [movies, setMovies] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editingMovie, setEditingMovie] = useState(null);
+  const [search, setSearch] = useState("");
 
   // ⭐ GET API – lấy danh sách phim thật từ backend
   useEffect(() => {
@@ -23,7 +24,7 @@ export default function MovieManagement() {
   const fetchMovies = async () => {
     try {
       const res = await axios.get("http://localhost:5000/api/movies");
-      console.log("📌 FE nhận từ backend:", res.data); // ← CHECK TẠI ĐÂY
+      console.log("📌 FE nhận từ backend:", res.data);
       setMovies(res.data);
       console.log("Backend trả về:", res.data);
     } catch (err) {
@@ -95,7 +96,26 @@ export default function MovieManagement() {
     });
   };
 
-  // ⭐ Lưu phim (THÊM hoặc SỬA)
+  // sửa
+  const onEditMovie = (movie) => {
+    console.log("📌 Movie to edit:", movie);
+    setIsEditing(true);
+    setEditingMovie({
+      id: movie.id, // 🔥 bắt buộc có ID
+      title: movie.title,
+      description: movie.description,
+      director: movie.director,
+      actor: movie.actor,
+      genre: movie.genre,
+      duration: movie.duration,
+      releaseDate: movie.releaseDate ? dayjs(movie.releaseDate) : null,
+      posterUrl: movie.posterUrl,
+      trailerUrl: movie.trailerUrl,
+      status: movie.status,
+    });
+  };
+
+  // ⭐ Lưu phim (khi THÊM hoặc SỬA)
   const saveMovie = async () => {
     if (
       !editingMovie.title ||
@@ -105,27 +125,62 @@ export default function MovieManagement() {
       message.error("Vui lòng nhập đầy đủ *Tên phim, Thời lượng, Ngày chiếu*");
       return;
     }
+
+    const payload = {
+      title: editingMovie.title,
+      description: editingMovie.description,
+      director: editingMovie.director,
+      actor: editingMovie.actor,
+      genre: editingMovie.genre,
+      duration: editingMovie.duration,
+      releaseDate: dayjs(editingMovie.releaseDate).format("YYYY-MM-DD"),
+      posterUrl: editingMovie.posterUrl,
+      trailerUrl: editingMovie.trailerUrl,
+      status: editingMovie.status || "coming_soon",
+    };
+
     try {
-      await axios.post("http://localhost:5000/api/movies", {
-        title: editingMovie.title,
-        description: editingMovie.description,
-        director: editingMovie.director,
-        actor: editingMovie.actor,
-        genre: editingMovie.genre,
-        duration: editingMovie.duration,
-        releaseDate: dayjs(editingMovie.releaseDate).format("YYYY-MM-DD"),
-        posterUrl: editingMovie.posterUrl,
-        trailerUrl: editingMovie.trailerUrl,
-      });
-      message.success("Thêm phim thành công!");
+      // Nếu có ID → UPDATE
+      if (editingMovie.id) {
+        await axios.put(
+          `http://localhost:5000/api/movies/${editingMovie.id}`,
+          payload
+        );
+        message.success("Cập nhật phim thành công!");
+      } else {
+        await axios.post("http://localhost:5000/api/movies", payload);
+        message.success("Thêm phim thành công!");
+      }
+
       fetchMovies();
       resetEditing();
-      return;
     } catch (err) {
-      message.error("Không thể thêm phim!");
-      return;
+      console.error("❌ Lỗi UPDATE/CREATE:", err);
+      message.error("Lỗi! Không lưu được phim.");
     }
   };
+
+  const onDeleteMovie = (movie) => {
+    Modal.confirm({
+      title: "Bạn có chắc muốn xóa phim này?",
+      okText: "Xóa",
+      okType: "danger",
+      onOk: async () => {
+        try {
+          await axios.delete(`http://localhost:5000/api/movies/${movie.id}`);
+          message.success("Đã xóa phim!");
+          fetchMovies();
+        } catch (err) {
+          message.error("Xóa thất bại!");
+        }
+      },
+    });
+  };
+
+  const filteredMovies = movies.filter((m) =>
+    m.title.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div style={{ padding: 20, background: "white", borderRadius: 8 }}>
       <h2>Quản lý Phim</h2>
@@ -133,6 +188,14 @@ export default function MovieManagement() {
       <Button type="primary" onClick={onAddMovie}>
         + Thêm phim mới
       </Button>
+
+      <Input
+        placeholder="Tìm kiếm phim..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        style={{ width: 300, marginTop: 15, marginBottom: 10 }}
+      />
+
       <div className="movie-table-wrapper">
         <Table
           style={{ marginTop: 10 }}
@@ -142,6 +205,7 @@ export default function MovieManagement() {
           pagination={{ pageSize: 10 }}
         />
       </div>
+
       <Modal
         title={editingMovie?.id ? "Chỉnh sửa phim" : "Thêm phim mới"}
         open={isEditing}
@@ -156,6 +220,7 @@ export default function MovieManagement() {
             setEditingMovie((pre) => ({ ...pre, title: e.target.value }))
           }
         />
+
         {/* ĐẠO DIỄN */}
         <Input
           value={editingMovie?.director}
@@ -165,6 +230,7 @@ export default function MovieManagement() {
             setEditingMovie((pre) => ({ ...pre, director: e.target.value }))
           }
         />
+
         {/* DIỄN VIÊN */}
         <Input
           value={editingMovie?.actor}
@@ -174,6 +240,7 @@ export default function MovieManagement() {
             setEditingMovie((pre) => ({ ...pre, actor: e.target.value }))
           }
         />
+
         <Input
           value={editingMovie?.genre}
           placeholder="Thể loại"
@@ -182,6 +249,7 @@ export default function MovieManagement() {
             setEditingMovie((pre) => ({ ...pre, genre: e.target.value }))
           }
         />
+
         <Input
           value={editingMovie?.duration}
           placeholder="Thời lượng (phút)"
@@ -190,6 +258,7 @@ export default function MovieManagement() {
             setEditingMovie((pre) => ({ ...pre, duration: e.target.value }))
           }
         />
+
         <DatePicker
           style={{ width: "100%", marginTop: 10 }}
           value={editingMovie?.releaseDate}
@@ -197,6 +266,7 @@ export default function MovieManagement() {
             setEditingMovie((pre) => ({ ...pre, releaseDate: date }))
           }
         />
+
         {/* TRAILER */}
         <Input
           value={editingMovie?.trailerUrl}
@@ -206,6 +276,7 @@ export default function MovieManagement() {
             setEditingMovie((pre) => ({ ...pre, trailerUrl: e.target.value }))
           }
         />
+
         <Input
           value={editingMovie?.posterUrl}
           placeholder="Poster URL"
@@ -214,7 +285,8 @@ export default function MovieManagement() {
             setEditingMovie((pre) => ({ ...pre, posterUrl: e.target.value }))
           }
         />
-        {/* MÔ TẢ / TÓM TẮT */}
+
+        {/* MÔ TẢ */}
         <Input.TextArea
           rows={3}
           value={editingMovie?.description}
