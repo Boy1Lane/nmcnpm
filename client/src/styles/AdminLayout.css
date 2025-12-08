@@ -1,0 +1,23 @@
+/* Tổng layout chiếm full màn hình */
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden; /* Ngăn toàn trang scroll */
+}
+
+/* Phần giữa: menu + content */
+.layout-main {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 120px); /* Header 60 + Footer 60 */
+  overflow: hidden;
+}
+
+/* Content scroll */
+.layout-content {
+  flex: 1;
+  overflow-y: auto;
+  background: #4b144b;
+  padding: 20px;
+}
