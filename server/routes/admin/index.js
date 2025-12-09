@@ -1,4 +1,4 @@
-const movieRoutes = require('./movieRoute');
+const movieRoutes = require('./movieRoute.js');
 const adminController = require('../../controllers/admin/adminController');
 const router = require('express').Router();
 

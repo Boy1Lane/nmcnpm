@@ -1,0 +1,46 @@
+### 1. Register a new user
+POST http://localhost:5000/auth/register
+Content-Type: application/json
+
+{
+  "fullName": "Test User",
+  "email": "test@example.com",
+  "password": "password123",
+  "phone": "0123456789"
+}
+
+### 2. Login (Copy the accessToken from the response)
+# @name login
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### 3. Get Public Movies (No token needed)
+GET http://localhost:5000/api/movies
+
+### 4. Try to access Admin Route without Token (Should fail 401/403)
+GET http://localhost:5000/admin/movies
+
+### 5. Try to access Admin Route WITH Token (Might fail if role is 'customer')
+# Replace <ACCESS_TOKEN> with the token from the login response
+GET http://localhost:5000/admin/movies
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### 6. (Admin Only) Create a Movie
+POST http://localhost:5000/admin/movies
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "title": "New Movie created by Admin",
+  "description": "Description",
+  "director": "Director Name",
+  "duration": 120,
+  "releaseDate": "2025-01-01",
+  "posterUrl": "http://example.com/poster.jpg",
+  "trailerUrl": "http://example.com/trailer.mp4"
+}

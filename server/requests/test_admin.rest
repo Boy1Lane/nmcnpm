@@ -1,0 +1,37 @@
+### 1. Register a NEW Admin User (Change email if you run this again!)
+# @name register
+POST http://localhost:5000/auth/register
+Content-Type: application/json
+
+{
+  "fullName": "Super Admin",
+  "email": "admin_new_02@cinemaverse.com",
+  "password": "password123",
+  "phone": "0999999999",
+  "role": "admin"
+}
+
+### 2. Login (Automatically captures the token)
+# @name login
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin_new_02@cinemaverse.com",
+  "password": "password123"
+}
+
+### 3. Create a Movie (Uses the token from Step 2)
+POST http://localhost:5000/admin/movies
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "title": "The Matrix 4",
+  "description": "Neo returns...",
+  "director": "Lana Wachowski",
+  "duration": 148,
+  "releaseDate": "2021-12-22",
+  "posterUrl": "https://example.com/matrix.jpg",
+  "trailerUrl": "https://example.com/trailer.mp4"
+}

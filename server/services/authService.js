@@ -5,8 +5,7 @@ const { where } = require("sequelize");
 
 class AuthService {
   async register(data) {
-    console.log("Registering user:", data);
-    const userExists = await User.findOne({ email: data.email });
+    const userExists = await User.findOne({ where: { email: data.email } });
     if (userExists) throw new Error("Email already used");
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -20,7 +19,7 @@ class AuthService {
   }
 
   async login(email, password) {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ where: { email } });
     if (!user) throw new Error("Email not found");
 
     const match = await bcrypt.compare(password, user.password);
@@ -45,7 +44,7 @@ class AuthService {
   }
 
   async refresh(oldToken) {
-    const user = await User.findOne({ refreshToken: oldToken });
+    const user = await User.findOne({ where: { refreshToken: oldToken } });
     if (!user) throw new Error("Invalid refresh token");
 
     const decoded = jwt.verify(oldToken, process.env.REFRESH_TOKEN_SECRET);
