@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Table, Button, Modal, Input, message, DatePicker } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import axios from "axios";
+import axiosAdmin from "../../services/Admin/axiosAdmin.js";
+import axiosClient from "../../services/Client/axiosClient.js";
 import dayjs from "dayjs";
 import "../../styles/Admin/MovieManagement.css";
 
@@ -23,7 +24,7 @@ export default function MovieManagement() {
 
   const fetchMovies = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/movies");
+      const res = await axiosClient.get("/movies");
       console.log("📌 FE nhận từ backend:", res.data);
       setMovies(res.data);
       console.log("Backend trả về:", res.data);
@@ -142,13 +143,10 @@ export default function MovieManagement() {
     try {
       // Nếu có ID → UPDATE
       if (editingMovie.id) {
-        await axios.put(
-          `http://localhost:5000/api/movies/${editingMovie.id}`,
-          payload
-        );
+        await axiosAdmin.put(`/movies/${editingMovie.id}`, payload);
         message.success("Cập nhật phim thành công!");
       } else {
-        await axios.post("http://localhost:5000/api/movies", payload);
+        await axiosAdmin.post("/movies", payload);
         message.success("Thêm phim thành công!");
       }
 
@@ -168,7 +166,7 @@ export default function MovieManagement() {
       okType: "danger",
       onOk: async () => {
         try {
-          await axios.delete(`http://localhost:5000/api/movies/${movie.id}`);
+          await axiosAdmin.delete(`/movies/${movie.id}`);
           message.success("Đã xóa phim!");
           // ⭐ Cập nhật danh sách mà không cần fetch lại
           setMovies((prev) => prev.filter((m) => m.id !== movie.id));

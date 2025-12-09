@@ -1,0 +1,12 @@
+.room-table-wrapper {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.room-tag {
+  padding: 4px 8px;
+  background: #eef2ff;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+}

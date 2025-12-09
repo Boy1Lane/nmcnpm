@@ -1,8 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AdminLayout from "./layout/AdminLayout";
+import AdminLayout from "./layout/AdminLayout.jsx";
+// Layouts
+import Dashboard from "./pages/Admin/Dashboard.jsx";
+import MovieManagement from "./pages/Admin/MovieManagement.jsx";
+import RoomManagement from "./pages/Admin/RoomManagement.jsx";
 
-import Dashboard from "./pages/Admin/Dashboard";
-import MovieManagement from "./pages/Admin/MovieManagement";
 // import LichChieu from "./pages/LichChieu";
 // import PhongVaGhe from "./pages/PhongVaGhe";
 // import NguoiDung from "./pages/NguoiDung";
@@ -15,6 +17,7 @@ export default function App() {
       <Route path="/" element={<AdminLayout />}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="movie-management" element={<MovieManagement />} />
+        <Route path="room-seat" element={<RoomManagement />} />
         {/* <Route path="lichChieu" element={<LichChieu />} />
           <Route path="phongVaGhe" element={<PhongVaGhe />} />
           <Route path="nguoiDung" element={<NguoiDung />} />
