@@ -49,7 +49,7 @@
 
 .header-logo-left {
   width: 100px;
-  height: 100px;
+  height: 50px;
   object-fit: cover;
   border-radius: 6px;
 }

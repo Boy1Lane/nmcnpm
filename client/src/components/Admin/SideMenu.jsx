@@ -21,7 +21,7 @@ export default function SideMenu() {
       label: "Quản lý phim",
       icon: <VideoCameraOutlined />,
     },
-    { key: "/showtime", label: "Lịch chiếu", icon: <ScheduleOutlined /> },
+    { key: "/showtimes", label: "Lịch chiếu", icon: <ScheduleOutlined /> },
     { key: "/room-seat", label: "Phòng & Ghế", icon: <AppstoreOutlined /> },
     { key: "/user", label: "Người dùng", icon: <UserOutlined /> },
     { key: "/report", label: "Báo cáo", icon: <BarChartOutlined /> },

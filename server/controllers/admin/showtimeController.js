@@ -13,11 +13,12 @@ exports.getAllShowtimes = async (req, res) => {
 // POST /admin/showtimes -> createShowtime
 exports.createShowtime = async (req, res) => {
   try {
-    const { movieId, roomId, startTime, endTime, price } = req.body;
-    if (!movieId || !roomId || !startTime || !endTime || !price) {
-      return res.status(400).json({ message: 'Missing value (movieId, roomId, startTime, endTime, price)!' });
+    console.log("📩 Received:", req.body);
+    const { movieId, roomId, startTime, endTime, basePrice } = req.body;
+    if (!movieId || !roomId || !startTime || !endTime || !basePrice) {
+      return res.status(400).json({ message: 'Missing value (movieId, roomId, startTime, endTime, basePrice)!' });
     }
-    const newShowtime = await Showtime.create({ movieId, roomId, startTime, endTime, price });
+    const newShowtime = await Showtime.create({ movieId, roomId, startTime, endTime, basePrice });
     res.status(201).json({
       message: 'Showtime created successfully!',
       data: newShowtime
@@ -46,7 +47,7 @@ exports.getAShowtime = async (req, res) => {
 exports.updateShowtime = async (req, res) => {
   try {
     const { id } = req.params;
-    const { movieId, roomId, startTime, endTime, price } = req.body;
+    const { movieId, roomId, startTime, endTime, basePrice } = req.body;
     const showtime = await Showtime.findByPk(id);
     if (!showtime) {
       return res.status(404).json({ message: 'Showtime not found' });
@@ -55,7 +56,7 @@ exports.updateShowtime = async (req, res) => {
     showtime.roomId = roomId || showtime.roomId;
     showtime.startTime = startTime || showtime.startTime;
     showtime.endTime = endTime || showtime.endTime;
-    showtime.price = price || showtime.price;
+    showtime.basePrice = basePrice || showtime.basePrice;
     await showtime.save();
     res.status(200).json({ 
         message: 'Showtime updated successfully', showtime 

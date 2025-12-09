@@ -72,21 +72,5 @@
   margin: 10px;
 }
 
-.sidebar-bottom {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-
-  margin-top: auto; /* ⭐ đẩy cả cụm xuống đáy */
-}
-
-.sidebar-bottom-logo img {
-  width: 110px;
-  opacity: 0.9;
-  border-radius: 10px;
-}
-
-
 
 

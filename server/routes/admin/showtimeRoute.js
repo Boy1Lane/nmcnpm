@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const showtimeController = require('../../controllers/user/showtimeController');
+const showtimeController = require('../../controllers/admin/showtimeController');
 
 // GET /admin/showtimes -> getAllShowtimes
 router.get('/', showtimeController.getAllShowtimes);
