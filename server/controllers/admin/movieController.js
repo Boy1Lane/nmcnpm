@@ -93,15 +93,18 @@ exports.updateMovie = async (req, res) => {
 
 // DELETE /api/movies/:id -> deleteMovie
 exports.deleteMovie = async (req, res) => {
+  console.log("🟡 BE nhận request xoá ID:", req.params.id);
   try {
     const { id } = req.params;
     const movie = await Movie.findByPk(id);
     if (!movie) {
+      console.log("❌ Không tìm thấy phim để xoá!");
       return res.status(404).json({ message: 'Movie not found' });
     }
     await movie.destroy();
     res.status(200).json({ message: 'Delete movie successfully!' });
   } catch (error) {
+    console.log("❌ Lỗi xoá BE:", error);
     res.status(500).json({ message: 'deleteMovie error' });
   }
 };
