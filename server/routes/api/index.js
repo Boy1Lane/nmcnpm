@@ -1,5 +1,5 @@
 const movieRoutes = require('./movieRoute');
-const showtimeRoutes = require('./showtimeRoute');
+const showtimeRoutes = require('./showtimeRoute.js');
 const router = require('express').Router();
 
 router.use('/movies', movieRoutes);
