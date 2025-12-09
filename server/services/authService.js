@@ -5,7 +5,6 @@ const { where } = require("sequelize");
 
 class AuthService {
   async register(data) {
-    console.log("Registering user:", data);
     const userExists = await User.findOne({ where: { email: data.email } });
     if (userExists) throw new Error("Email already used");
 
