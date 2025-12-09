@@ -1,0 +1,25 @@
+###
+GET http://localhost:5000/api/movies
+###
+GET http://localhost:5000/api/rooms
+### Create a new Showtime
+POST http://localhost:5000/api/showtimes
+Content-Type: application/json
+
+{
+    "movieId": 1,
+    "roomId": 4,
+    "startTime": "2025-12-07T14:30:00.000Z",
+    "basePrice": 10
+}
+
+### Create another Showtime (Evening)
+POST http://localhost:5000/api/showtimes
+Content-Type: application/json
+
+{
+    "movieId": "675265020637094d830025a2",
+    "roomId": 1,
+    "startTime": "2025-12-07T20:00:00.000Z",
+    "basePrice": 15.00
+}
