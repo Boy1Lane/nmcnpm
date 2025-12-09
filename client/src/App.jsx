@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AdminLayout from "./layout/AdminLayout";
 
-import Dashboard from "./pages/Dashboard";
-import MovieManagement from "./pages/MovieManagement";
+import Dashboard from "./pages/Admin/Dashboard";
+import MovieManagement from "./pages/Admin/MovieManagement";
 // import LichChieu from "./pages/LichChieu";
 // import PhongVaGhe from "./pages/PhongVaGhe";
 // import NguoiDung from "./pages/NguoiDung";
