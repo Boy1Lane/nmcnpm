@@ -1,0 +1,35 @@
+const express = require('express');
+const router = express.Router();
+const bookingController = require('../../controllers/admin/bookingController');
+
+// GET /admin/bookings -> getAllBookings
+router.get('/', bookingController.getAllBookings);
+
+// POST /admin/bookings -> createBooking
+router.post('/', bookingController.createBooking);  
+
+// GET /admin/bookings/:id -> getABooking
+router.get('/:id', bookingController.getABooking);
+
+// PUT /admin/bookings/:id -> updateBooking
+router.put('/:id', bookingController.updateBooking);
+
+// DELETE /admin/bookings/:id -> deleteBooking
+router.delete('/:id', bookingController.deleteBooking);
+
+// GET /admin/bookings/user/:userId -> getBookingsByUser
+router.get('/user/:userId', bookingController.getBookingsByUser);
+
+// GET /admin/bookings/showtime/:showtimeId -> getBookingsByShowtime
+router.get('/showtime/:showtimeId', bookingController.getBookingsByShowtime);
+
+// POST /admin/bookings/:id/seats -> addSeatsToBooking
+router.post('/:id/seats', bookingController.addSeatsToBooking);
+
+// DELETE /admin/bookings/:id/seats/:seatId -> removeSeatFromBooking
+router.delete('/:id/seats/:seatId', bookingController.removeSeatFromBooking);
+
+// GET /admin/bookings/summary -> getBookingSummary?month=&year=
+router.get('/summary', bookingController.getBookingSummary);
+
+module.exports = router;

@@ -36,6 +36,18 @@ ShowtimeSeat.belongsTo(Showtime, { foreignKey: 'showtimeId' });
 Seat.hasMany(ShowtimeSeat, { foreignKey: 'seatId' });
 ShowtimeSeat.belongsTo(Seat, { foreignKey: 'seatId' });
 
+// Relationship: A User can have many Bookings
+User.hasMany(Booking, { foreignKey: 'userId' });
+Booking.belongsTo(User, { foreignKey: 'userId' });
+
+// Relationship: A Showtime can have many Bookings
+Showtime.hasMany(Booking, { foreignKey: 'showtimeId' });
+Booking.belongsTo(Showtime, { foreignKey: 'showtimeId' });
+
+// Relationship: A Booking can have many BookingSeats
+Booking.hasMany(BookingSeat, { foreignKey: 'bookingId' });
+BookingSeat.belongsTo(Booking, { foreignKey: 'bookingId' });
+
 module.exports = {
     sequelize,
     User,
@@ -44,5 +56,7 @@ module.exports = {
     Room,
     Seat,
     Showtime,
-    ShowtimeSeat
+    ShowtimeSeat,
+    Booking,
+    BookingSeat
 };
