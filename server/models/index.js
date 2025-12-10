@@ -50,6 +50,12 @@ Booking.belongsTo(Showtime, { foreignKey: 'showtimeId' });
 Booking.hasMany(BookingSeat, { foreignKey: 'bookingId' });
 BookingSeat.belongsTo(Booking, { foreignKey: 'bookingId' });
 
+// Relationship: A ShowtimeSeat can have many BookingSeats
+ShowtimeSeat.hasMany(BookingSeat, { foreignKey: 'showtimeSeatId' });
+BookingSeat.belongsTo(ShowtimeSeat, { foreignKey: 'showtimeSeatId' });
+
+// Constraints and Indexes can be defined within individual model files
+
 module.exports = {
     sequelize,
     User,

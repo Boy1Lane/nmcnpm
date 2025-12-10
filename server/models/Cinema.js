@@ -17,4 +17,17 @@ const Cinema = sequelize.define('Cinema', {
   }
 });
 
+// Constraint: Ensure cinema names are unique
+Cinema.addHook('beforeValidate', async (cinema, options) => {
+  const existingCinema = await Cinema.findOne({
+    where: { 
+      name: cinema.name,
+      id: { [DataTypes.Op.ne]: cinema.id } // Exclude self for updates
+    }
+  });
+  if (existingCinema) {
+    throw new Error('Cinema name must be unique.');
+  }
+});
+
 module.exports = Cinema;
