@@ -124,3 +124,75 @@ exports.getAllShowtimes = async (req, res) => {
     res.status(500).json({ message: "getAllShowtimes error" });
   }
 };
+
+// GET /admin/showtimes/:showtimeId/seats -> getSeatsByShowtime
+exports.getSeatsByShowtime = async (req, res) => {
+  try {
+    const { showtimeId } = req.params;
+    const showtime = await Showtime.findByPk(showtimeId, {
+      include: ['seats']
+    });
+    if (!showtime) {
+      return res.status(404).json({ message: 'Showtime not found' });
+    }
+    res.status(200).json(showtime.seats);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'getSeatsByShowtime error' });
+  }
+};
+
+// POST /admin/showtimes/:showtimeId/seats -> addSeatsToShowtime
+exports.addSeatsToShowtime = async (req, res) => {
+  try {
+    const { showtimeId } = req.params;
+    const { seatIds } = req.body;
+    const showtime = await Showtime.findByPk(showtimeId);
+    if (!showtime) {
+      return res.status(404).json({ message: 'Showtime not found' });
+    }
+    await showtime.addSeats(seatIds);
+    res.status(200).json({ message: 'Seats added to showtime successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'addSeatsToShowtime error' });
+  }
+};
+
+// DELETE /admin/showtimes/:showtimeId/seats/:seatId -> removeSeatFromShowtime
+exports.removeSeatFromShowtime = async (req, res) => {
+  try {
+    const { showtimeId, seatId } = req.params;  
+    const showtime = await Showtime.findByPk(showtimeId);
+    if (!showtime) {
+      return res.status(404).json({ message: 'Showtime not found' });
+    }
+    await showtime.removeSeat(seatId);
+    res.status(200).json({ message: 'Seat removed from showtime successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'removeSeatFromShowtime error' });
+  }
+};
+
+// PUT /admin/showtimes/:showtimeId/seats/seatID -> changeSeatStatusInShowtime
+exports.changeSeatStatusInShowtime = async (req, res) => {
+  try {
+    const { showtimeId, seatId } = req.params;
+    const { status } = req.body;
+    const showtime = await Showtime.findByPk(showtimeId);
+    if (!showtime) {
+      return res.status(404).json({ message: 'Showtime not found' });
+    }
+    const seats = await showtime.getSeats({ where: { id: seatId } });
+    if (seats.length === 0) {
+      return res.status(404).json({ message: 'Seat not found in showtime' });
+    }
+    const seat = seats[0];
+    await showtime.addSeat(seat, { through: { status } });
+    res.status(200).json({ message: 'Seat status updated successfully in showtime' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'changeSeatStatusInShowtime error' });
+  }
+};

@@ -6,6 +6,8 @@ const Room = require('./Room');
 const Seat = require('./Seat');
 const Showtime = require('./Showtime');
 const ShowtimeSeat = require('./ShowtimeSeat');
+const Booking = require('./Booking');
+const BookingSeat = require('./BookingSeat');
 
 // Relationship: A Cinema has many Rooms
 Cinema.hasMany(Room, { foreignKey: 'cinemaId' });

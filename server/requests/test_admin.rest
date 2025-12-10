@@ -35,3 +35,80 @@ Content-Type: application/json
   "posterUrl": "https://example.com/matrix.jpg",
   "trailerUrl": "https://example.com/trailer.mp4"
 }
+
+### 4. Create a Cinema (Uses the token from Step 2)
+POST http://localhost:5000/admin/cinemas
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Downtown Cinema",
+  "address": "123 Main St, Metropolis",
+  "description": "The best cinema in town."
+}
+
+### 5. Create a Room in the Cinema (Uses the token from Step 2)
+POST http://localhost:5000/admin/rooms  
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Room 1",
+  "cinemaId": 1,
+  "seatingCapacity": 150
+}
+
+### 6. Create a Showtime for the Movie in the Room (Uses the token from Step 2)
+POST http://localhost:5000/admin/showtimes
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "movieId": 1,
+  "roomId": 1,
+  "startTime": "2024-07-01T19:00:00",
+  "endTime": "2024-07-01T21:30:00",
+  "price": 12.50
+}
+
+### 7. Get Seats for the Showtime (Uses the token from Step 2)
+GET http://localhost:5000/admin/showtimes/1/seats 
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+### 8. Add Seats to the Showtime (Uses the token from Step 2)
+POST http://localhost:5000/admin/showtimes/1/seats
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "seats": [
+    {"row": "A", "number": 1},
+    {"row": "A", "number": 2},
+    {"row": "A", "number": 3}
+  ]
+} 
+
+### 9. Change Seat Status in the Showtime (Uses the token from Step 2)
+PUT http://localhost:5000/admin/showtimes/1/seats/1 
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "status": "unavailable"
+}
+
+### 10. Remove a Seat from the Showtime (Uses the token from Step 2)
+DELETE http://localhost:5000/admin/showtimes/1/seats/3  
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+### 11. Add Seats to a Booking (Uses the token from Step 2)
+POST http://localhost:5000/admin/bookings/1/seats 
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "seatIds": [1, 2]
+}
+
