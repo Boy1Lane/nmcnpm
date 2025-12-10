@@ -7,6 +7,7 @@ import {
   InputNumber,
   Button,
   Space,
+  message,
 } from "antd";
 import movieService from "../../../services/Admin/movieService";
 import roomService from "../../../services/Admin/roomService";
@@ -84,11 +85,15 @@ export default function ShowtimeModal({
 
   // ⭐ Nếu bấm "Thêm suất" trong phòng → tự chọn đúng rạp + phòng
   useEffect(() => {
+    // Chỉ chạy khi rooms đã load
+    if (!rooms.length) return;
+
     if (selectedRoom) {
+      console.log("⭐ Modal nhận selectedRoom:", selectedRoom);
       setSelectedCinema(selectedRoom.Cinema?.id);
       setRoomId(selectedRoom.id);
     }
-  }, [selectedRoom]);
+  }, [selectedRoom, rooms]);
 
   // ------------------------------
   // Tự tính giờ kết thúc
@@ -112,7 +117,7 @@ export default function ShowtimeModal({
   // ------------------------------
   const handleSave = async () => {
     if (!movieId || !roomId || !date || !startTime || !endTime) {
-      alert("Vui lòng nhập đầy đủ thông tin!");
+      message.error("Vui lòng nhập đầy đủ thông tin!");
       return;
     }
 
@@ -133,9 +138,16 @@ export default function ShowtimeModal({
       : await showtimeService.create(payload);
 
     if (res.success) {
+      message.success(
+        editing
+          ? "Cập nhật suất chiếu thành công!"
+          : "Tạo suất chiếu thành công!"
+      );
       onSuccess();
       onClose();
-    } else alert("Lỗi: " + res.error);
+    } else {
+      message.error("Lỗi: " + res.error);
+    }
   };
 
   return (

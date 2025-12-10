@@ -58,12 +58,18 @@ export default function ShowtimesPage() {
 
   const handleDelete = async (id) => {
     if (!confirm("Bạn có chắc muốn xóa suất chiếu này?")) return;
+    try {
+      const res = await showtimeService.delete(id);
 
-    const res = await showtimeService.delete(id);
-    if (res.success) {
-      message.success("Đã xóa!");
-      loadShowtimes();
-    } else message.error(res.error);
+      if (res.success) {
+        message.success("Xóa suất chiếu thành công!");
+        loadShowtimes();
+      } else {
+        message.error(res.error || "Xóa thất bại!");
+      }
+    } catch (err) {
+      message.error("Lỗi server! Không thể xóa.");
+    }
   };
 
   const openEditModal = (st) => {
@@ -216,7 +222,9 @@ export default function ShowtimesPage() {
             setEditingShowtime(null);
             setSelectedRoom(null);
           }}
-          onSuccess={() => loadShowtimes()}
+          onSuccess={async () => {
+            await loadShowtimes(); // ⭐ reload xong mới đóng modal
+          }}
         />
       )}
     </div>
