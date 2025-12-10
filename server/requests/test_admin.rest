@@ -121,3 +121,18 @@ Content-Type: application/json
   "seatIds": [1, 2]
 }
 
+### 12. Remove a Seat from a Booking (Uses the token from Step 2)
+DELETE http://localhost:5000/admin/bookings/2/seats/2 
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+### 13. GET booking details (Uses the token from Step 2)  
+GET http://localhost:5000/admin/bookings/2
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+### 14. Get summerized list of all bookings in month (Uses the token from Step 2)
+GET http://localhost:5000/admin/bookings/summary?month=12&year=2025
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json  
+

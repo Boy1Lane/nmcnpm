@@ -1,11 +1,16 @@
 const Booking = require('../../models/Booking');
 const BookingSeat = require('../../models/BookingSeat');
+const { Op } = require('sequelize');
 
 // GET /admin/bookings -> getAllBookings
 exports.getAllBookings = async (req, res) => {
   try {
-    const bookings = await Booking.findAll();  
-    res.status(200).json(bookings);
+    const bookings = await Booking.findAll(); 
+    const bookingsWithSeats = await Promise.all(bookings.map(async (booking) => {
+      const seats = await BookingSeat.findAll({ where: { bookingId: booking.id } });
+      return { ...booking.toJSON(), seats };
+    })); 
+    res.status(200).json(bookingsWithSeats);
   } catch (error) {
     res.status(500).json({ message: 'getAllBookings error' });
   }
@@ -34,6 +39,10 @@ exports.getABooking = async (req, res) => {
   try {
     const { id } = req.params;  
     const booking = await Booking.findByPk(id);
+    const bookingSeats = await BookingSeat.findAll({ where: { bookingId: id } });
+    if (booking) {
+      booking.dataValues.seats = bookingSeats;
+    }
     if (!booking) {
       return res.status(404).json({ message: 'Booking not found' });
     }
@@ -105,40 +114,44 @@ exports.getBookingsByShowtime = async (req, res) => {
 exports.addSeatsToBooking = async (req, res) => {
   try {
     const { id } = req.params;
-    const { seatIds } = req.body;
+    const { seatIds } = req.body; // seatIds should be showtimeSeatIds
+    if (!Array.isArray(seatIds) || seatIds.length === 0) {
+      return res.status(400).json({ message: 'seatIds must be a non-empty array' });
+    }
+
     const booking = await Booking.findByPk(id);
     if (!booking) {
       return res.status(404).json({ message: 'Booking not found' });
     }
-    await BookingSeat.findAll({ where: { bookingId: id } });
-    for (const seatId of seatIds) {
-      if(await BookingSeat.findOne({ where: { bookingId: id, id: seatId } })) {
-        continue;
-        }
-        await BookingSeat.create({ bookingId: id, id: seatId });
+
+    const created = [];
+    for (const showtimeSeatId of seatIds) {
+      const exists = await BookingSeat.findOne({ where: { bookingId: id, showtimeSeatId } });
+      if (exists) continue;
+      const bs = await BookingSeat.create({ bookingId: id, showtimeSeatId });
+      created.push(bs);
     }
-    res.status(201).json({ 
-        message: 'Seats added to booking successfully' 
+
+    res.status(201).json({
+      message: 'Seats added to booking successfully',
+      added: created.length
     });
   } catch (error) {
-    res.status(500).json({ message: 'addSeatsToBooking error' });
+    console.error('addSeatsToBooking error:', error); // helpful log
+    res.status(500).json({ message: 'addSeatsToBooking error', error: error.message });
   }
 };
 
 // DELETE /admin/bookings/:id/seats/:seatId -> removeSeatFromBooking
 exports.removeSeatFromBooking = async (req, res) => {
   try {
-    const { id, seatId } = req.params;
-    const bookingSeat = await BookingSeat.findOne({ 
-      where: { bookingId: id, seatId } 
-    }); 
+    const { id, seatId } = req.params; // seatId here is a showtimeSeatId
+    const bookingSeat = await BookingSeat.findOne({ where: { bookingId: id, showtimeSeatId: seatId } });
     if (!bookingSeat) {
       return res.status(404).json({ message: 'Seat not found in booking' });
     }
     await bookingSeat.destroy();
-    res.status(200).json({ 
-        message: 'Seat removed from booking successfully' 
-    });
+    res.status(200).json({ message: 'Seat removed from booking successfully' });
   } catch (error) {
     res.status(500).json({ message: 'removeSeatFromBooking error' });
   } 
@@ -147,23 +160,28 @@ exports.removeSeatFromBooking = async (req, res) => {
 // GET /admin/bookings/summary -> getBookingSummary?month=&year=
 exports.getBookingSummary = async (req, res) => {
   try {
-    const { month, year } = req.query;
+    const month = req.query.month ? parseInt(req.query.month, 10) : undefined;
+    const year = req.query.year ? parseInt(req.query.year, 10) : undefined;
+
     const whereClause = {};
-    if (month && year) {
+    if (year && month && month >= 1 && month <= 12) {
       whereClause.createdAt = {
-        $gte: new Date(year, month - 1, 1),
-        $lt: new Date(year, month, 1)
+        [Op.gte]: new Date(year, month - 1, 1),
+        [Op.lt]: new Date(year, month, 1),
       };
     } else if (year) {
       whereClause.createdAt = {
-        $gte: new Date(year, 0, 1),
-        $lt: new Date(year + 1, 0, 1)
+        [Op.gte]: new Date(year, 0, 1),
+        [Op.lt]: new Date(year + 1, 0, 1),
       };
     }
+
     const totalBookings = await Booking.count({ where: whereClause });
-    const totalRevenue = await Booking.sum('totalPrice', { where: whereClause });
+    const totalRevenueRaw = await Booking.sum('totalPrice', { where: whereClause });
+    const totalRevenue = totalRevenueRaw ?? 0;
+
     res.status(200).json({ totalBookings, totalRevenue });
   } catch (error) {
-    res.status(500).json({ message: 'getBookingSummary error' });
+    res.status(500).json({ message: 'getBookingSummary error', error: error.message });
   }
-};
+}
