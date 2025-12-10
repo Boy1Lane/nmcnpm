@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { DatePicker, Button, Card, Space, Typography, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import showtimeService from "../../../services/Admin/showtimeService.js";
-import roomService from "../../../services/Admin/roomService.js";
+import dayjs from "dayjs";
+import showtimeService from "../../../services/Admin/showtimeService";
+import roomService from "../../../services/Admin/roomService";
 import ShowtimeModal from "./ShowtimeModal";
 
 const { Title } = Typography;
@@ -10,24 +11,51 @@ const { Title } = Typography;
 export default function ShowtimesPage() {
   const [date, setDate] = useState(null);
   const [rooms, setRooms] = useState([]);
+  const [cinemas, setCinemas] = useState([]);
+  const [selectedCinema, setSelectedCinema] = useState("all");
   const [showtimes, setShowtimes] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingShowtime, setEditingShowtime] = useState(null);
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
-  // Load rooms
+  // ===== LOAD ROOMS =====
   const loadRooms = async () => {
     const res = await roomService.getAll();
+    console.log("📌 FE nhận rooms:", res.data);
+
     setRooms(res.data);
+
+    const unique = {};
+    res.data.forEach((r) => {
+      if (r.Cinema) unique[r.Cinema.id] = r.Cinema;
+    });
+
+    setCinemas(Object.values(unique));
   };
 
-  // Load showtimes theo ngày
+  // ===== LOAD SHOWTIMES =====
   const loadShowtimes = async () => {
-    if (!date) return;
-    const res = await showtimeService.getByDate(date);
-    setShowtimes(res.data);
+    let res;
+
+    if (!date) {
+      // ⭐ CHƯA CHỌN NGÀY → LẤY TẤT CẢ SUẤT CHIẾU
+      res = await showtimeService.getAll();
+    } else {
+      // ⭐ ĐÃ CHỌN NGÀY → LỌC THEO NGÀY
+      res = await showtimeService.getByDate(date);
+    }
+
+    console.log("📌 FE nhận showtimes:", res.data);
+
+    const formatted = res.data.map((st) => ({
+      ...st,
+      startLabel: dayjs(st.startTime).format("HH:mm"),
+      endLabel: dayjs(st.endTime).format("HH:mm"),
+    }));
+
+    setShowtimes(formatted);
   };
 
-  // xóa
   const handleDelete = async (id) => {
     if (!confirm("Bạn có chắc muốn xóa suất chiếu này?")) return;
 
@@ -35,12 +63,9 @@ export default function ShowtimesPage() {
     if (res.success) {
       message.success("Đã xóa!");
       loadShowtimes();
-    } else {
-      message.error(res.error);
-    }
+    } else message.error(res.error);
   };
 
-  // mở model suất chiếu
   const openEditModal = (st) => {
     setEditingShowtime(st);
     setIsModalOpen(true);
@@ -48,55 +73,106 @@ export default function ShowtimesPage() {
 
   useEffect(() => {
     loadRooms();
+    loadShowtimes(); // ⭐ Load tất cả suất chiếu mặc định
   }, []);
+
+  // ===== FILTER ROOMS THEO RẠP =====
+  const baseRooms =
+    selectedCinema === "all"
+      ? rooms
+      : rooms.filter((r) => r.Cinema?.id == selectedCinema);
+
+  // ⭐ Chỉ giữ phòng có ít nhất 1 suất chiếu
+  const filteredRooms = baseRooms.filter((room) =>
+    showtimes.some((st) => st.roomId === room.id)
+  );
 
   return (
     <div style={{ padding: 20 }}>
       <Title level={3}>Quản lý Lịch chiếu</Title>
 
-      {/* Bộ lọc */}
+      {/* ==== FILTER BAR ==== */}
       <Space style={{ marginBottom: 20 }}>
         <DatePicker value={date} onChange={setDate} />
+
         <Button type="primary" onClick={loadShowtimes}>
           Xem lịch
         </Button>
+
+        {/* CHỌN RẠP */}
+        <select
+          value={selectedCinema}
+          onChange={(e) => setSelectedCinema(e.target.value)}
+          style={{ padding: "6px 12px", borderRadius: 6 }}
+        >
+          <option value="all">Tất cả Rạp</option>
+          {cinemas.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+
         <Button
           type="primary"
           danger
           icon={<PlusOutlined />}
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setEditingShowtime(null);
+            setSelectedRoom(null); // ⭐ không chọn phòng mặc định
+            setIsModalOpen(true);
+          }}
         >
           Tạo suất chiếu mới
         </Button>
       </Space>
 
-      {/* Danh sách phòng */}
-      {rooms.map((room) => {
-        const roomShowtimes = showtimes.filter((s) => s.roomId === room.id);
+      {/* ==== RENDER THEO RẠP → PHÒNG ==== */}
+      {filteredRooms.map((room) => {
+        const stInRoom = showtimes.filter((s) => s.roomId === room.id);
 
         return (
           <Card
             key={room.id}
-            title={`${room.name} (${room.type})`}
-            extra={`Sức chứa: ${room.totalSeats} ghế`}
+            title={`${room.Cinema?.name} • ${room.name} (${room.type})`}
+            extra={
+              <div style={{ textAlign: "right" }}>
+                <div>{room.Cinema?.address}</div>
+                <div>Sức chứa: {room.totalSeats} ghế</div>
+              </div>
+            }
             style={{ marginBottom: 20, borderRadius: 10 }}
           >
             <Space wrap>
-              {/* Các suất chiếu */}
-              {roomShowtimes.map((st) => (
+              {stInRoom.map((st) => (
                 <Card
                   key={st.id}
                   style={{
                     width: 260,
-                    borderRadius: 10,
                     background: "#fff7f7",
+                    borderRadius: 10,
                   }}
                 >
-                  <b>
-                    {st.startLabel} - {st.endLabel}
-                  </b>
-                  <p>{st.movie?.title}</p>
-                  <small>Giá chuẩn: {st.basePrice?.toLocaleString()}đ</small>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <img
+                      src={st.Movie?.posterUrl}
+                      alt="poster"
+                      style={{
+                        width: 70,
+                        height: 100,
+                        objectFit: "cover",
+                        borderRadius: 6,
+                      }}
+                    />
+
+                    <div style={{ flex: 1 }}>
+                      <b>
+                        {st.startLabel} - {st.endLabel}
+                      </b>
+                      <p>{st.Movie?.title}</p>
+                      <small>Giá: {st.basePrice?.toLocaleString()}đ</small>
+                    </div>
+                  </div>
 
                   <div style={{ marginTop: 10, display: "flex", gap: 10 }}>
                     <Button size="small" onClick={() => openEditModal(st)}>
@@ -113,12 +189,15 @@ export default function ShowtimesPage() {
                 </Card>
               ))}
 
-              {/* Nút thêm suất */}
               <Button
                 type="dashed"
                 style={{ width: 140, height: 80 }}
                 icon={<PlusOutlined />}
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => {
+                  setSelectedRoom(room); // ⭐ Gán phòng hiện tại!
+                  setEditingShowtime(null);
+                  setIsModalOpen(true);
+                }}
               >
                 Thêm suất
               </Button>
@@ -127,14 +206,15 @@ export default function ShowtimesPage() {
         );
       })}
 
-      {/* Modal */}
       {isModalOpen && (
         <ShowtimeModal
           open={isModalOpen}
-          editing={editingShowtime} // <-- truyền dữ liệu sửa
+          editing={editingShowtime}
+          selectedRoom={selectedRoom} // ⭐ rất quan trọng
           onClose={() => {
             setIsModalOpen(false);
             setEditingShowtime(null);
+            setSelectedRoom(null);
           }}
           onSuccess={() => loadShowtimes()}
         />

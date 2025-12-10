@@ -1,15 +1,16 @@
 const Room = require('../../models/Room');
+const Cinema = require('../../models/Cinema');   // <-- THÊM DÒNG NÀY
 
 // GET /admin/rooms -> getAllRooms
 
-exports.getAllRooms = async (req, res) => {
-  try {
-    const rooms = await Room.findAll();
-    res.status(200).json(rooms);
-  } catch (error) {
-    res.status(500).json({ message: 'getAllRooms error' });
-  }
-};
+// exports.getAllRooms = async (req, res) => {
+//   try {
+//     const rooms = await Room.findAll();
+//     res.status(200).json(rooms);
+//   } catch (error) {
+//     res.status(500).json({ message: 'getAllRooms error' });
+//   }
+// };
 
 // POST /admin/rooms -> createRoom
 exports.createRoom = async (req, res) => {
@@ -76,5 +77,25 @@ exports.deleteRoom = async (req, res) => {
     res.status(200).json({ message: 'Room deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'deleteRoom error' });
+  }
+};
+
+
+//sua them
+// GET /admin/rooms -> getAllRooms
+exports.getAllRooms = async (req, res) => {
+  try {
+    const rooms = await Room.findAll({
+      include: [
+        {
+          model: Cinema,
+          attributes: ["id", "name", "address"] // giữ nhẹ nhàng, không phá JSON cũ
+        }
+      ]
+    });
+
+    res.status(200).json(rooms);
+  } catch (error) {
+    res.status(500).json({ message: 'getAllRooms error' }); // GIỮ NGUYÊN
   }
 };

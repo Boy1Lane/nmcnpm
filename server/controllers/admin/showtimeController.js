@@ -1,14 +1,18 @@
 const Showtime = require('../../models/Showtime');
+//them check
+const { Op } = require("sequelize");
+const Movie = require("../../models/Movie");
+const Room = require("../../models/Room");
 
 // GET /admin/showtimes -> getAllShowtimes
-exports.getAllShowtimes = async (req, res) => {
-  try {
-    const showtimes = await Showtime.findAll();
-    res.status(200).json(showtimes);
-    } catch (error) {
-    res.status(500).json({ message: 'getAllShowtimes error' });
-  }
-};
+// exports.getAllShowtimes = async (req, res) => {
+//   try {
+//     const showtimes = await Showtime.findAll();
+//     res.status(200).json(showtimes);
+//     } catch (error) {
+//     res.status(500).json({ message: 'getAllShowtimes error' });
+//   }
+// };
 
 // POST /admin/showtimes -> createShowtime
 exports.createShowtime = async (req, res) => {
@@ -82,3 +86,41 @@ exports.deleteShowtime = async (req, res) => {
   }
 };
 
+//them check
+exports.getAllShowtimes = async (req, res) => {
+  try {
+    const { date } = req.query;
+
+    let where = {};
+
+    if (date) {
+      where.startTime = {
+        [Op.between]: [
+          `${date} 00:00:00`,
+          `${date} 23:59:59`
+        ]
+      };
+    }
+
+    const showtimes = await Showtime.findAll({
+      where,
+      include: [
+        {
+          model: Movie,
+          attributes: ["id", "title", "posterUrl", "duration"]
+        },
+        {
+          model: Room,
+          attributes: ["id", "name", "type", "totalSeats"]
+        }
+      ],
+      order: [["startTime", "ASC"]]
+    });
+
+    res.status(200).json(showtimes);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "getAllShowtimes error" });
+  }
+};

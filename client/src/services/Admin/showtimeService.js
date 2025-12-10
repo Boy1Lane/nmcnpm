@@ -33,7 +33,12 @@ const showtimeService = {
         success: false,
         error: err.response?.data?.message,
       }));
-  }
+  },
+
+  getAll() {
+  return axiosAdmin.get("/showtimes");
+}
+
 };
 
 export default showtimeService;

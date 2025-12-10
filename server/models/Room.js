@@ -18,7 +18,7 @@ const Room = sequelize.define('Room', {
   totalSeats: {
     type: DataTypes.INTEGER,
     defaultValue: 0
-  }
+  },
 });
 
 module.exports = Room;

@@ -13,11 +13,19 @@ import roomService from "../../../services/Admin/roomService";
 import showtimeService from "../../../services/Admin/showtimeService";
 import dayjs from "dayjs";
 
-export default function ShowtimeModal({ open, onClose, onSuccess, editing }) {
+export default function ShowtimeModal({
+  open,
+  onClose,
+  onSuccess,
+  editing,
+  selectedRoom,
+}) {
   const [movies, setMovies] = useState([]);
   const [rooms, setRooms] = useState([]);
+  const [cinemas, setCinemas] = useState([]);
 
   const [movieId, setMovieId] = useState(null);
+  const [selectedCinema, setSelectedCinema] = useState(null);
   const [roomId, setRoomId] = useState(null);
   const [basePrice, setBasePrice] = useState(90000);
 
@@ -26,15 +34,26 @@ export default function ShowtimeModal({ open, onClose, onSuccess, editing }) {
   const [endTime, setEndTime] = useState(null);
 
   // ------------------------------
-  // LOAD danh sách phim + phòng
+  // LOAD phim + rạp + phòng
   // ------------------------------
   useEffect(() => {
     movieService.getAll().then((res) => setMovies(res.data || []));
-    roomService.getAll().then((res) => setRooms(res.data || []));
+
+    roomService.getAll().then((res) => {
+      const all = res.data || [];
+      setRooms(all);
+
+      const unique = {};
+      all.forEach((r) => {
+        if (r.Cinema) unique[r.Cinema.id] = r.Cinema;
+      });
+
+      setCinemas(Object.values(unique));
+    });
   }, []);
 
   // ------------------------------
-  // Nếu EDIT → load dữ liệu vào form
+  // Nếu EDIT → load form
   // ------------------------------
   useEffect(() => {
     if (editing) {
@@ -48,16 +67,28 @@ export default function ShowtimeModal({ open, onClose, onSuccess, editing }) {
       setDate(start);
       setStartTime(start);
       setEndTime(end);
+
+      // Tự xác định CINEMA từ roomId
+      const room = rooms.find((r) => r.id === editing.roomId);
+      if (room) setSelectedCinema(room.Cinema?.id);
     } else {
-      // reset form khi tạo mới
       setMovieId(null);
       setRoomId(null);
+      setSelectedCinema(null);
       setBasePrice(90000);
       setDate(null);
       setStartTime(null);
       setEndTime(null);
     }
-  }, [editing]);
+  }, [editing, rooms]);
+
+  // ⭐ Nếu bấm "Thêm suất" trong phòng → tự chọn đúng rạp + phòng
+  useEffect(() => {
+    if (selectedRoom) {
+      setSelectedCinema(selectedRoom.Cinema?.id);
+      setRoomId(selectedRoom.id);
+    }
+  }, [selectedRoom]);
 
   // ------------------------------
   // Tự tính giờ kết thúc
@@ -77,7 +108,7 @@ export default function ShowtimeModal({ open, onClose, onSuccess, editing }) {
   }, [movieId, startTime, date]);
 
   // ------------------------------
-  // Lưu suất chiếu
+  // SAVE suất chiếu
   // ------------------------------
   const handleSave = async () => {
     if (!movieId || !roomId || !date || !startTime || !endTime) {
@@ -92,31 +123,27 @@ export default function ShowtimeModal({ open, onClose, onSuccess, editing }) {
         `${date.format("YYYY-MM-DD")} ${startTime.format("HH:mm")}`
       ).toISOString(),
       endTime: endTime.toISOString(),
-      basePrice: basePrice,
+      basePrice,
     };
 
-    console.log("👉 PAYLOAD FE GỬI LÊN:", payload);
+    console.log("👉 PAYLOAD FE:", payload);
 
-    let res;
-    if (editing) {
-      res = await showtimeService.update(editing.id, payload);
-    } else {
-      res = await showtimeService.create(payload);
-    }
+    const res = editing
+      ? await showtimeService.update(editing.id, payload)
+      : await showtimeService.create(payload);
 
     if (res.success) {
       onSuccess();
       onClose();
-    } else {
-      alert("Lỗi: " + res.error);
-    }
+    } else alert("Lỗi: " + res.error);
   };
 
   return (
     <Modal open={open} onCancel={onClose} footer={null} width={600}>
       <h2>{editing ? "Sửa Suất Chiếu" : "Tạo Suất Chiếu Mới"}</h2>
 
-      <Space direction="vertical" style={{ width: "100%" }} size="large">
+      <Space orientation="vertical" style={{ width: "100%" }} size="large">
+        {/* CHỌN PHIM */}
         <Select
           placeholder="Chọn phim"
           value={movieId}
@@ -124,13 +151,29 @@ export default function ShowtimeModal({ open, onClose, onSuccess, editing }) {
           options={movies.map((m) => ({ value: m.id, label: m.title }))}
         />
 
+        {/* CHỌN RẠP */}
+        <Select
+          placeholder="Chọn rạp"
+          value={selectedCinema}
+          onChange={(v) => {
+            setSelectedCinema(v);
+            setRoomId(null);
+          }}
+          options={cinemas.map((c) => ({ value: c.id, label: c.name }))}
+        />
+
+        {/* CHỌN PHÒNG */}
         <Select
           placeholder="Chọn phòng"
           value={roomId}
+          disabled={!selectedCinema}
           onChange={setRoomId}
-          options={rooms.map((r) => ({ value: r.id, label: r.name }))}
+          options={rooms
+            .filter((r) => r.Cinema?.id === selectedCinema)
+            .map((r) => ({ value: r.id, label: r.name }))}
         />
 
+        {/* GIÁ */}
         <Space.Compact block style={{ width: "100%" }}>
           <div
             style={{
@@ -152,6 +195,7 @@ export default function ShowtimeModal({ open, onClose, onSuccess, editing }) {
           />
         </Space.Compact>
 
+        {/* NGÀY + GIỜ */}
         <Space>
           <DatePicker value={date} onChange={setDate} />
           <TimePicker
