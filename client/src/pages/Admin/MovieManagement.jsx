@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Table, Button, Modal, Input, message, DatePicker } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import axiosAdmin from "../../services/Admin/axiosAdmin.js";
-import axiosClient from "../../services/Client/axiosClient.js";
 import dayjs from "dayjs";
 import "../../styles/Admin/MovieManagement.css";
 
@@ -24,7 +23,7 @@ export default function MovieManagement() {
 
   const fetchMovies = async () => {
     try {
-      const res = await axiosClient.get("/movies");
+      const res = await axiosAdmin.get("/movies");
       console.log("📌 FE nhận từ backend:", res.data);
       setMovies(res.data);
       console.log("Backend trả về:", res.data);

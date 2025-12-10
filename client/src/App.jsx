@@ -19,7 +19,7 @@ export default function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="movie-management" element={<MovieManagement />} />
         <Route path="room-seat" element={<RoomManagement />} />
-        <Route path="/showtimes" element={<ShowtimesPage />} />
+        <Route path="showtimes" element={<ShowtimesPage />} />
         {/* <Route path="lichChieu" element={<LichChieu />} />
           <Route path="phongVaGhe" element={<PhongVaGhe />} />
           <Route path="nguoiDung" element={<NguoiDung />} />
