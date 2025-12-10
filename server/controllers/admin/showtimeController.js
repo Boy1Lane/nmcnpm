@@ -1,4 +1,5 @@
 const Showtime = require('../../models/Showtime');
+const ShowtimeSeat = require('../../models/ShowtimeSeat');
 //them check
 const { Op } = require("sequelize");
 const Movie = require("../../models/Movie");
@@ -129,13 +130,11 @@ exports.getAllShowtimes = async (req, res) => {
 exports.getSeatsByShowtime = async (req, res) => {
   try {
     const { showtimeId } = req.params;
-    const showtime = await Showtime.findByPk(showtimeId, {
-      include: ['seats']
-    });
-    if (!showtime) {
+    const showtimeSeat = await ShowtimeSeat.findAll({ where: { showtimeId } });
+    if (!showtimeSeat) {
       return res.status(404).json({ message: 'Showtime not found' });
     }
-    res.status(200).json(showtime.seats);
+    res.status(200).json(showtimeSeat);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'getSeatsByShowtime error' });
@@ -147,11 +146,14 @@ exports.addSeatsToShowtime = async (req, res) => {
   try {
     const { showtimeId } = req.params;
     const { seatIds } = req.body;
-    const showtime = await Showtime.findByPk(showtimeId);
-    if (!showtime) {
+    const { price } = req.body;
+    const showtimeSeat = await ShowtimeSeat.findAll({ where: { showtimeId } });
+    if (!showtimeSeat) {
       return res.status(404).json({ message: 'Showtime not found' });
     }
-    await showtime.addSeats(seatIds);
+    for (const seatId of seatIds) {
+      await ShowtimeSeat.create({ showtimeId, seatId, status: 'AVAILABLE', price });
+    }
     res.status(200).json({ message: 'Seats added to showtime successfully' });
   } catch (error) {
     console.error(error);

@@ -14,11 +14,11 @@ exports.getAllBookings = async (req, res) => {
 // POST /admin/bookings -> createBooking
 exports.createBooking = async (req, res) => {
   try {
-    const { userId, showtimeId, totalPrice } = req.body;
-    if (!userId || !showtimeId || !totalPrice) {
-      return res.status(400).json({ message: 'Missing value (userId, showtimeId, totalPrice)!' });
+    const { userId, showtimeId, totalPrice, paymentMethod } = req.body;
+    if (!userId || !showtimeId || !totalPrice || !paymentMethod) {
+      return res.status(400).json({ message: 'Missing value (userId, showtimeId, totalPrice, paymentMethod)!' });
     }
-    const newBooking = await Booking.create({ userId, showtimeId, totalPrice });
+    const newBooking = await Booking.create({ userId, showtimeId, totalPrice, paymentMethod });
     res.status(201).json({
       message: 'Booking created successfully!',
       data: newBooking
@@ -110,11 +110,13 @@ exports.addSeatsToBooking = async (req, res) => {
     if (!booking) {
       return res.status(404).json({ message: 'Booking not found' });
     }
-    const bookingSeats = seatIds.map(seatId => ({
-      bookingId: id,
-      seatId
-    }));
-    await BookingSeat.bulkCreate(bookingSeats);
+    await BookingSeat.findAll({ where: { bookingId: id } });
+    for (const seatId of seatIds) {
+      if(await BookingSeat.findOne({ where: { bookingId: id, id: seatId } })) {
+        continue;
+        }
+        await BookingSeat.create({ bookingId: id, id: seatId });
+    }
     res.status(201).json({ 
         message: 'Seats added to booking successfully' 
     });

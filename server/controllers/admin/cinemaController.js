@@ -14,11 +14,11 @@ exports.getAllCinemas = async (req, res) => {
 // POST /admin/cinemas -> createCinema
 exports.createCinema = async (req, res) => {
   try {
-    const { name, location: address } = req.body;
+    const { name, address } = req.body;
     if (!name || !address) {
       return res.status(400).json({ message: 'Missing value (name, address)!' });
     }
-    const newCinema = await Cinema.create({ name, location: address });
+    const newCinema = await Cinema.create({ name, address });
     res.status(201).json({
       message: 'Cinema created successfully!',
       data: newCinema
@@ -53,7 +53,7 @@ exports.updateCinema = async (req, res) => {
       return res.status(404).json({ message: 'Cinema not found' });
     }
     cinema.name = name || cinema.name;
-    cinema.location = location || cinema.location;
+    cinema.address = address || cinema.address;
     await cinema.save();
     res.status(200).json({ 
         message: 'Cinema updated successfully', cinema 
@@ -96,12 +96,12 @@ exports.getRoomsByCinema = async (req, res) => {
 exports.addRoomToCinema = async (req, res) => {
   try {
     const { id } = req.params;  
-    const { name, capacity, location } = req.body;
+    const { name, totalSeats, address } = req.body;
     const cinema = await Cinema.findByPk(id);
     if (!cinema) {
       return res.status(404).json({ message: 'Cinema not found' });
     }
-    const newRoom = await cinema.createRoom({ name, capacity, location });
+    const newRoom = await cinema.createRoom({ name, totalSeats, address });
     res.status(201).json({ 
         message: 'Room added to cinema successfully', room: newRoom 
     });

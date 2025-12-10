@@ -48,14 +48,14 @@ Content-Type: application/json
 }
 
 ### 5. Create a Room in the Cinema (Uses the token from Step 2)
-POST http://localhost:5000/admin/rooms  
+POST http://localhost:5000/admin/cinemas/1/rooms  
 Authorization: Bearer {{login.response.body.accessToken}}
 Content-Type: application/json
 
 {
   "name": "Room 1",
   "cinemaId": 1,
-  "seatingCapacity": 150
+  "totalSeats": 150
 }
 
 ### 6. Create a Showtime for the Movie in the Room (Uses the token from Step 2)
@@ -68,7 +68,7 @@ Content-Type: application/json
   "roomId": 1,
   "startTime": "2024-07-01T19:00:00",
   "endTime": "2024-07-01T21:30:00",
-  "price": 12.50
+  "basePrice": 50000
 }
 
 ### 7. Get Seats for the Showtime (Uses the token from Step 2)
@@ -82,11 +82,8 @@ Authorization: Bearer {{login.response.body.accessToken}}
 Content-Type: application/json
 
 {
-  "seats": [
-    {"row": "A", "number": 1},
-    {"row": "A", "number": 2},
-    {"row": "A", "number": 3}
-  ]
+  "seatIds": [1, 2, 3, 4, 5],
+  "price": 60000
 } 
 
 ### 9. Change Seat Status in the Showtime (Uses the token from Step 2)
@@ -95,7 +92,7 @@ Authorization: Bearer {{login.response.body.accessToken}}
 Content-Type: application/json
 
 {
-  "status": "unavailable"
+  "status": "LOCKED"
 }
 
 ### 10. Remove a Seat from the Showtime (Uses the token from Step 2)
@@ -103,8 +100,20 @@ DELETE http://localhost:5000/admin/showtimes/1/seats/3
 Authorization: Bearer {{login.response.body.accessToken}}
 Content-Type: application/json
 
+### 11. Create a Booking (Uses the token from Step 2)
+POST http://localhost:5000/admin/bookings
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "showtimeId": 1,
+  "totalPrice": 120000,
+  "paymentMethod": "CREDIT_CARD"
+}
+
 ### 11. Add Seats to a Booking (Uses the token from Step 2)
-POST http://localhost:5000/admin/bookings/1/seats 
+POST http://localhost:5000/admin/bookings/2/seats 
 Authorization: Bearer {{login.response.body.accessToken}}
 Content-Type: application/json
 
