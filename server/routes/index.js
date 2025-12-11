@@ -9,7 +9,7 @@ function Routes(app) {
     // app.use('/admin', authMiddleware, adminMiddleware, adminRoutes);
     app.use('/admin', adminRoutes);
     app.use('/auth', authRoutes);
-    app.get('/', (req, res) => {
+    app.get('/', (req, res)  => {
         res.send('Xin chào! Server CinemaVerse đang chạy ổn định.');
     }
     );

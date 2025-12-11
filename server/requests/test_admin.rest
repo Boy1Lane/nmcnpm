@@ -47,15 +47,20 @@ Content-Type: application/json
   "description": "The best cinema in town."
 }
 
+### GET rooms in the Cinema (Uses the token from Step 2)
+GET http://localhost:5000/admin/cinemas/1/rooms 
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
 ### 5. Create a Room in the Cinema (Uses the token from Step 2)
 POST http://localhost:5000/admin/cinemas/1/rooms  
 Authorization: Bearer {{login.response.body.accessToken}}
 Content-Type: application/json
 
 {
-  "name": "Room 1",
-  "cinemaId": 1,
-  "totalSeats": 150
+  "name": "Room 4",
+  "totalSeats": 150,
+  "type": "IMAX"
 }
 
 ### 6. Create a Showtime for the Movie in the Room (Uses the token from Step 2)
@@ -66,8 +71,8 @@ Content-Type: application/json
 {
   "movieId": 1,
   "roomId": 1,
-  "startTime": "2024-07-01T19:00:00",
-  "endTime": "2024-07-01T21:30:00",
+  "startTime": "2025-07-01T19:00:00",
+  "endTime": "2025-07-01T21:30:00",
   "basePrice": 50000
 }
 
@@ -136,3 +141,42 @@ GET http://localhost:5000/admin/bookings/summary?month=12&year=2025
 Authorization: Bearer {{login.response.body.accessToken}}
 Content-Type: application/json  
 
+### 15. Add Many Seats to a Room (Uses the token from Step 2)
+POST http://localhost:5000/admin/rooms/1/seats
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "seats": [
+    { "row": "C", "number": 1, "type": "NORMAL" },
+    { "row": "C", "number": 2, "type": "COUPLE" },
+    { "row": "C", "number": 3, "type": "VIP" },
+    { "row": "D", "number": 1, "type": "NORMAL" },
+    { "row": "D", "number": 2, "type": "NORMAL" }
+  ]
+}
+
+### GET Seats in a Room (Uses the token from Step 2)
+GET http://localhost:5000/admin/rooms/1/seats
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+### 16. Update Seats in a Room (Uses the token from Step 2)
+PUT http://localhost:5000/admin/rooms/1/seats 
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "seats": [
+    { "id": 1,"row": "C", "number": 1, "type": "VIP" },
+    { "id": 2,"row": "C", "number": 2, "type": "COUPLE" },
+    { "id": 3,"row": "C", "number": 3, "type": "VIP" },
+    { "id": 49,"row": "D", "number": 1, "type": "COUPLE" },
+    { "id": 50,"row": "D", "number": 2, "type": "COUPLE" }
+  ]
+}
+
+### GET Seats in a Room after update (Uses the token from Step 2)
+GET http://localhost:5000/admin/rooms/1/seats
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json

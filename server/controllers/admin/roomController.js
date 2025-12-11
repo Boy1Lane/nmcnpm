@@ -1,5 +1,6 @@
 const Room = require('../../models/Room');
 const Cinema = require('../../models/Cinema');   // <-- THÊM DÒNG NÀY
+const Seat = require('../../models/Seat');
 
 // GET /admin/rooms -> getAllRooms
 
@@ -97,5 +98,64 @@ exports.getAllRooms = async (req, res) => {
     res.status(200).json(rooms);
   } catch (error) {
     res.status(500).json({ message: 'getAllRooms error' }); // GIỮ NGUYÊN
+  }
+};
+
+// GET /admin/rooms/:id/seats -> getSeatsInRoom
+exports.getSeatsInRoom = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const room = await Room.findByPk(id);
+    if (!room) {
+      return res.status(404).json({ message: 'Room not found' });
+    }
+    const seats = await Seat.findAll({ where: { roomId: id } });
+    res.status(200).json(seats);
+  } catch (error) {
+    res.status(500).json({ message: 'getSeatsInRoom error' });
+  } 
+};
+
+// POST /admin/rooms/:id/seats -> addSeatsToRoom
+exports.addSeatsToRoom = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { seats } = req.body; // Expecting an array of seat objects
+
+    const room = await Room.findByPk(id);
+    if (!room) {
+      return res.status(404).json({ message: 'Room not found' });
+    }
+    for (const seatData of seats) {
+      await Seat.create({ row: seatData.row, number: seatData.number, type: seatData.type, priceMultiplier: seatData.priceMultiplier || 1, roomId: id });
+    }
+    res.status(201).json({ message: 'Seats added successfully to the room' });
+  } catch (error) {
+    res.status(500).json({ message: 'addSeatsToRoom error' });
+  }
+};
+
+// PUT /admin/rooms/:id/seats -> updateSeatsInRoom
+exports.updateSeatsInRoom = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { seats } = req.body; // Expecting an array of seat objects with id
+    const room = await Room.findByPk(id);
+    if (!room) {
+      return res.status(404).json({ message: 'Room not found' });
+    }
+    for (const seatData of seats) {
+      const seat = await Seat.findByPk(seatData.id);
+      if (seat && seat.roomId === room.id) {
+        seat.row = seatData.row || seat.row;
+        seat.number = seatData.number || seat.number;
+        seat.type = seatData.type || seat.type;
+        seat.priceMultiplier = seatData.priceMultiplier || seat.priceMultiplier;
+        await seat.save();
+      }
+    }
+    res.status(200).json({ message: 'Seats updated successfully in the room' });
+  } catch (error) {
+    res.status(500).json({ message: 'updateSeatsInRoom error' });
   }
 };

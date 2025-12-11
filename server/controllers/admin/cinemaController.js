@@ -1,5 +1,6 @@
 const e = require('express');
 const Cinema = require('../../models/Cinema');
+const Room = require('../../models/Room');
 
 // GET /admin/cinemas -> getAllCinemas
 exports.getAllCinemas = async (req, res) => {
@@ -82,11 +83,12 @@ exports.deleteCinema = async (req, res) => {
 exports.getRoomsByCinema = async (req, res) => {
   try {
     const { id } = req.params;
-    const cinema = await Cinema.findByPk(id, { include: 'rooms' });
+    const cinema = await Cinema.findByPk(id);
     if (!cinema) {
       return res.status(404).json({ message: 'Cinema not found' });
     }
-    res.status(200).json(cinema.rooms);
+    const rooms = await cinema.getRooms();
+    res.status(200).json(rooms);
   } catch (error) {
     res.status(500).json({ message: 'getRoomsByCinema error' });
   }
@@ -95,18 +97,25 @@ exports.getRoomsByCinema = async (req, res) => {
 // POST /admin/cinemas/:id/rooms -> addRoomToCinema
 exports.addRoomToCinema = async (req, res) => {
   try {
-    const { id } = req.params;  
-    const { name, totalSeats, address } = req.body;
+    const { id } = req.params;
+    const { name, totalSeats, type } = req.body;
+
+    if (!name || !totalSeats || !type) {
+      return res.status(400).json({ message: 'Missing value (name, totalSeats, type)!' });
+    }
+
     const cinema = await Cinema.findByPk(id);
     if (!cinema) {
       return res.status(404).json({ message: 'Cinema not found' });
     }
-    const newRoom = await cinema.createRoom({ name, totalSeats, address });
-    res.status(201).json({ 
-        message: 'Room added to cinema successfully', room: newRoom 
-    });
+
+    // Ensure FK matches your Room model
+    const newRoom = await Room.create({ name, totalSeats, type, cinemaId: Number(id) });
+
+    res.status(201).json({ message: 'Room added to cinema successfully', room: newRoom });
   } catch (error) {
-    res.status(500).json({ message: 'addRoomToCinema error' });
+    console.error('addRoomToCinema error:', error);
+    res.status(500).json({ message: 'addRoomToCinema error', error: error.message });
   }
 };
 
