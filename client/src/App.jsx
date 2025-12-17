@@ -5,6 +5,7 @@ import Dashboard from "./pages/Admin/Dashboard.jsx";
 import MovieManagement from "./pages/Admin/MovieManagement.jsx";
 import RoomManagement from "./pages/Admin/Rooms/RoomManagement.jsx";
 import ShowtimesPage from "./pages/Admin/Showtimes/ShowtimesPage.jsx";
+import RevenueReport from "./pages/Admin/Reports/RevenueReport.jsx";
 
 // import LichChieu from "./pages/LichChieu";
 // import PhongVaGhe from "./pages/PhongVaGhe";
@@ -20,10 +21,11 @@ export default function App() {
         <Route path="movie-management" element={<MovieManagement />} />
         <Route path="room-seat" element={<RoomManagement />} />
         <Route path="showtimes" element={<ShowtimesPage />} />
-        {/* <Route path="lichChieu" element={<LichChieu />} />
+        <Route path="report" element={<RevenueReport />} /> */
+        {/* /* <Route path="lichChieu" element={<LichChieu />} />
           <Route path="phongVaGhe" element={<PhongVaGhe />} />
           <Route path="nguoiDung" element={<NguoiDung />} />
-          <Route path="baoCao" element={<BaoCao />} /> */}
+           */}
       </Route>
     </Routes>
   );

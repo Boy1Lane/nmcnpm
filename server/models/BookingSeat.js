@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes,Op } = require('sequelize');
 const sequelize = require('../config/db');
 
 const BookingSeat = sequelize.define('BookingSeat', {
@@ -25,7 +25,7 @@ BookingSeat.addHook('beforeValidate', async (bookingSeat, options) => {
         where: { 
             bookingId: bookingSeat.bookingId, 
             showtimeSeatId: bookingSeat.showtimeSeatId,
-            id: { [DataTypes.Op.ne]: bookingSeat.id } // Exclude self for updates
+            id: { [Op.ne]: bookingSeat.id } // Exclude self for updates
         }
     });
     if (existingBookingSeat) {

@@ -21,8 +21,6 @@ const Room = sequelize.define('Room', {
   },
 });
 
-<<<<<<< HEAD
-=======
 // Constraint: Ensure room names are unique within the same cinema
 Room.addHook('beforeValidate', async (room, options) => {
   const existingRoom = await Room.findOne({ 
@@ -36,6 +34,5 @@ Room.addHook('beforeValidate', async (room, options) => {
     throw new Error('Room name must be unique within the same cinema.');
   }
 }); 
->>>>>>> babfc67 (Update Room and Showtime models)
 
 module.exports = Room;
