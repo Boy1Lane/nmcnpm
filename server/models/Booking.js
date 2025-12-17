@@ -24,8 +24,8 @@ const Booking = sequelize.define('Booking', {
     defaultValue: 'PENDING'
   },
   paymentMethod: {
-    type: DataTypes.STRING,
-    allowNull: false
+    type: DataTypes.ENUM('CREDIT_CARD', 'CASH'),
+    defaultValue: 'CASH'
   }
 }, {
   timestamps: true
