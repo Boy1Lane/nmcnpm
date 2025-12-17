@@ -3,7 +3,7 @@ import AdminLayout from "./layout/AdminLayout.jsx";
 // Layouts
 import Dashboard from "./pages/Admin/Dashboard.jsx";
 import MovieManagement from "./pages/Admin/MovieManagement.jsx";
-import RoomManagement from "./pages/Admin/RoomManagement.jsx";
+import RoomManagement from "./pages/Admin/Rooms/RoomManagement.jsx";
 import ShowtimesPage from "./pages/Admin/Showtimes/ShowtimesPage.jsx";
 
 // import LichChieu from "./pages/LichChieu";

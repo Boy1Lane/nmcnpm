@@ -16,11 +16,11 @@ const Seat = require('../../models/Seat');
 // POST /admin/rooms -> createRoom
 exports.createRoom = async (req, res) => {
   try {
-    const { name, capacity, location } = req.body; 
+    const { name, capacity, type } = req.body; 
     if (!name || !capacity) {
       return res.status(400).json({ message: 'Missing value (name, capacity)!' });
     }
-    const newRoom = await Room.create({ name, capacity, location });
+    const newRoom = await Room.create({ name, capacity, type });
     res.status(201).json({
       message: 'Room created successfully!',
       data: newRoom
@@ -49,14 +49,14 @@ exports.getARoom = async (req, res) => {
 exports.updateRoom = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, capacity, location } = req.body;
+    const { name, capacity, type } = req.body;
     const room = await Room.findByPk(id);
     if (!room) {
       return res.status(404).json({ message: 'Room not found' });
     }
     room.name = name || room.name;
     room.capacity = capacity || room.capacity;
-    room.location = location || room.location;
+    room.type = type || room.type;
     await room.save();
     res.status(200).json({ 
         message: 'Room updated successfully', room 

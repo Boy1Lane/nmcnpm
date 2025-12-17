@@ -34,18 +34,16 @@ export default function ShowtimesPage() {
   };
 
   // ===== LOAD SHOWTIMES =====
-  const loadShowtimes = async () => {
+  const loadShowtimes = async (customDate = date) => {
     let res;
 
-    if (!date) {
-      // ⭐ CHƯA CHỌN NGÀY → LẤY TẤT CẢ SUẤT CHIẾU
+    if (!customDate || !dayjs(customDate).isValid()) {
       res = await showtimeService.getAll();
     } else {
-      // ⭐ ĐÃ CHỌN NGÀY → LỌC THEO NGÀY
-      res = await showtimeService.getByDate(date);
+      res = await showtimeService.getByDate(
+        dayjs(customDate).format("YYYY-MM-DD")
+      );
     }
-
-    console.log("📌 FE nhận showtimes:", res.data);
 
     const formatted = res.data.map((st) => ({
       ...st,
@@ -76,16 +74,19 @@ export default function ShowtimesPage() {
     loadShowtimes(); // ⭐ Load tất cả suất chiếu mặc định
   }, []);
 
+  useEffect(() => {
+    loadShowtimes(date); // ⭐ TỰ LOAD LẠI KHI ĐỔI NGÀY
+  }, [date]);
+
   // ===== FILTER ROOMS THEO RẠP =====
   const baseRooms =
     selectedCinema === "all"
       ? rooms
       : rooms.filter((r) => r.Cinema?.id == selectedCinema);
 
-  // ⭐ Chỉ giữ phòng có ít nhất 1 suất chiếu
-  const filteredRooms = baseRooms.filter((room) =>
-    showtimes.some((st) => st.roomId === room.id)
-  );
+  const filteredRooms = date
+    ? baseRooms.filter((room) => showtimes.some((st) => st.roomId === room.id))
+    : baseRooms;
 
   return (
     <div style={{ padding: 20 }}>
@@ -93,9 +94,13 @@ export default function ShowtimesPage() {
 
       {/* ==== FILTER BAR ==== */}
       <Space style={{ marginBottom: 20 }}>
-        <DatePicker value={date} onChange={setDate} />
+        <DatePicker
+          value={date}
+          onChange={(value) => setDate(value ? dayjs(value) : null)}
+          allowClear
+        />
 
-        <Button type="primary" onClick={loadShowtimes}>
+        <Button type="primary" onClick={() => loadShowtimes(date)}>
           Xem lịch
         </Button>
 

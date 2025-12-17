@@ -2,8 +2,8 @@ import axiosAdmin from "./axiosAdmin";
 
 const showtimeService = {
   getByDate(date) {
-    return axiosAdmin.get(`/showtimes?date=${date.format("YYYY-MM-DD")}`);
-  },
+  return axiosAdmin.get(`/showtimes?date=${date}`);
+},
 
   create(payload) {
     return axiosAdmin

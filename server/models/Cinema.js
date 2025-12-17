@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes,Op } = require('sequelize');
 const sequelize = require('../config/db');
 
 const Cinema = sequelize.define('Cinema', {
@@ -22,7 +22,7 @@ Cinema.addHook('beforeValidate', async (cinema, options) => {
   const existingCinema = await Cinema.findOne({
     where: { 
       name: cinema.name,
-      id: { [DataTypes.Op.ne]: cinema.id } // Exclude self for updates
+      id: { [Op.ne]: cinema.id } // Exclude self for updates
     }
   });
   if (existingCinema) {
