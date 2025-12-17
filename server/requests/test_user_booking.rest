@@ -1,0 +1,48 @@
+@baseUrl = http://localhost:5000/api
+
+# Login and extract token
+# @name login
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+
+### Get Available Seats for a Showtime (To find valid seatIds)
+GET {{baseUrl}}/showtimes/11/seats
+Content-Type: application/json
+
+### Create a Booking (User Action)
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.accessToken}}
+
+{
+  "showtimeId": 11,
+  "paymentMethod": "CASH",
+  "seatIds": [61, 63]
+}
+
+### Confirm Booking
+POST {{baseUrl}}/bookings/confirm
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.accessToken}}
+
+{
+  "bookingId": 1
+}
+
+### Get My Bookings (User Action)
+GET {{baseUrl}}/bookings/my-bookings
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Admin: Get All Bookings (Admin Action - requires Admin Token)
+GET {{baseUrl}}/admin/bookings
+Authorization: Bearer your_admin_jwt_token_here
+
+### Admin: Get Revenue Summary
+GET {{baseUrl}}/admin/bookings/summary?year=2025
+Authorization: Bearer your_admin_jwt_token_here
