@@ -4,4 +4,5 @@ const showtimeController = require('../../controllers/user/showtimeController');
 
 router.get('/:showtimeId/seats', showtimeController.getSeatsByShowtime);
 
+router.get('/', showtimeController.getShowtimes);
 module.exports = router;

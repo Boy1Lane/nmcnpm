@@ -19,28 +19,27 @@ Content-Type: application/json
   "password": "password123"
 }
 
-### 3. Get Public Movies (No token needed)
+### 3. Get All Movies (Browse Page)
 GET http://localhost:5000/api/movies
 
-### 4. Try to access Admin Route without Token (Should fail 401/403)
-GET http://localhost:5000/admin/movies
+### 4. Get Single Movie Details (Movie Detail Page)
+# Replace '1' with an actual ID from the list above
+GET http://localhost:5000/api/movies/1
 
-### 5. Try to access Admin Route WITH Token (Might fail if role is 'customer')
-# Replace <ACCESS_TOKEN> with the token from the login response
-GET http://localhost:5000/admin/movies
-Authorization: Bearer {{login.response.body.accessToken}}
+### 5. Get All Showtimes (Unfiltered)
+GET http://localhost:5000/api/showtimes
 
-### 6. (Admin Only) Create a Movie
-POST http://localhost:5000/admin/movies
-Authorization: Bearer {{login.response.body.accessToken}}
-Content-Type: application/json
+### 6. Search Showtimes by Movie (e.g., Showtimes for 'Inception')
+# Replace movieId=1 with a valid ID
+GET http://localhost:5000/api/showtimes?movieId=1
 
-{
-  "title": "New Movie created by Admin",
-  "description": "Description",
-  "director": "Director Name",
-  "duration": 120,
-  "releaseDate": "2025-01-01",
-  "posterUrl": "http://example.com/poster.jpg",
-  "trailerUrl": "http://example.com/trailer.mp4"
-}
+### 7. Search Showtimes by Date
+# Format: YYYY-MM-DD
+GET http://localhost:5000/api/showtimes?date=2025-01-01
+
+### 8. Search Showtimes by Movie AND Date (Specific filter)
+GET http://localhost:5000/api/showtimes?movieId=1&date=2025-01-01
+
+### 9. Get Seats for a Specific Showtime (Clicking a Showtime)
+# Replace '1' with a valid showtimeId found in previous requests
+GET http://localhost:5000/api/showtimes/1/seats
