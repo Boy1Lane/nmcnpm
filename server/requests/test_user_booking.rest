@@ -1,6 +1,10 @@
 @baseUrl = http://localhost:5000/api
 
-# Login and extract token
+# ---------------------------------------------------
+# AUTHENTICATION
+# ---------------------------------------------------
+
+# Login to get Access Token
 # @name login
 POST http://localhost:5000/auth/login
 Content-Type: application/json
@@ -10,12 +14,16 @@ Content-Type: application/json
   "password": "password123"
 }
 
+# ---------------------------------------------------
+# FLOW A: SUCCESSFUL BOOKING (Hold -> Confirm)
+# ---------------------------------------------------
 
-### Get Available Seats for a Showtime (To find valid seatIds)
+### Get Available Seats (Check availability before booking)
 GET {{baseUrl}}/showtimes/11/seats
 Content-Type: application/json
 
-### Create a Booking (User Action)
+### Create a Booking (Hold Seats)
+# @name createBooking
 POST {{baseUrl}}/bookings
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.accessToken}}
@@ -23,26 +31,44 @@ Authorization: Bearer {{login.response.body.accessToken}}
 {
   "showtimeId": 11,
   "paymentMethod": "CASH",
-  "seatIds": [61, 63]
+  "seatIds": [103, 104] 
 }
 
-### Confirm Booking
+### Confirm the Booking
+# Uses the ID from the previous request automatically
 POST {{baseUrl}}/bookings/confirm
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.accessToken}}
 
 {
-  "bookingId": 1
+  "bookingId": {{createBooking.response.body.booking.id}}
 }
 
-### Get My Bookings (User Action)
-GET {{baseUrl}}/bookings/my-bookings
+# ---------------------------------------------------
+# FLOW B: CANCEL BOOKING (Hold -> Cancel)
+# ---------------------------------------------------
+
+### Create Another Booking (To be cancelled)
+# @name createBookingToCancel
+POST {{baseUrl}}/bookings
+Content-Type: application/json
 Authorization: Bearer {{login.response.body.accessToken}}
 
-### Admin: Get All Bookings (Admin Action - requires Admin Token)
-GET {{baseUrl}}/admin/bookings
-Authorization: Bearer your_admin_jwt_token_here
+{
+  "showtimeId": 11,
+  "paymentMethod": "CREDIT_CARD",
+  "seatIds": [106]
+}
 
-### Admin: Get Revenue Summary
-GET {{baseUrl}}/admin/bookings/summary?year=2025
-Authorization: Bearer your_admin_jwt_token_here
+### Cancel the Booking
+# Uses the ID from Step 5, for example: 22
+POST {{baseUrl}}/bookings/22/cancel
+Authorization: Bearer {{login.response.body.accessToken}}
+
+# ---------------------------------------------------
+# VERIFICATION
+# ---------------------------------------------------
+
+### Get My Bookings (Should see one CONFIRMED and one CANCELLED)
+GET {{baseUrl}}/bookings/my-bookings
+Authorization: Bearer {{login.response.body.accessToken}}
