@@ -12,4 +12,6 @@ router.post('/confirm', verifyToken, bookingController.confirmBooking);
 // GET /api/bookings/my-bookings -> getUserBookings
 router.get('/my-bookings', verifyToken, bookingController.getUserBookings);
 
+router.post('/:bookingId/cancel', verifyToken, bookingController.cancelBooking);
+
 module.exports = router;
