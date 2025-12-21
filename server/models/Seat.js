@@ -31,6 +31,8 @@ const Seat = sequelize.define('Seat', {
     type: DataTypes.FLOAT,
     defaultValue: 1.0 // Normal x1, VIP x1.2
   }
+}, {
+  timestamps: false
 });
 
 

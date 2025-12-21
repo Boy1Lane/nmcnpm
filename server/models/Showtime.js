@@ -19,6 +19,8 @@ const Showtime = sequelize.define('Showtime', {
     type: DataTypes.INTEGER,
     allowNull: false
   }
+}, {
+  timestamps: false
 });
 
 // Constraint: Ensure showtimes in the same room do not overlap

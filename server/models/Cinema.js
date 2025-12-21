@@ -15,6 +15,8 @@ const Cinema = sequelize.define('Cinema', {
     type: DataTypes.STRING,
     allowNull: false
   }
+}, {
+  timestamps: false
 });
 
 // Constraint: Ensure cinema names are unique

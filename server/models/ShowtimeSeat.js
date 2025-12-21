@@ -20,6 +20,8 @@ const ShowtimeSeat = sequelize.define('ShowtimeSeat', {
     allowNull: true
   }
   // showtimeID and seatID to be add 
+},  {
+  timestamps: false
 });
 
 module.exports = ShowtimeSeat;

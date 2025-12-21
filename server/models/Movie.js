@@ -47,6 +47,8 @@ const Movie = sequelize.define('Movie', {
     type: DataTypes.ENUM('showing', 'coming_soon', 'ended'),
     defaultValue: 'coming_soon'
   }
+}, {
+  timestamps: false
 });
 
 module.exports = Movie;

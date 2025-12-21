@@ -19,7 +19,9 @@ const Room = sequelize.define('Room', {
     type: DataTypes.INTEGER,
     defaultValue: 0
   },
-});
+}, {
+  timestamps: false
+}); 
 
 // Constraint: Ensure room names are unique within the same cinema
 Room.addHook('beforeValidate', async (room, options) => {
