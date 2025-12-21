@@ -10,6 +10,7 @@ const {
   Booking,
   BookingSeat
 } = require('./models');
+const bcrypt = require('bcrypt');
 
 /**
  * Random datetime trong tuần hiện tại (Thứ 2 → CN)
@@ -49,22 +50,31 @@ async function seedData() {
     users.push(await User.create({
       fullName: 'Admin System',
       email: 'admin@test.com',
-      password: 'admin123',
+      password: await bcrypt.hash('admin123', 10),
       role: 'admin'
     }));
 
     users.push(await User.create({
       fullName: 'Staff Cinema',
       email: 'staff@test.com',
-      password: 'staff123',
+      password: await bcrypt.hash('staff123', 10),
       role: 'staff'
     }));
 
+    // Test User for Development
+    users.push(await User.create({
+      fullName: 'Test User',
+      email: 'test@example.com',
+      password: await bcrypt.hash('password123', 10),
+      role: 'customer'
+    }));
+
+    const commonPassword = await bcrypt.hash('123456', 10);
     for (let i = 1; i <= 28; i++) {
       users.push(await User.create({
         fullName: `Customer ${i}`,
         email: `user${i}@test.com`,
-        password: '123456',
+        password: commonPassword,
         phone: `09000000${i}`,
         role: 'customer'
       }));
@@ -234,7 +244,7 @@ async function seedData() {
         showtimeId: showtime.id,
         totalPrice,
         status: 'CONFIRMED',
-        paymentMethod: i % 2 === 0 ? 'momo' : 'zalopay',
+        paymentMethod: i % 2 === 0 ? 'CREDIT_CARD' : 'CASH',
         createdAt: bookingDate,
         updatedAt: bookingDate
       });
