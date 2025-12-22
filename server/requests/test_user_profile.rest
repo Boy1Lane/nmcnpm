@@ -1,0 +1,40 @@
+@baseUrl = http://localhost:5000/api
+
+# ---------------------------------------------------
+# AUTHENTICATION
+# ---------------------------------------------------
+
+# 1. Login to get Access Token
+# @name login
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+# ---------------------------------------------------
+# PROFILE MANAGEMENT
+# ---------------------------------------------------
+
+### 2. Get Current Profile
+# Should return user details (excluding password)
+GET {{baseUrl}}/users/profile
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### 3. Update Profile
+# Change name and phone number
+# @name updateProfile
+PUT {{baseUrl}}/users/profile
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.accessToken}}
+
+{
+  "phone": "1238386"
+}
+
+### 4. Verify Update
+# Fetch profile again to confirm changes persisted
+GET {{baseUrl}}/users/profile
+Authorization: Bearer {{login.response.body.accessToken}}
