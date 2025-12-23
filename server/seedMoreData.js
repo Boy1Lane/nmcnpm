@@ -45,19 +45,56 @@ async function seedData() {
     // =========================
     // USERS (30)
     // =========================
+    // const users = [];
+
+    // users.push(await User.create({
+    //   fullName: 'Admin System',
+    //   email: 'admin@test.com',
+    //   password: await bcrypt.hash('admin123', 10),
+    //   role: 'admin'
+    // }));
+
+    // users.push(await User.create({
+    //   fullName: 'Staff Cinema',
+    //   email: 'staff@test.com',
+    //   password: await bcrypt.hash('staff123', 10),
+    //   role: 'staff'
+    // }));
+
+    // // Test User for Development
+    // users.push(await User.create({
+    //   fullName: 'Test User',
+    //   email: 'test@example.com',
+    //   password: await bcrypt.hash('password123', 10),
+    //   role: 'customer'
+    // }));
+
+    // const commonPassword = await bcrypt.hash('123456', 10);
+    // for (let i = 1; i <= 28; i++) {
+    //   users.push(await User.create({
+    //     fullName: `Customer ${i}`,
+    //     email: `user${i}@test.com`,
+    //     password: commonPassword,
+    //     phone: `09000000${i}`,
+    //     role: 'customer'
+    //   }));
+    // }
+    // =========================
+    // USERS (30) - NO HASH PASSWORD
+    // =========================
     const users = [];
 
     users.push(await User.create({
       fullName: 'Admin System',
       email: 'admin@test.com',
-      password: await bcrypt.hash('admin123', 10),
+      password: 'admin123',
       role: 'admin'
     }));
 
     users.push(await User.create({
       fullName: 'Staff Cinema',
       email: 'staff@test.com',
-      password: await bcrypt.hash('staff123', 10),
+      password: 'staff123',
       role: 'staff'
     }));
 
@@ -65,20 +102,20 @@ async function seedData() {
     users.push(await User.create({
       fullName: 'Test User',
       email: 'test@example.com',
-      password: await bcrypt.hash('password123', 10),
+      password: 'password123',
       role: 'customer'
     }));
 
-    const commonPassword = await bcrypt.hash('123456', 10);
     for (let i = 1; i <= 28; i++) {
       users.push(await User.create({
         fullName: `Customer ${i}`,
         email: `user${i}@test.com`,
-        password: commonPassword,
+        password: '123456',
         phone: `09000000${i}`,
         role: 'customer'
       }));
     }
+
 
     // =========================
     // CINEMAS (5)

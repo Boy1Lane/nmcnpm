@@ -28,14 +28,15 @@ exports.getAUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, role } = req.body;
+    const { fullName, email, role,phone } = req.body;
     const user = await User.findByPk(id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    user.name = name || user.name;
+    user.fullName = fullName || user.fullName;
     user.email = email || user.email;
     user.role = role || user.role;
+    user.phone=phone||user.phone;
     await user.save();
     res.status(200).json({ 
         message: 'User updated successfully', user 
@@ -63,8 +64,8 @@ exports.deleteUser = async (req, res) => {
 // POST /admin/users -> createUser
 exports.createUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
-    const newUser = await User.create({ name, email, password, role });
+    const { fullName, email, password, role,phone } = req.body;
+    const newUser = await User.create({ fullName, email, password, role,phone });
     res.status(201).json({ 
         message: 'User created successfully!',
         data: newUser 
