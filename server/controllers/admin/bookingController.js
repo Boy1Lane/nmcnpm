@@ -56,7 +56,7 @@ exports.getABooking = async (req, res) => {
 exports.updateBooking = async (req, res) => {
   try {
     const { id } = req.params;
-    const { userId, showtimeId, totalPrice } = req.body;
+    const { userId, showtimeId, totalPrice, status, paymentMethod } = req.body;
     const booking = await Booking.findByPk(id);
     if (!booking) {
       return res.status(404).json({ message: 'Booking not found' });
@@ -64,12 +64,14 @@ exports.updateBooking = async (req, res) => {
     booking.userId = userId || booking.userId;
     booking.showtimeId = showtimeId || booking.showtimeId;
     booking.totalPrice = totalPrice || booking.totalPrice;
+    booking.status = status || booking.status;
+    booking.paymentMethod = paymentMethod || booking.paymentMethod;
     await booking.save();
     res.status(200).json({ 
         message: 'Booking updated successfully', booking 
     });
   } catch (error) {
-    res.status(500).json({ message: 'updateBooking error' });
+    res.status(500).json({ message: 'updateBooking error', error: error.message });
   }
 };
 
