@@ -1,0 +1,27 @@
+.movie-card {
+  background: #222;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s;
+  width: 200px; /* Cố định chiều rộng card */
+}
+
+.movie-card:hover { transform: scale(1.05); }
+
+.movie-poster img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.movie-info { padding: 10px; text-align: center; }
+.movie-title { font-size: 1rem; margin: 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.movie-duration { color: #888; font-size: 0.8rem; margin-bottom: 10px; }
+.btn-book-ticket {
+  background-color: #e50914;
+  color: white;
+  border: none;
+  padding: 5px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}

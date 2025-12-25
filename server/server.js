@@ -1,21 +1,28 @@
-const express = require("express")
-const cors = require("cors")
+// server/server.js
+const express = require("express");
+const cors = require("cors");
 const dotenv = require('dotenv');
-const db = require("./config/db")
-const { User, Movie, Cinema, Room, Seat, Showtime, ShowtimeSeat } = require('./models');
+const db = require("./config/db");
 const Routes = require("./routes/index");
 const cookieParser = require("cookie-parser");
+const { User, Movie } = require('./models');
 
-dotenv.config()
+dotenv.config();
 
 const app = express();
 
-app.use(cors())
+app.use(cors({
+  origin: function (origin, callback) {
+    callback(null, true);
+  },
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
-// Initialize Routes
 Routes(app);
 
 db.authenticate()
@@ -31,7 +38,7 @@ db.authenticate()
   });
 
 app.get('/', (req, res) => {
-  res.send('Xin chào! Server CinemaVerse đang chạy ổn định.');
+  res.send('Server CinemaVerse is running');
 });
 
 const PORT = process.env.PORT || 5000;
