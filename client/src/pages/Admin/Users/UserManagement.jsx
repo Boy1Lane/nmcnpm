@@ -3,12 +3,16 @@ import { Table, Button, Tag, Space, Modal, message } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import userService from "../../../services/Admin/userServices";
 import CreateUserModal from "./CreateUserModal";
+import EditUserModal from "./EditUserModal";
 import { useNavigate } from "react-router-dom";
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [openCreate, setOpenCreate] = useState(false);
   const navigate = useNavigate();
+
+  const [openEdit, setOpenEdit] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   //   // 🔐 CHECK ADMIN
   //   useEffect(() => {
@@ -82,7 +86,13 @@ export default function UserManagement() {
       title: "Hành động",
       render: (_, record) => (
         <Space>
-          <EditOutlined />
+          <EditOutlined
+            style={{ color: "blue" }}
+            onClick={() => {
+              setSelectedUser(record);
+              setOpenEdit(true);
+            }}
+          />
           <DeleteOutlined
             style={{ color: "red" }}
             onClick={() => handleDelete(record.id)}
@@ -116,6 +126,13 @@ export default function UserManagement() {
       <CreateUserModal
         open={openCreate}
         onClose={() => setOpenCreate(false)}
+        onSuccess={fetchUsers}
+      />
+      {/* ✅ THÊM ĐOẠN NÀY */}
+      <EditUserModal
+        open={openEdit}
+        user={selectedUser}
+        onClose={() => setOpenEdit(false)}
         onSuccess={fetchUsers}
       />
     </>

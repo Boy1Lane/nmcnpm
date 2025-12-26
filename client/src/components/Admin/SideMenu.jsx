@@ -1,4 +1,7 @@
 import "../../styles/Admin/SideMenu.css";
+import { useAuth } from "../../context/AuthContext";
+import { message } from "antd";
+
 import {
   DashboardOutlined,
   VideoCameraOutlined,
@@ -13,6 +16,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 export default function SideMenu() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth(); // ⭐ THÊM
+
+  const handleLogout = async () => {
+    // ⭐ THÊM
+    message.success("Đăng xuất thành công");
+    await logout();
+  };
 
   const menuItems = [
     { key: "/dashboard", label: "Dashboard", icon: <DashboardOutlined /> },
@@ -48,7 +58,11 @@ export default function SideMenu() {
         ))}
       </div>
 
-      <div className="sidebar-footer">
+      <div
+        className="sidebar-footer"
+        onClick={handleLogout}
+        style={{ cursor: "pointer" }}
+      >
         <LogoutOutlined className="logout-icon" />
         <span>Đăng xuất</span>
       </div>

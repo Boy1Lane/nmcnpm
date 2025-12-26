@@ -8,20 +8,15 @@ export default function EditUserModal({ open, onClose, onSuccess, user }) {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if (user && open) {
+    if (user) {
       form.setFieldsValue({
         fullName: user.fullName,
         email: user.email,
         role: user.role,
+        phone: user.phone,
       });
     }
-  }, [user, open]);
-
-  useEffect(() => {
-    if (!open) {
-      form.resetFields();
-    }
-  }, [open]);
+  }, [user]);
 
   const handleSubmit = async () => {
     try {
@@ -52,7 +47,13 @@ export default function EditUserModal({ open, onClose, onSuccess, user }) {
         >
           <Input />
         </Form.Item>
-
+        <Form.Item
+          label="Số điện thoại"
+          name="phone"
+          rules={[{ required: true, message: "Nhập số điện thoại" }]}
+        >
+          <Input />
+        </Form.Item>
         <Form.Item
           label="Email"
           name="email"

@@ -1,15 +1,12 @@
 import axios from "axios";
 
-const axiosAdmin = axios.create({
-  baseURL: "http://localhost:5000/admin",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true, // gửi refreshToken cookie
+const axiosClient = axios.create({
+  baseURL: "http://localhost:5000",
+  withCredentials: true, // ⭐ để gửi refreshToken cookie
 });
 
 // ================= REQUEST =================
-axiosAdmin.interceptors.request.use((config) => {
+axiosClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -18,19 +15,22 @@ axiosAdmin.interceptors.request.use((config) => {
 });
 
 // ================= RESPONSE (AUTO REFRESH) =================
-axiosAdmin.interceptors.response.use(
+axiosClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    if (
+    // accessToken hết hạn
+     if (
       (error.response?.status === 401 ||
-        error.response?.status === 403) &&
-      !originalRequest._retry
+    error.response?.status === 403) &&
+  !originalRequest._retry &&
+  !originalRequest.url.includes("/auth/")
     ) {
       originalRequest._retry = true;
 
       try {
+        // 🔥 GỌI API REFRESH THEO ĐÚNG BE CỦA BẠN
         const refreshRes = await axios.post(
           "http://localhost:5000/auth/refresh",
           {},
@@ -39,13 +39,17 @@ axiosAdmin.interceptors.response.use(
 
         const newAccessToken = refreshRes.data.accessToken;
 
+        // lưu token mới
         localStorage.setItem("accessToken", newAccessToken);
 
+        // gắn lại token cho request cũ
         originalRequest.headers.Authorization =
           `Bearer ${newAccessToken}`;
 
-        return axiosAdmin(originalRequest);
+        // gọi lại request ban đầu
+        return axiosClient(originalRequest);
       } catch (err) {
+        // refresh token hết hạn → logout
         localStorage.clear();
         window.location.href = "/login";
         return Promise.reject(err);
@@ -56,4 +60,4 @@ axiosAdmin.interceptors.response.use(
   }
 );
 
-export default axiosAdmin;
+export default axiosClient;

@@ -1,4 +1,5 @@
 const User = require("../../models/User");
+const bcrypt = require("bcrypt"); // ✅ THÊM
 
 // GET /admin/users -> getAllUsers
 exports.getAllUsers = async (req, res) => {
@@ -65,7 +66,10 @@ exports.deleteUser = async (req, res) => {
 exports.createUser = async (req, res) => {
   try {
     const { fullName, email, password, role,phone } = req.body;
-    const newUser = await User.create({ fullName, email, password, role,phone });
+    // ✅ HASH PASSWORD
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({ fullName, email, password:hashedPassword, role,phone });
     res.status(201).json({ 
         message: 'User created successfully!',
         data: newUser 
