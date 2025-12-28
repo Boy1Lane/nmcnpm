@@ -1,0 +1,132 @@
+/* client/src/pages/Client/Homepage.css */
+
+/* 1. Khung bao quanh toàn trang */
+.homepage-container {
+  min-height: 100vh;
+  background-color: #141414; /* Màu đen Netflix */
+  color: white;
+  width: 100%;
+  overflow-x: hidden; /* Chặn thanh cuộn ngang thừa */
+}
+
+/* 2. Phần Banner tiêu đề */
+.banner {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.banner h1 {
+  color: #e50914; /* Đỏ rạp phim */
+  text-transform: uppercase;
+  font-size: 2.5rem;
+  margin: 0;
+  display: inline-block;
+  border-bottom: 4px solid #e50914;
+  padding-bottom: 10px;
+  letter-spacing: 2px;
+}
+
+/* 3. Lưới phim thông minh (GRID LAYOUT) - ĐÃ SỬA LỖI */
+.movie-list {
+  display: grid;
+  
+  /* QUAN TRỌNG: 
+     - Giảm xuống 200px để màn hình laptop có thể chia được 4-5 cột.
+     - auto-fill: Tự động lấp đầy số lượng cột tối đa có thể.
+  */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  
+  gap: 25px; /* Khoảng cách giữa các phim */
+  width: 100%;
+  padding: 20px 40px; /* Cách lề 2 bên một chút cho thoáng */
+  box-sizing: border-box;
+}
+
+/* 4. Tinh chỉnh thẻ Card để không bị vỡ giao diện */
+/* Class này override style gốc của MovieCard.jsx để phục vụ trang chủ */
+.movie-list .movie-card {
+  width: 100%;
+  
+  /* CHỐT AN TOÀN: 
+     Dù màn hình có rộng bao nhiêu, thẻ phim cũng không to quá 280px.
+     Nó sẽ giữ form poster chuẩn đẹp.
+  */
+  max-width: 280px; 
+  
+  margin: 0 auto; /* Tự động căn giữa thẻ trong ô lưới của nó */
+  display: flex;
+  flex-direction: column;
+  background-color: #1f1f1f;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+/* Hiệu ứng khi di chuột vào phim */
+.movie-list .movie-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(229, 9, 20, 0.3); /* Ánh đỏ nhẹ khi hover */
+  z-index: 10;
+}
+
+/* Style cho ảnh poster bên trong */
+.movie-list .movie-poster {
+  width: 100%;
+  aspect-ratio: 2/3; /* Giữ tỷ lệ khung hình chuẩn poster phim */
+  position: relative;
+  overflow: hidden;
+}
+
+.movie-list .movie-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.movie-list .movie-card:hover .movie-poster img {
+  transform: scale(1.05); /* Zoom nhẹ ảnh khi hover */
+}
+
+/* Style cho phần thông tin dưới ảnh */
+.movie-list .movie-info {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.movie-list .movie-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #fff;
+}
+
+.movie-list .movie-duration {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin-bottom: 15px;
+}
+
+.movie-list .btn-book-ticket {
+  background-color: #e50914;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: background 0.3s;
+  width: 100%;
+}
+
+.movie-list .btn-book-ticket:hover {
+  background-color: #b20710;
+}

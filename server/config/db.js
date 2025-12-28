@@ -1,15 +1,14 @@
 const { Sequelize } = require('sequelize');
-require('dotenv').config();
 
+// Chúng ta điền trực tiếp thông tin vào đây để tránh lỗi không đọc được file .env
 const sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
+    'postgres',   // Tên Database
+    'postgres',  // Username
+    'ha031105',    // Password (Lưu ý: Phải để trong dấu ngoặc kép '...')
     {
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT,
-        dialect: process.env.DB_DIALECT,
-        logging: false,
+        host: 'localhost',
+        dialect: 'postgres', // Khai báo rõ ràng là dùng PostgreSQL
+        logging: false,      // Tắt log cho gọn
         pool: {
             max: 5,
             min: 0,

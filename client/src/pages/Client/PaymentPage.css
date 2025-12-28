@@ -1,0 +1,65 @@
+.payment-container {
+  background-color: #141414;
+  color: white;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.payment-content {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  gap: 40px;
+}
+
+/* Cột trái: Thông tin vé */
+.bill-section {
+  flex: 1;
+  background-color: #222;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.bill-section h2 { color: #e50914; margin-bottom: 20px; text-align: center; }
+.bill-row { display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px dashed #444; padding-bottom: 12px; }
+.bill-row.total { border-top: 2px solid #fff; border-bottom: none; padding-top: 15px; font-size: 1.2rem; font-weight: bold; color: #f1c40f; }
+
+/* Cột phải: Phương thức thanh toán */
+.method-section {
+  flex: 1;
+}
+.method-item {
+  display: flex;
+  align-items: center;
+  background-color: #333;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: 0.2s;
+}
+.method-item:hover { background-color: #444; }
+.method-item.active { border-color: #e50914; background-color: #2a2a2a; }
+.method-icon { width: 40px; margin-right: 15px; }
+
+.btn-pay {
+  width: 100%;
+  padding: 15px;
+  background-color: #e50914;
+  color: white;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: 0.3s;
+}
+.btn-pay:hover { background-color: #b20710; }
+.btn-pay:disabled { background-color: #555; cursor: not-allowed; }
+
+@media (max-width: 768px) {
+  .payment-content { flex-direction: column; }
+}
