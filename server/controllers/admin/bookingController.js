@@ -1,6 +1,7 @@
 const Booking = require('../../models/Booking');
 const BookingSeat = require('../../models/BookingSeat');
 const BookingFood = require('../../models/BookingFood');
+const ShowtimeSeat = require('../../models/ShowtimeSeat');
 const { Op } = require('sequelize');
 
 // GET /admin/bookings -> getAllBookings
@@ -19,21 +20,52 @@ exports.getAllBookings = async (req, res) => {
 
 // POST /admin/bookings -> createBooking
 exports.createBooking = async (req, res) => {
+  const transaction = await sequelize.transaction();
   try {
-    const { userId, showtimeId, totalPrice, paymentMethod } = req.body;
+    const { userId, showtimeId, totalPrice, paymentMethod, status, seatIds } = req.body;
+
     if (!userId || !showtimeId || !totalPrice || !paymentMethod) {
-      return res.status(400).json({ message: 'Missing value (userId, showtimeId, totalPrice, paymentMethod)!' });
+      await transaction.rollback();
+      return res.status(400).json({ message: 'Missing required fields!' });
     }
-    const newBooking = await Booking.create({ userId, showtimeId, totalPrice, paymentMethod });
+
+    const newBooking = await Booking.create({ 
+      userId, 
+      showtimeId, 
+      totalPrice, 
+      paymentMethod,
+      status: status || 'PENDING' // Allow Admin to set CONFIRMED
+    }, { transaction });
+
+    if (seatIds && seatIds.length > 0) {
+      const bookingSeatsData = seatIds.map(seatId => ({
+        bookingId: newBooking.id,
+        showtimeSeatId: seatId,
+        price: 0
+      }));
+      await BookingSeat.bulkCreate(bookingSeatsData, { transaction });
+
+      const seatStatus = (status === 'CONFIRMED') ? 'SOLD' : 'LOCKED';
+      await ShowtimeSeat.update({
+        status: seatStatus
+      }, {
+        where: { id: seatIds },
+        transaction
+      });
+    }
+
+    await transaction.commit();
+
     res.status(201).json({
       message: 'Booking created successfully!',
       data: newBooking
     });
   } catch (error) {
+    await transaction.rollback();
     console.error(error);
-    res.status(500).json({ message: 'server error', error: error.message });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
-};  
+};
 
 // GET /admin/bookings/:id -> getABooking
 exports.getABooking = async (req, res) => {
