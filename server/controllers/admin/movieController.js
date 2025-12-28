@@ -1,4 +1,20 @@
 const Movie = require('../../models/Movie');
+const cloudinary = require('../../config/cloudinary');
+
+const uploadBufferToCloudinary = (buffer, options = {}) => new Promise((resolve, reject) => {
+  const stream = cloudinary.uploader.upload_stream(
+    {
+      folder: options.folder || 'movies',
+      resource_type: 'image'
+    },
+    (error, result) => {
+      if (error) return reject(error);
+      resolve(result);
+    }
+  );
+
+  stream.end(buffer);
+});
 
 // /POST /api/movies -> createMovie
 exports.createMovie = async (req, res) => {
@@ -9,6 +25,12 @@ exports.createMovie = async (req, res) => {
       return res.status(400).json({ message: 'Missing value (title, duration, releaseDate)!' });
     }
 
+    let resolvedPosterUrl = posterUrl;
+    if (req.file && req.file.buffer) {
+      const uploaded = await uploadBufferToCloudinary(req.file.buffer, { folder: 'movies/posters' });
+      resolvedPosterUrl = uploaded.secure_url;
+    }
+
     const newMovie = await Movie.create({
       title,
       description,
@@ -17,7 +39,7 @@ exports.createMovie = async (req, res) => {
       genre,
       duration,
       releaseDate,
-      posterUrl,
+      posterUrl: resolvedPosterUrl,
       trailerUrl,
       status: 'coming_soon'
     });
@@ -70,6 +92,13 @@ exports.updateMovie = async (req, res) => {
     if (!movie) {
       return res.status(404).json({ message: 'Movie not found' });
     }
+
+    let resolvedPosterUrl = posterUrl;
+    if (req.file && req.file.buffer) {
+      const uploaded = await uploadBufferToCloudinary(req.file.buffer, { folder: 'movies/posters' });
+      resolvedPosterUrl = uploaded.secure_url;
+    }
+
     await movie.update({
       title,
       description,
@@ -78,7 +107,7 @@ exports.updateMovie = async (req, res) => {
       genre,
       duration,
       releaseDate,
-      posterUrl,
+      posterUrl: resolvedPosterUrl,
       trailerUrl,
       status
     });

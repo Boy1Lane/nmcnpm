@@ -4,6 +4,8 @@ const showtimeRoutes = require('./showtimeRoute.js');
 const cinemaRoutes = require('./cinemaRoute.js');
 const userRoutes = require('./userRoute.js');
 const bookingRoutes = require('./bookingRoute.js');
+const promotionRoutes = require('./promotionRoute');
+const foodRoutes = require('./foodRoute');
 const router = require('express').Router();
 
 
@@ -24,6 +26,12 @@ router.use('/users', userRoutes);
 
 // /admin/bookings -> bookingRoutes
 router.use('/bookings', bookingRoutes);
+
+// /admin/foods -> foodRoutes
+router.use('/foods', foodRoutes);
+
+// /admin/promotions -> promotionRoutes
+router.use('/promotions', promotionRoutes);
 
 // /admin 
 router.get('/', (req, res) => {
