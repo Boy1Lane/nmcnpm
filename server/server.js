@@ -5,6 +5,7 @@ const db = require("./config/db")
 const { User, Movie, Cinema, Room, Seat, Showtime, ShowtimeSeat } = require('./models');
 const Routes = require("./routes/index");
 const cookieParser = require("cookie-parser");
+const startCleanupJob = require('./services/cleanupService');
 
 dotenv.config()
 
@@ -24,6 +25,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Initialize Routes
 Routes(app);
+
+startCleanupJob();
 
 db.authenticate()
   .then(() => {

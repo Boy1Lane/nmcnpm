@@ -7,7 +7,7 @@ export default function Login() {
   const navigate = useNavigate();
   const { login, user, loading } = useAuth();
 
-  // ✅ CHẶN: nếu đã đăng nhập thì không render form login nữa
+  // // ✅ CHẶN: nếu đã đăng nhập thì không render form login nữa
   // if (!loading && user) {
   //   if (user.role === "admin") return <Navigate to="/dashboard" replace />;
   //   return <Navigate to="/" replace />;
@@ -36,10 +36,13 @@ export default function Login() {
       message.success("Đăng nhập thành công");
 
       // ✅ ĐIỀU HƯỚNG THEO ROLE
-      if (res.data.user.role === "customer") {
+      const role = res.data.user.role;
+      if (role === "customer") {
         navigate("/");
-      } else {
+      } else if (role === "admin") {
         navigate("/dashboard");
+      } else if (role === "staff") {
+        navigate("/dashboard"); // hoặc /staff nếu có
       }
     } catch (err) {
       message.error(err.response?.data?.message || "Đăng nhập thất bại");
