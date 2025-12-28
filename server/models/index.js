@@ -54,6 +54,14 @@ BookingSeat.belongsTo(Booking, { foreignKey: 'bookingId' });
 ShowtimeSeat.hasMany(BookingSeat, { foreignKey: 'showtimeSeatId' });
 BookingSeat.belongsTo(ShowtimeSeat, { foreignKey: 'showtimeSeatId' });
 
+// Relationship: A Booking can have many BookingFoods
+Booking.hasMany(BookingFood, { foreignKey: 'bookingId' });
+BookingFood.belongsTo(Booking, { foreignKey: 'bookingId' });
+
+// Relationship: A FoodCombo can have many BookingFoods
+FoodCombo.hasMany(BookingFood, { foreignKey: 'foodComboId' });
+BookingFood.belongsTo(FoodCombo, { foreignKey: 'foodComboId' });
+
 // Constraints and Indexes can be defined within individual model files
 
 module.exports = {
