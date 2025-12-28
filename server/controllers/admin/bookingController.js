@@ -1,5 +1,6 @@
 const Booking = require('../../models/Booking');
 const BookingSeat = require('../../models/BookingSeat');
+const BookingFood = require('../../models/BookingFood');
 const { Op } = require('sequelize');
 
 // GET /admin/bookings -> getAllBookings
@@ -187,3 +188,49 @@ exports.getBookingSummary = async (req, res) => {
     res.status(500).json({ message: 'getBookingSummary error', error: error.message });
   }
 }
+
+// POST /admin/bookings/:id/foods -> addFoodsToBooking
+exports.addFoodsToBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { foodComboIds } = req.body;
+    if (!Array.isArray(foodComboIds) || foodComboIds.length === 0) {
+      return res.status(400).json({ message: 'foodComboIds must be a non-empty array' });
+    }
+    const booking = await Booking.findByPk(id);
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+    const created = [];
+    for (const foodComboId of foodComboIds) {
+      const exists = await BookingFood.findOne({ where: { bookingId: id, foodComboId } });
+      if (exists) continue;
+      const bf = await BookingFood.create({ bookingId: id, foodComboId });
+      created.push(bf);
+    }
+    res.status(201).json({
+      message: 'Food combos added to booking successfully',
+      added: created.length
+    });
+  }
+  catch (error) {
+    console.error('addFoodsToBooking error:', error);
+    res.status(500).json({ message: 'addFoodsToBooking error', error: error.message });
+  } 
+};
+
+// DELETE /admin/bookings/:id/foods/:foodId -> removeFoodFromBooking
+exports.removeFoodFromBooking = async (req, res) => {
+  try {
+    const { id, foodId } = req.params;
+    const bookingFood = await BookingFood.findOne({ where: { bookingId: id, foodComboId: foodId } });
+    if (!bookingFood) {
+      return res.status(404).json({ message: 'Food combo not found in booking' });
+    } 
+    await bookingFood.destroy();
+    res.status(200).json({ message: 'Food combo removed from booking successfully' });
+  }
+  catch (error) {
+    res.status(500).json({ message: 'removeFoodFromBooking error' });
+  }
+};

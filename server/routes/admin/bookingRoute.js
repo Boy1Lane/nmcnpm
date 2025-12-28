@@ -20,6 +20,12 @@ router.post('/:id/seats', bookingController.addSeatsToBooking);
 // DELETE /admin/bookings/:id/seats/:seatId -> removeSeatFromBooking
 router.delete('/:id/seats/:seatId', bookingController.removeSeatFromBooking);
 
+// POST /admin/bookings/:id/foods -> addFoodsToBooking
+router.post('/:id/foods', bookingController.addFoodsToBooking);
+
+// DELETE /admin/bookings/:id/foods/:foodId -> removeFoodFromBooking
+router.delete('/:id/foods/:foodId', bookingController.removeFoodFromBooking);   
+
 // GET /admin/bookings/:id -> getABooking
 router.get('/:id', bookingController.getABooking);
 

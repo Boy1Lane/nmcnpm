@@ -31,7 +31,7 @@ startCleanupJob();
 db.authenticate()
   .then(() => {
     console.log('Connected to PostgreSQL');
-    return db.sync({ alter: true });
+    return db.sync({ alter: true, force: true });
   })
   .then(() => {
     console.log('Synced Models with DB');
