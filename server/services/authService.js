@@ -28,7 +28,8 @@ class AuthService {
     const accessToken = jwt.sign(
       { id: user.id, role: user.role },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "15m" }
+      // { expiresIn: "15m" }
+      { expiresIn: "1m" }   // ⭐ 1 phút
     );
 
     const refreshToken = jwt.sign(

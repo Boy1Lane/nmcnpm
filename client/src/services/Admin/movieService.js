@@ -19,7 +19,12 @@ const movieService = {
 
   delete(id) {
     return axiosAdmin.delete(`/movies/${id}`);
-  }
+  },
+
+   // ✅ ALIAS CHO CHECK-IN (QUAN TRỌNG)
+  getMovieById(id) {
+    return axiosAdmin.get(`/movies/${id}`);
+  },
 };
 
 export default movieService;

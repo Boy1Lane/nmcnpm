@@ -55,7 +55,13 @@ const roomService = {
   // payload: { seats: [...] }
   updateSeats(roomId, seats) {
     return axiosAdmin.put(`/rooms/${roomId}/seats`, { seats });
-  }
+  },
+
+  // ✅ ALIAS CHO CHECK-IN
+  getRoomById(id) {
+    return axiosAdmin.get(`/rooms/${id}`);
+  },
+
 };
 
 export default roomService;
