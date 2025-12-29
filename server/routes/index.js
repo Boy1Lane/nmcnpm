@@ -8,7 +8,7 @@ const staffMiddleware = require('../middlewares/staffMiddleware');
 function Routes(app) {
     app.use('/api', apiRoutes);
     // app.use('/admin', authMiddleware, adminMiddleware, adminRoutes);
-    app.use('/admin', staffMiddleware, adminRoutes);
+    app.use('/admin',  authMiddleware,staffMiddleware, adminRoutes);
     app.use('/auth', authRoutes);
     app.get('/', (req, res)  => {
         res.send('Xin chào! Server CinemaVerse đang chạy ổn định.');

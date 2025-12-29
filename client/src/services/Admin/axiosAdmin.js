@@ -5,9 +5,10 @@ const axiosAdmin = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true, // gửi refreshToken cookie
 });
 
-// tự gắn token admin
+// ================= REQUEST =================
 axiosAdmin.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
   if (token) {
@@ -15,5 +16,44 @@ axiosAdmin.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// ================= RESPONSE (AUTO REFRESH) =================
+axiosAdmin.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (
+      (error.response?.status === 401 ||
+        error.response?.status === 403) &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+
+      try {
+        const refreshRes = await axios.post(
+          "http://localhost:5000/auth/refresh",
+          {},
+          { withCredentials: true }
+        );
+
+        const newAccessToken = refreshRes.data.accessToken;
+
+        localStorage.setItem("accessToken", newAccessToken);
+
+        originalRequest.headers.Authorization =
+          `Bearer ${newAccessToken}`;
+
+        return axiosAdmin(originalRequest);
+      } catch (err) {
+        localStorage.clear();
+        window.location.href = "/login";
+        return Promise.reject(err);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export default axiosAdmin;

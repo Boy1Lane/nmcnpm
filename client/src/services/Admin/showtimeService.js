@@ -36,8 +36,18 @@ const showtimeService = {
   },
 
   getAll() {
-  return axiosAdmin.get("/showtimes");
-}
+    return axiosAdmin.get("/showtimes");
+  },
+
+   // ✅ ALIAS CHO CHECK-IN
+  getShowtimeById(id) {
+    return axiosAdmin.get(`/showtimes/${id}`);
+  },
+
+  // ✅ GHẾ THEO SUẤT CHIẾU
+  getSeatsByShowtime(showtimeId) {
+    return axiosAdmin.get(`/showtimes/${showtimeId}/seats`);
+  },
 
 };
 

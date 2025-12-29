@@ -1,122 +1,83 @@
-import React, { useState } from 'react';
-import MovieCard from '../../components/Client/MovieCard';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import movieService from '../../services/movieService'; // Import service
 import './Homepage.css';
 
-const Homepage = () => {
-  // Danh sách 12 phim bom tấn với ID và Ảnh chuẩn từ TMDB & Wikipedia
-  const [movies] = useState([
-    { 
-      id: 1, 
-      title: "Inception", 
-      duration: 148, 
-      posterUrl: "https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg", 
-      releaseDate: "2010-07-16",
-      status: "showing" 
-    },
-    { 
-      id: 2, 
-      title: "Interstellar", 
-      duration: 169, 
-      posterUrl: "https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg", 
-      releaseDate: "2014-11-07",
-      status: "showing"
-    },
-    { 
-      id: 3, 
-      title: "The Dark Knight", 
-      duration: 152, 
-      posterUrl: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg", 
-      releaseDate: "2008-07-18",
-      status: "showing"
-    },
-    { 
-      id: 4, 
-      title: "Avatar: The Way of Water", 
-      duration: 192, 
-      posterUrl: "https://upload.wikimedia.org/wikipedia/en/5/54/Avatar_The_Way_of_Water_poster.jpg", 
-      releaseDate: "2022-12-16",
-      status: "showing"
-    },
-    { 
-      id: 5, 
-      title: "Avengers: Endgame", 
-      duration: 181, 
-      posterUrl: "https://upload.wikimedia.org/wikipedia/en/0/0d/Avengers_Endgame_poster.jpg", 
-      releaseDate: "2019-04-26",
-      status: "showing"
-    },
-    { 
-      id: 6, 
-      title: "Oppenheimer", 
-      duration: 180, 
-      posterUrl: "https://upload.wikimedia.org/wikipedia/en/4/4a/Oppenheimer_%28film%29.jpg", 
-      releaseDate: "2023-07-21",
-      status: "showing"
-    },
-    {
-      id: 7,
-      title: "Dune: Part Two",
-      duration: 166,
-      // ✅ ĐÃ SỬA: Link ảnh mới siêu nét từ TMDB (Server chuyên dụng)
-      posterUrl: "https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg",
-      releaseDate: "2024-03-01",
-      status: "showing"
-    },
-    {
-      id: 8,
-      title: "Spider-Man: No Way Home",
-      duration: 148,
-      posterUrl: "https://upload.wikimedia.org/wikipedia/en/0/00/Spider-Man_No_Way_Home_poster.jpg",
-      releaseDate: "2021-12-17",
-      status: "showing"
-    },
-    {
-      id: 9,
-      title: "The Batman",
-      duration: 176,
-      posterUrl: "https://upload.wikimedia.org/wikipedia/en/f/ff/The_Batman_%28film%29_poster.jpg",
-      releaseDate: "2022-03-04",
-      status: "showing"
-    },
-    {
-      id: 10,
-      title: "Joker",
-      duration: 122,
-      posterUrl: "https://upload.wikimedia.org/wikipedia/en/e/e1/Joker_%282019_film%29_poster.jpg",
-      releaseDate: "2019-10-04",
-      status: "showing"
-    },
-    {
-      id: 11,
-      title: "Top Gun: Maverick",
-      duration: 130,
-      posterUrl: "https://upload.wikimedia.org/wikipedia/en/1/13/Top_Gun_Maverick_Poster.jpg",
-      releaseDate: "2022-05-27",
-      status: "showing"
-    },
-    {
-      id: 12,
-      title: "Titanic",
-      duration: 195,
-      posterUrl: "https://upload.wikimedia.org/wikipedia/en/1/18/Titanic_%281997_film%29_poster.png",
-      releaseDate: "1997-12-19",
-      status: "showing"
-    }
-  ]);
+const HomePage = () => {
+  const [movies, setMovies] = useState([]);
+  const [activeTab, setActiveTab] = useState('showing'); // 'showing' hoặc 'coming_soon'
+  const [loading, setLoading] = useState(true);
+
+  // --- GỌI API LẤY PHIM ---
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        setLoading(true);
+        // Gọi API với status tương ứng tab đang chọn
+        const data = await movieService.getAllMovies(activeTab);
+        setMovies(data);
+      } catch (error) {
+        console.error("Lỗi tải phim:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovies();
+  }, [activeTab]); // Chạy lại khi đổi tab
 
   return (
-    <div className="homepage-container">
+    <div className="homepage">
+      {/* Banner / Slider (Giữ nguyên code cũ của bạn nếu có) */}
       <div className="banner">
-        <h1>PHIM ĐANG CHIẾU</h1>
+         <h1>CinemaVerse - Thế giới điện ảnh</h1>
       </div>
-      
+
+      {/* Tabs chuyển đổi */}
+      <div className="movie-tabs">
+        <button 
+          className={activeTab === 'showing' ? 'active' : ''} 
+          onClick={() => setActiveTab('showing')}
+        >
+          Đang Chiếu
+        </button>
+        <button 
+          className={activeTab === 'coming_soon' ? 'active' : ''} 
+          onClick={() => setActiveTab('coming_soon')}
+        >
+          Sắp Chiếu
+        </button>
+      </div>
+
+      {/* Danh sách phim */}
       <div className="movie-list">
-        {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
-        ))}
+        {loading ? (
+           <p>Đang tải danh sách phim...</p>
+        ) : movies.length === 0 ? (
+           <p>Hiện chưa có phim nào ở mục này.</p>
+        ) : (
+          movies.map((movie) => (
+            <div key={movie.id} className="movie-card">
+              <div className="poster-wrapper">
+                <img src={movie.posterUrl} alt={movie.title} />
+                <div className="overlay">
+                  {/* Link dẫn đến trang chi tiết phim */}
+                  <Link to={`/movie/${movie.id}`} className="btn-buy-ticket">
+                    MUA VÉ
+                  </Link>
+                </div>
+              </div>
+              <h3 className="movie-title">{movie.title}</h3>
+              <p className="movie-info">
+                Thời lượng: {movie.duration} phút <br/>
+                Khởi chiếu: {new Date(movie.releaseDate).toLocaleDateString('vi-VN')}
+              </p>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
 };
 
-export default Homepage;
+export default HomePage;

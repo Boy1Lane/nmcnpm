@@ -1,57 +1,37 @@
-// client/src/services/authService.js
-import axios from "axios";
+import axios from 'axios';
 
-// Đảm bảo URL này đúng với port server của bạn (5000)
-const API_URL = "http://localhost:5000/auth"; 
+// Đảm bảo port 5000 là đúng port server của bạn
+const API_URL = "http://localhost:5000/api/auth"; 
 
-// Cấu hình axios gửi cookie (quan trọng để nhận refreshToken)
-const axiosInstance = axios.create({
-  baseURL: API_URL,
-  withCredentials: true, 
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+// 1. Đăng ký
+const register = async (userData) => {
+  const response = await axios.post(`${API_URL}/register`, userData);
+  if (response.data) {
+    localStorage.setItem('user', JSON.stringify(response.data));
+  }
+  return response.data;
+};
+
+// 2. Đăng nhập
+const login = async (userData) => {
+  const response = await axios.post(`${API_URL}/login`, userData);
+  if (response.data) {
+    // Lưu thông tin user kèm token vào bộ nhớ trình duyệt
+    localStorage.setItem('user', JSON.stringify(response.data));
+  }
+  return response.data;
+};
+
+// 3. Đăng xuất
+const logout = () => {
+  localStorage.removeItem('user');
+  localStorage.removeItem('accessToken');
+};
 
 const authService = {
-  // Feature 1: Đăng ký
-  register: async (userData) => {
-    try {
-      // Input: fullName, email, password
-      const response = await axiosInstance.post("/register", userData);
-      return response.data;
-    } catch (error) {
-      // Scenario 2: Trả về lỗi nếu email trùng
-      throw error.response?.data || error.message;
-    }
-  },
-
-  // Feature 2: Đăng nhập
-  login: async (email, password) => {
-    try {
-      const response = await axiosInstance.post("/login", { email, password });
-      // Expected: accessToken, user info
-      if (response.data.accessToken) {
-        // Lưu accessToken vào localStorage để dùng cho các request sau
-        localStorage.setItem("accessToken", response.data.accessToken);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-      }
-      return response.data;
-    } catch (error) {
-      // Scenario 2: Sai mật khẩu
-      throw error.response?.data || error.message;
-    }
-  },
-
-  logout: async () => {
-    try {
-        await axiosInstance.post("/logout");
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("user");
-    } catch (error) {
-        console.error(error);
-    }
-  }
+  register,
+  login,
+  logout,
 };
 
 export default authService;

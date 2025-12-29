@@ -8,6 +8,8 @@ const Showtime = require('./Showtime');
 const ShowtimeSeat = require('./ShowtimeSeat');
 const Booking = require('./Booking');
 const BookingSeat = require('./BookingSeat');
+const BookingFood = require('./BookingFood');
+const FoodCombo = require('./FoodCombo');
 
 // Relationship: A Cinema has many Rooms
 Cinema.hasMany(Room, { foreignKey: 'cinemaId' });
@@ -53,6 +55,14 @@ BookingSeat.belongsTo(Booking, { foreignKey: 'bookingId' });
 // Relationship: A ShowtimeSeat can have many BookingSeats
 ShowtimeSeat.hasMany(BookingSeat, { foreignKey: 'showtimeSeatId' });
 BookingSeat.belongsTo(ShowtimeSeat, { foreignKey: 'showtimeSeatId' });
+
+// Relationship: A Booking can have many BookingFoods
+Booking.hasMany(BookingFood, { foreignKey: 'bookingId' });
+BookingFood.belongsTo(Booking, { foreignKey: 'bookingId' });
+
+// Relationship: A FoodCombo can have many BookingFoods
+FoodCombo.hasMany(BookingFood, { foreignKey: 'foodComboId' });
+BookingFood.belongsTo(FoodCombo, { foreignKey: 'foodComboId' });
 
 // Constraints and Indexes can be defined within individual model files
 

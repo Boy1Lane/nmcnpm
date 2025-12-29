@@ -1,105 +1,123 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import './BookingPage.css';
+import bookingService from '../../services/bookingService';
+import './BookingPage.css'; // Đảm bảo file CSS đã có
 
 const BookingPage = () => {
   const { scheduleId } = useParams();
   const navigate = useNavigate();
 
-  // Giá vé cơ bản
-  const TICKET_PRICE = 85000;
-
-  // Giả lập danh sách ghế (10 hàng, mỗi hàng 8 ghế)
-  // Trong thực tế, dữ liệu này sẽ lấy từ API (để biết ghế nào đã bán)
-  const ROWS = 8;
-  const COLS = 10;
-  
-  // Giả lập một số ghế ĐÃ BÁN (Sold) - ID ghế dạng "A1", "B5"...
-  const soldSeats = ['A3', 'A4', 'C5', 'C6', 'E8'];
-
-  // State lưu các ghế đang chọn
+  const [seats, setSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Hàm tạo mã ghế (Ví dụ: Hàng 0, Cột 0 -> A1)
-  const getSeatLabel = (row, col) => {
-    const rowLabel = String.fromCharCode(65 + row); // 65 là mã ASCII của 'A'
-    return `${rowLabel}${col + 1}`;
-  };
+  // --- 1. Tải ghế từ Database ---
+  useEffect(() => {
+    const fetchSeats = async () => {
+      try {
+        setLoading(true);
+        const data = await bookingService.getSeatsByShowtime(scheduleId);
+        setSeats(data);
+      } catch (err) {
+        console.error("Lỗi tải ghế:", err);
+        setError("Không thể tải sơ đồ ghế. Vui lòng kiểm tra lại đường truyền hoặc dữ liệu.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (scheduleId) fetchSeats();
+  }, [scheduleId]);
 
-  const handleSeatClick = (seatLabel) => {
-    if (soldSeats.includes(seatLabel)) return; // Ghế đỏ không bấm được
+  // --- 2. Xử lý chọn ghế ---
+  const handleSeatClick = (seat) => {
+    // Không cho chọn ghế đã bán hoặc đang khóa
+    if (seat.status !== 'AVAILABLE') return;
 
-    if (selectedSeats.includes(seatLabel)) {
-      // Nếu đã chọn -> Bỏ chọn (Xóa khỏi mảng)
-      setSelectedSeats(selectedSeats.filter(s => s !== seatLabel));
+    const isSelected = selectedSeats.includes(seat.id);
+    if (isSelected) {
+      setSelectedSeats(selectedSeats.filter(id => id !== seat.id));
     } else {
-      // Nếu chưa chọn -> Thêm vào mảng
-      setSelectedSeats([...selectedSeats, seatLabel]);
+      setSelectedSeats([...selectedSeats, seat.id]);
     }
   };
 
-  // Tính tổng tiền
-  const totalPrice = selectedSeats.length * TICKET_PRICE;
-
-  const handleNextStep = () => {
-    // Chuyển sang trang Bắp nước (sẽ làm ở bước sau)
-    // Truyền state ghế và tổng tiền sang trang sau
-    navigate('/booking/concessions', { state: { selectedSeats, totalPrice, scheduleId } });
+  // --- 3. Tính tổng tiền ---
+  const calculateTotalPrice = () => {
+    return selectedSeats.reduce((total, seatId) => {
+      const seat = seats.find(s => s.id === seatId);
+      return total + (seat ? seat.price : 0);
+    }, 0);
   };
 
+  // --- 4. Chuyển sang trang tiếp theo ---
+  const handleNext = () => {
+    if (selectedSeats.length === 0) {
+      alert("Vui lòng chọn ít nhất 1 ghế!");
+      return;
+    }
+    // Chuyển sang trang chọn đồ ăn (hoặc thanh toán), mang theo dữ liệu ghế
+    navigate(`/booking/${scheduleId}/concessions`, {
+      state: {
+        selectedSeatIds: selectedSeats,
+        seatsPrice: calculateTotalPrice()
+      }
+    });
+  };
+
+  if (loading) return <div className="text-center p-10">Đang tải sơ đồ ghế...</div>;
+  if (error) return <div className="text-center p-10 text-red-500">{error}</div>;
+
   return (
-    <div className="booking-container">
-      <h2>Màn hình chiếu</h2>
-      <div className="screen"></div>
+    <div className="booking-page-container">
+      <h2 className="page-title">Chọn ghế ngồi</h2>
+      
+      {/* Màn hình */}
+      <div className="screen-container">
+        <div className="screen">MÀN HÌNH</div>
+      </div>
 
       {/* Sơ đồ ghế */}
-      <div className="seat-map">
-        {Array.from({ length: ROWS }).map((_, rowIndex) => (
-          <div key={rowIndex} className="seat-row">
-            {Array.from({ length: COLS }).map((_, colIndex) => {
-              const seatLabel = getSeatLabel(rowIndex, colIndex);
-              const isSold = soldSeats.includes(seatLabel);
-              const isSelected = selectedSeats.includes(seatLabel);
-              
-              let seatClass = "seat available"; // Mặc định: Xanh/Trống
-              if (isSold) seatClass = "seat sold"; // Đỏ
-              if (isSelected) seatClass = "seat selected"; // Vàng
+      <div className="seats-grid">
+        {seats.map((seat) => {
+          const isSelected = selectedSeats.includes(seat.id);
+          const isSold = seat.status === 'SOLD';
+          
+          // Class CSS động
+          let seatClass = `seat-item ${seat.Seat?.type?.toLowerCase()}`;
+          if (isSold) seatClass += ' sold';
+          else if (isSelected) seatClass += ' selected';
 
-              return (
-                <div 
-                  key={seatLabel} 
-                  className={seatClass}
-                  onClick={() => handleSeatClick(seatLabel)}
-                >
-                  {seatLabel}
-                </div>
-              );
-            })}
-          </div>
-        ))}
+          return (
+            <button
+              key={seat.id}
+              className={seatClass}
+              onClick={() => handleSeatClick(seat)}
+              disabled={isSold}
+              title={`${seat.Seat?.row}${seat.Seat?.number} - ${seat.price.toLocaleString()}đ`}
+            >
+              {seat.Seat ? `${seat.Seat.row}${seat.Seat.number}` : 'G'}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Chú thích màu */}
+      {/* Chú thích */}
       <div className="legend">
-        <div className="legend-item"><div className="box green"></div> Ghế trống</div>
-        <div className="legend-item"><div className="box yellow"></div> Đang chọn</div>
-        <div className="legend-item"><div className="box red"></div> Đã bán</div>
+        <div className="legend-item"><span className="seat-item sold"></span> Đã bán</div>
+        <div className="legend-item"><span className="seat-item selected"></span> Đang chọn</div>
+        <div className="legend-item"><span className="seat-item vip"></span> VIP</div>
+        <div className="legend-item"><span className="seat-item normal"></span> Thường</div>
       </div>
 
-      {/* Thanh thanh toán dưới cùng */}
-      <div className="booking-summary">
-        <div className="info">
-          <p>Ghế đã chọn: <strong>{selectedSeats.join(', ') || 'Chưa chọn'}</strong></p>
-          <p>Tạm tính: <strong style={{color: '#f1c40f', fontSize: '20px'}}>
-            {totalPrice.toLocaleString('vi-VN')} đ
-          </strong></p>
+      {/* Footer */}
+      <div className="booking-footer">
+        <div className="total-info">
+          <span>Ghế chọn: {selectedSeats.length}</span>
+          <span className="price">{calculateTotalPrice().toLocaleString()} đ</span>
         </div>
-        <button 
-          className="btn-next" 
-          disabled={selectedSeats.length === 0}
-          onClick={handleNextStep}
-        >
-          TIẾP TỤC &gt;
+        <button onClick={handleNext} className="btn-continue">
+          Tiếp tục
         </button>
       </div>
     </div>

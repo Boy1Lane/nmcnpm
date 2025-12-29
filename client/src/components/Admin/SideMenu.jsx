@@ -1,4 +1,6 @@
 import "../../styles/Admin/SideMenu.css";
+import { useAuth } from "../../context/AuthContext";
+import { message } from "antd";
 import {
   DashboardOutlined,
   VideoCameraOutlined,
@@ -13,8 +15,15 @@ import { useNavigate, useLocation } from "react-router-dom";
 export default function SideMenu() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
 
-  const menuItems = [
+  const handleLogout = async () => {
+    message.success("Đăng xuất thành công");
+    await logout();
+  };
+
+  // ===== MENU ADMIN =====
+  const adminMenuItems = [
     { key: "/dashboard", label: "Dashboard", icon: <DashboardOutlined /> },
     {
       key: "/movie-management",
@@ -26,6 +35,25 @@ export default function SideMenu() {
     { key: "/user", label: "Người dùng", icon: <UserOutlined /> },
     { key: "/report", label: "Báo cáo", icon: <BarChartOutlined /> },
   ];
+
+  // ===== MENU STAFF =====
+  const staffMenuItems = [
+    { key: "/dashboard", label: "Dashboard", icon: <DashboardOutlined /> },
+    {
+      key: "/check-in",
+      label: "Soát vé",
+      icon: <ScheduleOutlined />,
+    },
+    {
+      key: "sale",
+      label: "Bán vé",
+      icon: <VideoCameraOutlined />,
+      onClick: () => window.open("/", "_blank"),
+    },
+  ];
+
+  // ⭐⭐ DÒNG QUAN TRỌNG NHẤT ⭐⭐
+  const menuItems = user?.role === "staff" ? staffMenuItems : adminMenuItems;
 
   return (
     <div className="sidebar">
@@ -40,7 +68,7 @@ export default function SideMenu() {
             className={`menu-item ${
               location.pathname === item.key ? "active" : ""
             }`}
-            onClick={() => navigate(item.key)}
+            onClick={item.onClick || (() => navigate(item.key))}
           >
             {item.icon}
             <span>{item.label}</span>
@@ -48,7 +76,11 @@ export default function SideMenu() {
         ))}
       </div>
 
-      <div className="sidebar-footer">
+      <div
+        className="sidebar-footer"
+        onClick={handleLogout}
+        style={{ cursor: "pointer" }}
+      >
         <LogoutOutlined className="logout-icon" />
         <span>Đăng xuất</span>
       </div>

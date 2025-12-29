@@ -20,7 +20,8 @@ class AuthController {
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: "strict",
+        // sameSite: "strict",
+        sameSite: "lax",      // ⭐ FIX LỖI 403 SAU 15 PHÚT
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 

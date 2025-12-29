@@ -181,7 +181,7 @@ export default function MovieManagement() {
   );
 
   return (
-    <div style={{ padding: 20, background: "white", borderRadius: 8 }}>
+    <div style={{ padding: 20, borderRadius: 8 }}>
       <h2>Quản lý Phim</h2>
 
       <Button type="primary" onClick={onAddMovie}>

@@ -1,122 +1,108 @@
 import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import bookingService from '../../services/bookingService';
 import './PaymentPage.css';
 
 const PaymentPage = () => {
+  const { scheduleId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const state = location.state || {}; // Lấy dữ liệu từ trang Bắp nước
+  
+  // Lấy dữ liệu được truyền từ các trang trước
+  const { selectedSeatIds, seatsPrice, selectedFoods = [] } = location.state || {};
 
-  // Dữ liệu an toàn (tránh lỗi nếu user vào thẳng link mà không qua các bước trước)
-  const { 
-    selectedSeats = [], 
-    selectedCombos = [], 
-    totalTickets = 0, 
-    totalCombos = 0, 
-    discount = 0, 
-    finalPrice = 0,
-    scheduleId 
-  } = state;
-
-  const [paymentMethod, setPaymentMethod] = useState('momo');
+  const [paymentMethod, setPaymentMethod] = useState('CASH');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handlePay = () => {
-    setIsProcessing(true);
-    // Giả lập gọi API thanh toán mất 2 giây
-    setTimeout(() => {
+  // Tính tổng tiền cuối cùng
+  const foodsPrice = selectedFoods.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const finalTotal = (seatsPrice || 0) + foodsPrice;
+
+  // --- XỬ LÝ THANH TOÁN ---
+  const handlePayment = async () => {
+    if (!selectedSeatIds || selectedSeatIds.length === 0) {
+      alert("Dữ liệu đặt vé không hợp lệ!");
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+
+      // Chuẩn bị dữ liệu gửi lên Server
+      const bookingData = {
+        showtimeId: scheduleId,
+        seats: selectedSeatIds, // Mảng ID của ShowtimeSeat
+        foods: selectedFoods.map(f => ({ foodComboId: f.id, quantity: f.quantity })),
+        paymentMethod: paymentMethod
+      };
+
+      console.log("Sending booking data:", bookingData);
+
+      // Gọi API
+      const result = await bookingService.createBooking(bookingData);
+
+      // Thành công -> Chuyển sang trang vé
+      alert("Đặt vé thành công!");
+      navigate('/ticket-success', { state: { bookingId: result.bookingId } });
+
+    } catch (error) {
+      console.error("Lỗi thanh toán:", error);
+      // Hiển thị thông báo lỗi từ Server trả về (ví dụ: Ghế vừa bị người khác mua)
+      alert(error.response?.data?.message || "Đặt vé thất bại, vui lòng thử lại.");
+    } finally {
       setIsProcessing(false);
-      // Thanh toán xong -> Chuyển sang trang Vé Thành Công
-      // Tạo mã đơn hàng ngẫu nhiên
-      const fakeOrderId = 'ORD-' + Math.floor(Math.random() * 1000000);
-      
-      navigate('/ticket-success', { 
-        state: { 
-          ...state, 
-          paymentMethod, 
-          orderId: fakeOrderId 
-        } 
-      });
-    }, 2000);
+    }
   };
 
+  if (!location.state) {
+    return <div className="p-10 text-center">Không tìm thấy thông tin đặt vé. <a href="/">Về trang chủ</a></div>;
+  }
+
   return (
-    <div className="payment-container">
+    <div className="payment-page-container">
+      <h2>Thanh Toán</h2>
+      
       <div className="payment-content">
-        {/* Cột Trái: Hóa đơn */}
-        <div className="bill-section">
-          <h2>📦 THÔNG TIN ĐẶT VÉ</h2>
-          <div className="bill-row">
-            <span>Phim</span>
-            <strong>Avatar: The Way of Water</strong>
+        {/* Cột trái: Phương thức thanh toán */}
+        <div className="payment-methods">
+          <h3>Chọn phương thức</h3>
+          <div className={`method-item ${paymentMethod === 'CASH' ? 'active' : ''}`}
+               onClick={() => setPaymentMethod('CASH')}>
+            <span>💵 Tiền mặt (Thanh toán tại quầy)</span>
           </div>
-          <div className="bill-row">
-            <span>Suất chiếu</span>
-            <span>09:30 - Rạp 1</span>
+          <div className={`method-item ${paymentMethod === 'CREDIT_CARD' ? 'active' : ''}`}
+               onClick={() => setPaymentMethod('CREDIT_CARD')}>
+            <span>💳 Thẻ tín dụng / Visa</span>
           </div>
-          <div className="bill-row">
-            <span>Ghế ({selectedSeats.length})</span>
-            <strong>{selectedSeats.join(', ')}</strong>
-          </div>
-          <div className="bill-row">
-            <span>Tiền vé</span>
-            <span>{totalTickets.toLocaleString()} đ</span>
-          </div>
-          
-          {selectedCombos.length > 0 && (
-            <div className="bill-row">
-              <span>Bắp nước</span>
-              <span>
-                {selectedCombos.map(c => `${c.quantity}x ${c.name}`).join(', ')}
-                <br/>
-                ({totalCombos.toLocaleString()} đ)
-              </span>
-            </div>
-          )}
-
-          {discount > 0 && (
-            <div className="bill-row" style={{color: '#2ecc71'}}>
-              <span>Voucher giảm giá</span>
-              <span>- {discount.toLocaleString()} đ</span>
-            </div>
-          )}
-
-          <div className="bill-row total">
-            <span>TỔNG THANH TOÁN</span>
-            <span>{finalPrice.toLocaleString()} đ</span>
+          <div className={`method-item ${paymentMethod === 'MOMO' ? 'active' : ''}`}
+               onClick={() => setPaymentMethod('MOMO')}>
+            <span>📱 Ví MoMo</span>
           </div>
         </div>
 
-        {/* Cột Phải: Phương thức thanh toán */}
-        <div className="method-section">
-          <h2 style={{color: 'white', textAlign: 'center', marginBottom: '20px'}}>💳 CHỌN CÁCH THANH TOÁN</h2>
-          
-          <div className={`method-item ${paymentMethod === 'momo' ? 'active' : ''}`} onClick={() => setPaymentMethod('momo')}>
-            <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" className="method-icon" alt="Momo"/>
-            <div>
-              <strong>Ví MoMo</strong>
-              <p style={{fontSize:'12px', color:'#aaa'}}>Quét mã QR để thanh toán</p>
-            </div>
+        {/* Cột phải: Thông tin đơn hàng */}
+        <div className="order-summary">
+          <h3>Thông tin vé</h3>
+          <div className="summary-row">
+            <span>Tiền ghế:</span>
+            <span>{seatsPrice?.toLocaleString()} đ</span>
+          </div>
+          <div className="summary-row">
+            <span>Tiền bắp nước:</span>
+            <span>{foodsPrice.toLocaleString()} đ</span>
+          </div>
+          <hr />
+          <div className="summary-row total">
+            <span>Tổng cộng:</span>
+            <span>{finalTotal.toLocaleString()} đ</span>
           </div>
 
-          <div className={`method-item ${paymentMethod === 'zalo' ? 'active' : ''}`} onClick={() => setPaymentMethod('zalo')}>
-            <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/10/Logo-ZaloPay-Square.png" className="method-icon" alt="Zalo"/>
-            <div>
-              <strong>ZaloPay</strong>
-              <p style={{fontSize:'12px', color:'#aaa'}}>Giảm 5% cho bạn mới</p>
-            </div>
-          </div>
-
-          <div className={`method-item ${paymentMethod === 'card' ? 'active' : ''}`} onClick={() => setPaymentMethod('card')}>
-            <img src="https://cdn-icons-png.flaticon.com/512/179/179457.png" className="method-icon" alt="Card"/>
-            <div>
-              <strong>Thẻ ATM / Visa / Master</strong>
-              <p style={{fontSize:'12px', color:'#aaa'}}>Thanh toán qua cổng Napas</p>
-            </div>
-          </div>
-
-          <button className="btn-pay" onClick={handlePay} disabled={isProcessing}>
-            {isProcessing ? '⏳ ĐANG XỬ LÝ...' : `THANH TOÁN ${finalPrice.toLocaleString()} đ`}
+          <button 
+            className="btn-pay" 
+            onClick={handlePayment} 
+            disabled={isProcessing}
+          >
+            {isProcessing ? 'Đang xử lý...' : 'XÁC NHẬN THANH TOÁN'}
           </button>
         </div>
       </div>

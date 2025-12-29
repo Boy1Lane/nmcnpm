@@ -11,7 +11,14 @@ dotenv.config()
 
 const app = express();
 
-app.use(cors())
+// app.use(cors())
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -24,7 +31,7 @@ startCleanupJob();
 db.authenticate()
   .then(() => {
     console.log('Connected to PostgreSQL');
-    return db.sync({ alter: true });
+    return db.sync({ alter: true, force: true });
   })
   .then(() => {
     console.log('Synced Models with DB');
