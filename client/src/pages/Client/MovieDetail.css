@@ -1,0 +1,85 @@
+.movie-detail-container {
+  background-color: #0a0a0a;
+  color: white;
+  min-height: 100vh;
+}
+
+/* Hiệu ứng Hero Banner làm mờ nền bằng chính ảnh poster */
+.movie-hero {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  padding: 80px 5%;
+}
+
+.movie-hero-overlay {
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  gap: 40px;
+  padding: 40px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.movie-poster img {
+  width: 300px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.movie-info-content {
+  flex: 1;
+}
+
+.movie-title { font-size: 3rem; color: #e50914; margin-bottom: 15px; }
+.movie-meta { font-size: 1.1rem; color: #ccc; margin-bottom: 30px; }
+.movie-description h3 { color: #f1c40f; margin-bottom: 10px; }
+.movie-description p { line-height: 1.6; color: #ddd; margin-bottom: 25px; }
+
+.btn-trailer {
+  display: inline-block;
+  background: #e50914;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+/* Phần lịch chiếu */
+.showtimes-section { padding: 50px 10%; }
+.section-title { border-left: 5px solid #e50914; padding-left: 15px; margin-bottom: 40px; }
+
+.showtime-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.showtime-card {
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #333;
+}
+
+.cinema-name { display: block; font-weight: bold; color: #f1c40f; }
+.showtime-date { font-size: 0.9rem; color: #888; }
+
+.btn-time {
+  background: #333;
+  color: #fff;
+  border: 1px solid #e50914;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.btn-time:hover { background: #e50914; }
+.price-tag { display: block; font-size: 0.8rem; text-align: center; color: #aaa; }
