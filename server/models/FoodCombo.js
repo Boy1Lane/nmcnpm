@@ -18,6 +18,10 @@ const FoodCombo = sequelize.define('FoodCombo', {
   items: {
     type: DataTypes.TEXT,
     allowNull: false
+  },
+  pictureUrl: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 }, {
   timestamps: true
