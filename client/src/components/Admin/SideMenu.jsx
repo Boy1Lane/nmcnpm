@@ -11,6 +11,7 @@ import {
   BarChartOutlined,
   LogoutOutlined,
   GiftOutlined, // ⭐ THÊM
+  CoffeeOutlined, // ⭐ ICON THỨC ĂN
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -33,12 +34,18 @@ export default function SideMenu() {
       icon: <GiftOutlined />,
     },
     {
+      key: "/foods",
+      label: "Thức ăn & Combo",
+      icon: <CoffeeOutlined />,
+    },
+
+    {
       key: "/movie-management",
-      label: "Quản lý phim",
+      label: "Phim",
       icon: <VideoCameraOutlined />,
     },
     { key: "/showtimes", label: "Lịch chiếu", icon: <ScheduleOutlined /> },
-    { key: "/room-seat", label: "Phòng & Ghế", icon: <AppstoreOutlined /> },
+    { key: "/room-seat", label: "Phòng và Ghế", icon: <AppstoreOutlined /> },
     { key: "/user", label: "Người dùng", icon: <UserOutlined /> },
     { key: "/report", label: "Báo cáo", icon: <BarChartOutlined /> },
   ];
@@ -50,7 +57,6 @@ export default function SideMenu() {
       key: "sale",
       label: "Bán vé",
       icon: <VideoCameraOutlined />,
-      onClick: () => window.open("/", "_blank"),
     },
   ];
 

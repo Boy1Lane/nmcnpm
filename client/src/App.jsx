@@ -13,6 +13,7 @@ import ShowtimesPage from "./pages/Admin/Showtimes/ShowtimesPage.jsx";
 import RevenueReport from "./pages/Admin/Reports/RevenueReport.jsx";
 import UserManagement from "./pages/Admin/Users/UserManagement.jsx";
 import PromotionManagement from "./pages/Admin/Promotions/PromotionManagement.jsx";
+import FoodManagement from "./pages/Admin/Foods/FoodManagement.jsx";
 
 // Staff pages
 import CheckInPage from "./pages/Staff/Checkin/CheckinPage.jsx";
@@ -41,8 +42,18 @@ export default function App() {
           {/* ===== STAFF + ADMIN ===== */}
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="check-in" element={<CheckInPage />} />
+          {/* <Route path="sale" element={<CounterBookingPage />} /> */}
 
           {/* ===== ADMIN ONLY ===== */}
+          <Route
+            path="foods"
+            element={
+              <AdminRoute>
+                <FoodManagement />
+              </AdminRoute>
+            }
+          />
+
           <Route
             path="movie-management"
             element={
