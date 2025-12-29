@@ -2,10 +2,10 @@ import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import AdminRoute from "./routes/AdminRoute.jsx";
 import StaffRoute from "./routes/StaffRoute.jsx";
-import ClientRoute from "./routes/ClientRoute.jsx"; // Route bảo vệ cho khách
+import ClientRoute from "./routes/ClientRoute.jsx"; 
 
 import AdminLayout from "./layout/AdminLayout.jsx";
-import ClientLayout from "./layout/ClientLayout.jsx"; // Layout cho khách
+import ClientLayout from "./layout/ClientLayout.jsx"; 
 
 // Admin pages
 import Dashboard from "./pages/Admin/Dashboard.jsx";
@@ -19,7 +19,7 @@ import PromotionManagement from "./pages/Admin/Promotions/PromotionManagement.js
 // Staff pages
 import CheckInPage from "./pages/Staff/Checkin/CheckinPage.jsx";
 
-// Client pages (Các file bạn vừa copy)
+// Client pages
 import HomePage from "./pages/Client/HomePage.jsx";
 import MovieDetail from "./pages/Client/MovieDetail.jsx";
 import BookingPage from "./pages/Client/BookingPage.jsx";
@@ -46,9 +46,16 @@ export default function App() {
           
           {/* Bắt buộc đăng nhập mới được vào luồng đặt vé */}
           <Route element={<ClientRoute />}>
+            {/* Bước 1: Chọn ghế theo Suất chiếu */}
             <Route path="booking/:scheduleId" element={<BookingPage />} />
+            
+            {/* Bước 2: Chọn bắp nước (nếu có) */}
             <Route path="booking/:scheduleId/concessions" element={<ConcessionsPage />} />
-            <Route path="payment/:scheduleId" element={<PaymentPage />} />
+            
+            {/* Bước 3: Thanh toán theo ID của đơn hàng PENDING */}
+            <Route path="payment/:bookingId" element={<PaymentPage />} />
+            
+            {/* Bước 4: Hoàn tất */}
             <Route path="ticket-success" element={<TicketSuccess />} />
           </Route>
         </Route>
