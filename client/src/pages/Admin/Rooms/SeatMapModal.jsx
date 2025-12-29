@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Modal, Button, Space, Typography, message } from "antd";
 import roomService from "../../../services/Admin/roomService";
 
+// 👇 IMPORT FILE CSS VÀO ĐÂY
+import "../../../styles/Admin/Room.css";
+
 const { Text } = Typography;
 
 export default function SeatMapModal({ open, room, disabled, onClose }) {
@@ -10,16 +13,12 @@ export default function SeatMapModal({ open, room, disabled, onClose }) {
 
   const loadSeats = async () => {
     const res = await roomService.getSeats(room.id);
-
-    // ✅ SORT GHẾ TRƯỚC KHI SET STATE
-    const sortedSeats = res.data
-      .slice() // tránh mutate data gốc
-      .sort((a, b) => {
-        if (a.row === b.row) {
-          return a.number - b.number; // số ghế tăng dần
-        }
-        return a.row.localeCompare(b.row); // hàng A → Z
-      });
+    const sortedSeats = res.data.slice().sort((a, b) => {
+      if (a.row === b.row) {
+        return a.number - b.number;
+      }
+      return a.row.localeCompare(b.row);
+    });
 
     setSeats(sortedSeats);
     setChangedSeats({});
@@ -29,10 +28,8 @@ export default function SeatMapModal({ open, room, disabled, onClose }) {
     if (open) loadSeats();
   }, [open]);
 
-  // 👉 CLICK GHẾ: TOGGLE NORMAL <-> VIP
   const toggleSeatType = (seat) => {
     if (disabled) return;
-
     const newType = seat.type === "VIP" ? "NORMAL" : "VIP";
     const newMultiplier = newType === "VIP" ? 1.2 : 1.0;
 
@@ -43,11 +40,7 @@ export default function SeatMapModal({ open, room, disabled, onClose }) {
     };
 
     setSeats((prev) => prev.map((s) => (s.id === seat.id ? updated : s)));
-
-    setChangedSeats((prev) => ({
-      ...prev,
-      [seat.id]: updated,
-    }));
+    setChangedSeats((prev) => ({ ...prev, [seat.id]: updated }));
   };
 
   const handleSave = async () => {
@@ -67,7 +60,6 @@ export default function SeatMapModal({ open, room, disabled, onClose }) {
     loadSeats();
   };
 
-  // group theo hàng
   const grouped = seats.reduce((acc, s) => {
     acc[s.row] = acc[s.row] || [];
     acc[s.row].push(s);
@@ -78,44 +70,74 @@ export default function SeatMapModal({ open, room, disabled, onClose }) {
     <Modal
       open={open}
       width={900}
-      title={`Sơ đồ ghế – ${room.name}`}
+      title={`Sơ đồ ghế – ${room?.name}`} // Thêm dấu ? phòng khi room chưa load kịp
       onCancel={onClose}
       footer={null}
+      centered
     >
-      {/* LEGEND */}
-      <Space style={{ marginBottom: 16 }}>
-        <Button size="small">Ghế thường</Button>
-        <Button size="small" type="primary">
-          Ghế VIP
-        </Button>
-        {disabled && (
-          <Text type="danger">Phòng có lịch chiếu → không thể chỉnh ghế</Text>
-        )}
-      </Space>
+      {/* 1. CHÚ THÍCH (LEGEND) */}
+      <div className="legend-container">
+        <Space size="large">
+          <div className="legend-item">
+            <Button size="small" className="cursor-default">
+              Ghế thường
+            </Button>
+          </div>
+          <div className="legend-item">
+            <Button size="small" type="primary" className="cursor-default">
+              Ghế VIP
+            </Button>
+          </div>
+        </Space>
+      </div>
 
-      {/* SEAT MAP */}
-      {Object.keys(grouped).map((row) => (
-        <div key={row} style={{ marginBottom: 12 }}>
-          <b>{row}</b>
-          <Space wrap>
-            {grouped[row].map((seat) => (
-              <Button
-                key={seat.id}
-                type={seat.type === "VIP" ? "primary" : "default"}
-                onClick={() => toggleSeatType(seat)}
-                disabled={disabled}
-              >
-                {seat.number}
-              </Button>
-            ))}
-          </Space>
+      {disabled && (
+        <Text type="danger" className="warning-text">
+          Phòng có lịch chiếu → không thể chỉnh ghế
+        </Text>
+      )}
+
+      {/* 2. MÀN HÌNH (SCREEN) */}
+      <div className="screen-wrapper">
+        <div className="screen-visual">
+          <span className="screen-text">MÀN HÌNH</span>
         </div>
-      ))}
+      </div>
 
-      {/* SAVE */}
+      {/* 3. SƠ ĐỒ GHẾ (SEAT MAP) */}
+      <div className="seat-map-container">
+        {Object.keys(grouped).map((row) => (
+          <div key={row} className="seat-row">
+            {/* Tên hàng (A, B, C...) */}
+            <div className="row-label">{row}</div>
+
+            {/* Các ghế trong hàng */}
+            <Space wrap>
+              {grouped[row].map((seat) => (
+                <Button
+                  key={seat.id}
+                  type={seat.type === "VIP" ? "primary" : "default"}
+                  onClick={() => toggleSeatType(seat)}
+                  disabled={disabled}
+                  className="seat-btn" // Class CSS chỉnh width
+                >
+                  {seat.number}
+                </Button>
+              ))}
+            </Space>
+          </div>
+        ))}
+      </div>
+
+      {/* 4. FOOTER (NÚT LƯU) */}
       {!disabled && (
-        <div style={{ marginTop: 20, textAlign: "right" }}>
-          <Button type="primary" onClick={handleSave}>
+        <div className="modal-footer">
+          <Button
+            type="primary"
+            size="large"
+            onClick={handleSave}
+            className="save-btn"
+          >
             Lưu sơ đồ ghế
           </Button>
         </div>

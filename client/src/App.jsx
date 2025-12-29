@@ -7,11 +7,12 @@ import AdminLayout from "./layout/AdminLayout.jsx";
 
 // Admin pages
 import Dashboard from "./pages/Admin/Dashboard.jsx";
-import MovieManagement from "./pages/Admin/MovieManagement.jsx";
+import MovieManagement from "./pages/Admin/Movie/MovieManagement.jsx";
 import RoomManagement from "./pages/Admin/Rooms/RoomManagement.jsx";
 import ShowtimesPage from "./pages/Admin/Showtimes/ShowtimesPage.jsx";
 import RevenueReport from "./pages/Admin/Reports/RevenueReport.jsx";
 import UserManagement from "./pages/Admin/Users/UserManagement.jsx";
+import PromotionManagement from "./pages/Admin/Promotions/PromotionManagement.jsx";
 
 // Staff pages
 import CheckInPage from "./pages/Staff/Checkin/CheckinPage.jsx";
@@ -47,6 +48,15 @@ export default function App() {
             element={
               <AdminRoute>
                 <MovieManagement />
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="promotions"
+            element={
+              <AdminRoute>
+                <PromotionManagement />
               </AdminRoute>
             }
           />

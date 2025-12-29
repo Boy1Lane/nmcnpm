@@ -1,0 +1,226 @@
+/* Import Font Inter cho đẹp */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+.revenue-container {
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    color: #334155;
+}
+
+/* --- Header --- */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
+}
+
+.page-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.page-subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin: 4px 0 0 0;
+}
+
+.btn-export {
+    background: white;
+    border: 1px solid #e2e8f0;
+    color: #059669;
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+.btn-export:hover {
+    background: #059669 !important;
+    color: white !important;
+    border-color: #059669 !important;
+    transform: translateY(-2px);
+}
+
+/* --- Filter Section --- */
+.filter-card {
+    background: #fff;
+    border-radius: 16px; /* Bo góc tròn hơn */
+    padding: 24px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); /* Bóng mềm */
+    margin-bottom: 24px;
+    border: 1px solid #f8fafc;
+}
+
+.filter-label {
+    font-size: 13px;
+    color: #475569;
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 600;
+}
+
+/* Nút Lọc */
+.btn-filter {
+    height: 40px;
+    border-radius: 8px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+.btn-filter:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4);
+}
+
+/* --- STATS DASHBOARD LAYOUT (GRID MỚI) --- */
+.dashboard-stats-container {
+    display: grid;
+    /* Chia cột: Bên trái 3.5 phần, bên phải 6.5 phần */
+    grid-template-columns: 3.5fr 6.5fr; 
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+/* Base Card Style */
+.stat-card, .chart-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08); /* Bóng sâu và sang */
+    border: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover, .chart-card:hover {
+    transform: translateY(-3px); /* Hiệu ứng nổi lên khi di chuột */
+}
+
+/* --- Revenue Card (Bên trái) --- */
+.revenue-card {
+    position: relative;
+    border-left: 6px solid #6366f1; /* Điểm nhấn màu tím bên trái */
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.stat-icon-wrapper {
+    width: 50px;
+    height: 50px;
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.stat-content h3 {
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+}
+
+/* Chữ số tiền Gradient */
+.gradient-text {
+    font-size: 36px;
+    font-weight: 800;
+    margin: 0;
+    background: -webkit-linear-gradient(45deg, #4f46e5, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: 'Inter', sans-serif;
+}
+.gradient-text small {
+    font-size: 16px;
+    font-weight: 600;
+    color: #94a3b8;
+    -webkit-text-fill-color: #94a3b8;
+}
+
+.sub-text {
+    font-size: 13px;
+    color: #10b981; /* Xanh lá */
+    margin-top: 8px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* --- Chart Card (Bên phải) --- */
+.chart-card {
+    padding: 20px 24px 10px 24px; /* Padding dưới ít hơn */
+}
+
+.chart-header-simple {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 10px;
+}
+
+/* --- Table Section --- */
+.table-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+}
+
+.table-header-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 20px;
+}
+
+/* Custom Table */
+.custom-table .ant-table-thead > tr > th {
+    background: #f8fafc !important;
+    color: #475569;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 12px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.custom-table .ant-table-tbody > tr > td {
+    padding: 16px 16px;
+    font-weight: 500;
+}
+
+.price-text {
+    color: #0f172a;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+}
+
+.order-id-tag {
+    background: #eff6ff;
+    color: #3b82f6;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+/* Ant Design Overrides */
+.ant-picker, .ant-select-selector {
+    border-radius: 8px !important;
+    border-color: #e2e8f0 !important;
+}

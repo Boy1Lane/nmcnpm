@@ -1,3 +1,4 @@
+import React from "react";
 import "../../styles/Admin/SideMenu.css";
 import { useAuth } from "../../context/AuthContext";
 import { message } from "antd";
@@ -9,6 +10,7 @@ import {
   UserOutlined,
   BarChartOutlined,
   LogoutOutlined,
+  GiftOutlined, // ⭐ THÊM
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -22,9 +24,14 @@ export default function SideMenu() {
     await logout();
   };
 
-  // ===== MENU ADMIN =====
   const adminMenuItems = [
     { key: "/dashboard", label: "Dashboard", icon: <DashboardOutlined /> },
+    // ⭐ THÊM DÒNG NÀY
+    {
+      key: "/promotions",
+      label: "Khuyến mãi",
+      icon: <GiftOutlined />,
+    },
     {
       key: "/movie-management",
       label: "Quản lý phim",
@@ -36,14 +43,9 @@ export default function SideMenu() {
     { key: "/report", label: "Báo cáo", icon: <BarChartOutlined /> },
   ];
 
-  // ===== MENU STAFF =====
   const staffMenuItems = [
     { key: "/dashboard", label: "Dashboard", icon: <DashboardOutlined /> },
-    {
-      key: "/check-in",
-      label: "Soát vé",
-      icon: <ScheduleOutlined />,
-    },
+    { key: "/check-in", label: "Soát vé", icon: <ScheduleOutlined /> },
     {
       key: "sale",
       label: "Bán vé",
@@ -52,15 +54,16 @@ export default function SideMenu() {
     },
   ];
 
-  // ⭐⭐ DÒNG QUAN TRỌNG NHẤT ⭐⭐
   const menuItems = user?.role === "staff" ? staffMenuItems : adminMenuItems;
 
   return (
     <div className="sidebar">
+      {/* Logo Area */}
       <div className="sidebar-logo">
         🎬 <span>AdminPanel</span>
       </div>
 
+      {/* Menu Items */}
       <div className="sidebar-menu">
         {menuItems.map((item) => (
           <div
@@ -76,11 +79,8 @@ export default function SideMenu() {
         ))}
       </div>
 
-      <div
-        className="sidebar-footer"
-        onClick={handleLogout}
-        style={{ cursor: "pointer" }}
-      >
+      {/* Footer / Logout */}
+      <div className="sidebar-footer" onClick={handleLogout}>
         <LogoutOutlined className="logout-icon" />
         <span>Đăng xuất</span>
       </div>

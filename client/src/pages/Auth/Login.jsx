@@ -1,7 +1,9 @@
 import { Card, Form, Input, Button, message } from "antd";
 import { useNavigate, Navigate } from "react-router-dom";
+import { UserOutlined, LockOutlined } from "@ant-design/icons"; // Thêm icon cho đẹp
 import authService from "../../services/authService";
 import { useAuth } from "../../context/AuthContext";
+import "../../styles/Auth/Auth.css";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -50,30 +52,36 @@ export default function Login() {
   };
 
   return (
-    <div style={styles.wrapper}>
-      <Card title="Đăng nhập" style={styles.card}>
-        <Form layout="vertical" onFinish={onFinish}>
+    <div className="auth-wrapper">
+      <Card className="auth-card">
+        <div className="auth-title">Đăng Nhập Hệ Thống</div>
+
+        <Form layout="vertical" onFinish={onFinish} size="large">
           <Form.Item
-            label="Email"
             name="email"
-            rules={[{ required: true, type: "email" }]}
+            rules={[
+              {
+                required: true,
+                type: "email",
+                message: "Vui lòng nhập đúng định dạng email!",
+              },
+            ]}
           >
-            <Input />
+            <Input prefix={<UserOutlined />} placeholder="Email" />
           </Form.Item>
 
           <Form.Item
-            label="Mật khẩu"
             name="password"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
           >
-            <Input.Password />
+            <Input.Password prefix={<LockOutlined />} placeholder="Mật khẩu" />
           </Form.Item>
 
-          <Button type="primary" htmlType="submit" block>
+          <Button type="primary" htmlType="submit" block className="auth-btn">
             Đăng nhập
           </Button>
 
-          <div style={{ marginTop: 12, textAlign: "center" }}>
+          <div className="auth-footer">
             Chưa có tài khoản? <a href="/register">Đăng ký</a>
           </div>
         </Form>
@@ -81,14 +89,3 @@ export default function Login() {
     </div>
   );
 }
-
-const styles = {
-  wrapper: {
-    minHeight: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "#f5f5f5",
-  },
-  card: { width: 380 },
-};

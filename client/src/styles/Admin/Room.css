@@ -1,0 +1,399 @@
+/* AdminRoom.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* --- LAYOUT CHUNG --- */
+.admin-room-page {
+  padding: 24px;
+  font-family: 'Inter', sans-serif;
+  background-color: #f5f7fa; /* Màu nền xám nhẹ hiện đại */
+  min-height: 100vh;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  margin: 0 !important;
+  font-weight: 700 !important;
+  color: #111827 !important;
+}
+
+/* --- THANH CÔNG CỤ & FILTER --- */
+.filter-section {
+  background-color: #ffffff;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+  
+  /* Flex để căn chỉnh hàng ngang đẹp hơn */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.filter-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.custom-select .ant-select-selector {
+  border-radius: 8px !important;
+  height: 40px !important;
+  align-items: center;
+}
+
+.filter-tabs .ant-tabs-nav {
+  margin-bottom: 0 !important;
+}
+
+.btn-add {
+  height: 40px;
+  border-radius: 8px;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(24, 144, 255, 0.2);
+}
+
+/* --- DANH SÁCH PHÒNG (CARD) --- */
+.room-card {
+  border-radius: 12px !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02) !important;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.room-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+  border-color: #d1d5db !important;
+}
+
+.room-card .ant-card-head {
+  border-bottom: 1px solid #f3f4f6;
+  padding: 0 24px;
+  min-height: 56px;
+}
+
+.room-card .ant-card-body {
+  padding: 20px 24px;
+}
+
+.room-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.room-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cinema-name {
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.seat-count {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* --- NÚT HÀNH ĐỘNG TRONG CARD --- */
+.action-btn {
+  border-radius: 6px;
+  border-color: #e5e7eb;
+}
+
+.action-btn:hover {
+  border-color: #40a9ff;
+  color: #40a9ff;
+}
+
+.action-btn-danger:hover {
+  border-color: #ff7875 !important;
+  color: #ff4d4f !important;
+  background-color: #fff1f0 !important;
+}
+
+/* --- MODAL (Dùng cho bước sau) --- */
+.custom-modal .ant-modal-content {
+  border-radius: 16px;
+  padding: 24px;
+}
+.custom-modal .ant-modal-header {
+  margin-bottom: 16px;
+}
+.custom-modal .ant-modal-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* SeatMapModal.css */
+
+/* --- Phần chú thích (Legend) --- */
+.legend-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.warning-text {
+  text-align: center;
+  margin-bottom: 16px;
+  display: block;
+}
+
+/* --- Phần Màn hình (Screen) --- */
+.screen-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.screen-visual {
+  height: 40px;
+  width: 70%; /* Độ rộng màn hình so với modal */
+  background: linear-gradient(to bottom, #e6f7ff, #bae7ff); /* Gradient xanh nhạt */
+  border-radius: 8px;
+  border: 1px solid #91d5ff;
+  
+  /* Tạo hiệu ứng 3D nghiêng và đổ bóng sáng */
+  transform: perspective(200px) rotateX(-5deg);
+  box-shadow: 0 25px 20px -10px rgba(24, 144, 255, 0.25);
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.screen-text {
+  font-size: 12px;
+  letter-spacing: 4px; /* Giãn chữ cho sang trọng */
+  opacity: 0.8;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #0050b3; /* Màu chữ đậm hơn một chút cho dễ đọc */
+}
+
+/* --- Phần Sơ đồ ghế (Seat Map) --- */
+.seat-map-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.seat-row {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Khoảng cách giữa chữ cái hàng (A) và dãy ghế */
+}
+
+.row-label {
+  width: 25px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Class riêng cho nút ghế để cố định kích thước */
+.seat-btn {
+  width: 40px !important; /* Cố định chiều rộng */
+  padding: 0 !important;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* --- Phần Footer (Nút lưu) --- */
+.modal-footer {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.save-btn {
+  min-width: 150px;
+  height: 40px;
+}
+
+/* EditRoomModal.css */
+
+/* Container bao quanh các input */
+.edit-room-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Khoảng cách giữa các ô nhập liệu */
+  padding-top: 10px;
+}
+
+/* Từng nhóm nhập liệu (Label + Input) */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Label (Nhãn) của ô input */
+.form-label {
+  font-weight: 600; /* Chữ đậm */
+  margin-bottom: 8px; /* Khoảng cách với ô input bên dưới */
+  color: #262626;
+  display: block;
+}
+
+/* Class riêng để ép Select full chiều rộng */
+.full-width-select {
+  width: 100% !important;
+}
+
+/* CreateRoomModal.css */
+
+/* --- FORM --- */
+.create-room-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #262626;
+  display: block;
+}
+
+.full-width-select {
+  width: 100% !important;
+}
+
+/* --- SEAT MAP CONFIGURATOR --- */
+.seat-map-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 20px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  padding-bottom: 20px;
+}
+
+.preview-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #595959;
+}
+
+/* Legend (Chú thích) */
+.legend-container {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+/* Screen (Màn hình) */
+.screen-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.screen-visual {
+  height: 30px;
+  width: 60%;
+  background: linear-gradient(to bottom, #e6f7ff, #91d5ff);
+  border-radius: 4px;
+  /* Hiệu ứng 3D */
+  transform: perspective(300px) rotateX(-10deg);
+  box-shadow: 0 15px 10px -10px rgba(24, 144, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.screen-text {
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  color: #003a8c;
+  opacity: 0.8;
+}
+
+/* Grid Ghế */
+.seat-rows-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 0 10px;
+  width: 100%;
+  align-items: center;
+}
+
+.seat-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.row-label {
+  width: 20px;
+  text-align: center;
+  font-weight: bold;
+  color: #8c8c8c;
+}
+
+/* Nút ghế */
+.seat-btn-config {
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer !important;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.seat-btn-config:hover {
+  transform: scale(1.1);
+  z-index: 2;
+}
+
+/* Màu ghế */
+.seat-normal {
+  background-color: #ffffff !important;
+  border: 1px solid #d9d9d9 !important;
+  color: #595959 !important;
+}
+
+.seat-vip {
+  background-color: #1890ff !important;
+  border: 1px solid #1890ff !important;
+  color: #ffffff !important;
+}

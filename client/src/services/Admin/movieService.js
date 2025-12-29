@@ -9,13 +9,15 @@ const movieService = {
     return axiosAdmin.get(`/movies/${id}`);
   },
 
-  create(payload) {
-    return axiosAdmin.post("/movies", payload);
-  },
+  create: (formData) =>
+    axiosAdmin.post("/movies", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
 
-  update(id, payload) {
-    return axiosAdmin.put(`/movies/${id}`, payload);
-  },
+  update: (id, formData) =>
+    axiosAdmin.put(`/movies/${id}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
 
   delete(id) {
     return axiosAdmin.delete(`/movies/${id}`);
