@@ -5,7 +5,7 @@ const uploadBufferToCloudinary = (buffer, options = {}) => new Promise((resolve,
   const stream = cloudinary.uploader.upload_stream(
     {
       folder: options.folder || 'movies',
-      resource_type: 'image'
+      resource_type: options.resource_type || 'image'
     },
     (error, result) => {
       if (error) return reject(error);
@@ -15,6 +15,11 @@ const uploadBufferToCloudinary = (buffer, options = {}) => new Promise((resolve,
 
   stream.end(buffer);
 });
+
+const getUploadedFile = (req, fieldName) => {
+  if (req.files?.[fieldName]?.[0]) return req.files[fieldName][0];
+  return null;
+};
 
 // /POST /api/movies -> createMovie
 exports.createMovie = async (req, res) => {
@@ -26,9 +31,17 @@ exports.createMovie = async (req, res) => {
     }
 
     let resolvedPosterUrl = posterUrl;
-    if (req.file && req.file.buffer) {
-      const uploaded = await uploadBufferToCloudinary(req.file.buffer, { folder: 'movies/posters' });
+    const posterFile = getUploadedFile(req, 'poster');
+    if (posterFile?.buffer) {
+      const uploaded = await uploadBufferToCloudinary(posterFile.buffer, { folder: 'movies/posters', resource_type: 'image' });
       resolvedPosterUrl = uploaded.secure_url;
+    }
+
+    let resolvedTrailerUrl = trailerUrl;
+    const trailerFile = getUploadedFile(req, 'trailer');
+    if (trailerFile?.buffer) {
+      const uploaded = await uploadBufferToCloudinary(trailerFile.buffer, { folder: 'movies/trailers', resource_type: 'video' });
+      resolvedTrailerUrl = uploaded.secure_url;
     }
 
     const newMovie = await Movie.create({
@@ -40,7 +53,7 @@ exports.createMovie = async (req, res) => {
       duration,
       releaseDate,
       posterUrl: resolvedPosterUrl,
-      trailerUrl,
+      trailerUrl: resolvedTrailerUrl,
       status: 'coming_soon'
     });
 
@@ -94,9 +107,17 @@ exports.updateMovie = async (req, res) => {
     }
 
     let resolvedPosterUrl = posterUrl;
-    if (req.file && req.file.buffer) {
-      const uploaded = await uploadBufferToCloudinary(req.file.buffer, { folder: 'movies/posters' });
+    const posterFile = getUploadedFile(req, 'poster');
+    if (posterFile?.buffer) {
+      const uploaded = await uploadBufferToCloudinary(posterFile.buffer, { folder: 'movies/posters', resource_type: 'image' });
       resolvedPosterUrl = uploaded.secure_url;
+    }
+
+    let resolvedTrailerUrl = trailerUrl;
+    const trailerFile = getUploadedFile(req, 'trailer');
+    if (trailerFile?.buffer) {
+      const uploaded = await uploadBufferToCloudinary(trailerFile.buffer, { folder: 'movies/trailers', resource_type: 'video' });
+      resolvedTrailerUrl = uploaded.secure_url;
     }
 
     await movie.update({
@@ -108,7 +129,7 @@ exports.updateMovie = async (req, res) => {
       duration,
       releaseDate,
       posterUrl: resolvedPosterUrl,
-      trailerUrl,
+      trailerUrl: resolvedTrailerUrl,
       status
     });
     res.status(200).json({
