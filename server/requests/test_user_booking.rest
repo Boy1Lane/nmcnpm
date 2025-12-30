@@ -31,7 +31,12 @@ Authorization: Bearer {{login.response.body.accessToken}}
 {
   "showtimeId": 11,
   "paymentMethod": "CASH",
-  "seatIds": [103, 104] 
+  "seatIds": [103, 104],
+  "foodItems": [
+    { "foodId": 1, "quantity": 2 },
+    { "foodId": 3, "quantity": 1 }
+  ],
+  "promotionCode": "SUMMER2025"
 }
 
 ### Confirm the Booking
