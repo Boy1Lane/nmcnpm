@@ -9,7 +9,8 @@ const {
   ShowtimeSeat,
   Booking,
   BookingSeat,
-  Promotion // ⭐ THÊM
+  Promotion, // ⭐ THÊM
+  FoodCombo // ⭐ THÊM
 } = require('./models');
 const bcrypt = require('bcrypt');
 
@@ -290,20 +291,65 @@ async function seedData() {
         validTo: new Date('2025-12-31'),
         usageLimit: null, // không giới hạn
         timesUsed: 0
+      }
+    ]);
+    console.log('🎁 Promotions seeded');
+
+    // =========================
+    // FOOD COMBOS
+    // =========================
+    await FoodCombo.bulkCreate([
+      {
+        name: 'Popcorn (L)',
+        price: 50000,
+        items: '1 Large Popcorn',
+        pictureUrl: 'https://example.com/popcorn.jpg'
       },
       {
-        code: 'FLASH30',
-        description: 'Flash sale giảm 30%',
-        discountPercentage: 30,
+        name: 'Coke (L)',
+        price: 30000,
+        items: '1 Large Coke',
+        pictureUrl: 'https://example.com/coke.jpg'
+      },
+      {
+        name: 'Combo 1',
+        price: 75000,
+        items: '1 Popcorn (M) + 1 Coke (M)',
+        pictureUrl: 'https://example.com/combo1.jpg'
+      },
+      {
+        name: 'Combo 2',
+        price: 140000,
+        items: '2 Popcorn (M) + 2 Coke (M)',
+        pictureUrl: 'https://example.com/combo2.jpg'
+      }
+    ]);
+    console.log('🍿 Food Combos seeded');
+
+    // =========================
+    // PROMOTIONS (Additional)
+    // =========================
+    await Promotion.bulkCreate([
+      {
+        code: 'SUMMER2025',
+        description: 'Summer Sale 10%',
+        discountPercentage: 10,
+        validFrom: new Date(),
+        validTo: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+        usageLimit: 100,
+        timesUsed: 0
+      },
+      {
+        code: 'WELCOME',
+        description: 'Welcome New User 20%',
+        discountPercentage: 20,
         validFrom: new Date(),
         validTo: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        usageLimit: 20,
+        usageLimit: 50,
         timesUsed: 0
       }
     ]);
-
     console.log('🎁 Promotions seeded');
-
 
     console.log('🎉 SEED DATA CREATED SUCCESSFULLY');
     process.exit(0);
