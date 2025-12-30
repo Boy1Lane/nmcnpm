@@ -2,6 +2,8 @@ const Booking = require('../../models/Booking');
 const BookingSeat = require('../../models/BookingSeat');
 const BookingFood = require('../../models/BookingFood');
 const ShowtimeSeat = require('../../models/ShowtimeSeat');
+const Showtime = require('../../models/Showtime');
+const sequelize = require('../../config/db');
 const { Op } = require('sequelize');
 
 // GET /admin/bookings -> getAllBookings
@@ -22,34 +24,98 @@ exports.getAllBookings = async (req, res) => {
 exports.createBooking = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    const { userId, showtimeId, totalPrice, paymentMethod, status, seatIds } = req.body;
+    const { userId, showtimeId, paymentMethod, status, seatIds } = req.body;
 
-    if (!userId || !showtimeId || !totalPrice || !paymentMethod) {
+    if (!userId || !showtimeId || !paymentMethod) {
       await transaction.rollback();
       return res.status(400).json({ message: 'Missing required fields!' });
     }
 
-    const newBooking = await Booking.create({ 
-      userId, 
-      showtimeId, 
-      totalPrice, 
+    if (!Array.isArray(seatIds) || seatIds.length === 0) {
+      await transaction.rollback();
+      return res.status(400).json({ message: 'seatIds must be a non-empty array' });
+    }
+
+    const showtime = await Showtime.findByPk(showtimeId, { transaction });
+    if (!showtime) {
+      await transaction.rollback();
+      return res.status(404).json({ message: 'Showtime not found' });
+    }
+
+    // Admin API historically might pass either physical Seat IDs (like user API)
+    // or ShowtimeSeat IDs. Prefer Seat IDs; fallback to ShowtimeSeat IDs.
+    let showtimeSeats = await ShowtimeSeat.findAll({
+      where: {
+        showtimeId,
+        seatId: seatIds
+      },
+      lock: transaction.LOCK.UPDATE,
+      transaction
+    });
+
+    if (showtimeSeats.length !== seatIds.length) {
+      showtimeSeats = await ShowtimeSeat.findAll({
+        where: {
+          showtimeId,
+          id: seatIds
+        },
+        lock: transaction.LOCK.UPDATE,
+        transaction
+      });
+    }
+
+    if (showtimeSeats.length !== seatIds.length) {
+      await transaction.rollback();
+      return res.status(400).json({ message: 'Invalid seat IDs for this showtime.' });
+    }
+
+    const unavailable = showtimeSeats.some((seat) => seat.status !== 'AVAILABLE');
+    if (unavailable) {
+      await transaction.rollback();
+      return res.status(409).json({ message: 'One or more seats are already booked or held.' });
+    }
+
+    const calculatedTotal = showtimeSeats.reduce((sum, seat) => sum + seat.price, 0);
+
+    // Create booking as PENDING (hold seats) like user flow
+    const newBooking = await Booking.create({
+      userId,
+      showtimeId,
+      totalPrice: calculatedTotal,
       paymentMethod,
-      status: status || 'PENDING' // Allow Admin to set CONFIRMED
+      status: 'PENDING',
+      bookingDate: new Date()
     }, { transaction });
 
-    if (seatIds && seatIds.length > 0) {
-      const bookingSeatsData = seatIds.map(seatId => ({
-        bookingId: newBooking.id,
-        showtimeSeatId: seatId,
-        price: 0
-      }));
-      await BookingSeat.bulkCreate(bookingSeatsData, { transaction });
+    // Lock seats
+    await ShowtimeSeat.update({
+      status: 'LOCKED',
+      lockedAt: new Date()
+    }, {
+      where: {
+        id: showtimeSeats.map((s) => s.id)
+      },
+      transaction
+    });
 
-      const seatStatus = (status === 'CONFIRMED') ? 'SOLD' : 'LOCKED';
+    await BookingSeat.bulkCreate(
+      showtimeSeats.map((sts) => ({
+        bookingId: newBooking.id,
+        showtimeSeatId: sts.id
+      })),
+      { transaction }
+    );
+
+    // Backward compatible: allow admin to create and immediately confirm in one request.
+    if (status === 'CONFIRMED') {
+      newBooking.status = 'CONFIRMED';
+      await newBooking.save({ transaction });
+
       await ShowtimeSeat.update({
-        status: seatStatus
+        status: 'SOLD',
+        lockedAt: null
       }, {
-        where: { id: seatIds },
+        where: { id: showtimeSeats.map((s) => s.id) },
         transaction
       });
     }
@@ -57,13 +123,110 @@ exports.createBooking = async (req, res) => {
     await transaction.commit();
 
     res.status(201).json({
-      message: 'Booking created successfully!',
+      message: status === 'CONFIRMED'
+        ? 'Booking created and confirmed successfully!'
+        : 'Seats held successfully. Please confirm booking to finalize.',
       data: newBooking
     });
   } catch (error) {
     await transaction.rollback();
     console.error(error);
     res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// POST /admin/bookings/confirm -> confirmBooking
+exports.confirmBooking = async (req, res) => {
+  const transaction = await sequelize.transaction();
+  try {
+    const { bookingId } = req.body;
+    if (!bookingId) {
+      await transaction.rollback();
+      return res.status(400).json({ message: 'bookingId is required' });
+    }
+
+    const booking = await Booking.findOne({
+      where: { id: bookingId, status: 'PENDING' },
+      transaction,
+      lock: transaction.LOCK.UPDATE
+    });
+
+    if (!booking) {
+      await transaction.rollback();
+      return res.status(404).json({ message: 'Booking not found or already processed.' });
+    }
+
+    booking.status = 'CONFIRMED';
+    await booking.save({ transaction });
+
+    const bookingSeats = await BookingSeat.findAll({
+      where: { bookingId: booking.id },
+      transaction
+    });
+
+    const showtimeSeatIds = bookingSeats.map((bs) => bs.showtimeSeatId);
+
+    if (showtimeSeatIds.length > 0) {
+      await ShowtimeSeat.update({
+        status: 'SOLD',
+        lockedAt: null
+      }, {
+        where: { id: showtimeSeatIds },
+        transaction
+      });
+    }
+
+    await transaction.commit();
+    res.json({ message: 'Booking confirmed successfully.', booking });
+  } catch (error) {
+    await transaction.rollback();
+    console.error('Admin confirm booking error:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+// POST /admin/bookings/:bookingId/cancel -> cancelBooking
+exports.cancelBooking = async (req, res) => {
+  const transaction = await sequelize.transaction();
+  try {
+    const bookingId = req.params.bookingId;
+
+    const booking = await Booking.findOne({
+      where: { id: bookingId, status: 'PENDING' },
+      transaction,
+      lock: transaction.LOCK.UPDATE
+    });
+
+    if (!booking) {
+      await transaction.rollback();
+      return res.status(404).json({ message: 'Booking not found or already processed.' });
+    }
+
+    booking.status = 'CANCELLED';
+    await booking.save({ transaction });
+
+    const bookingSeats = await BookingSeat.findAll({
+      where: { bookingId: booking.id },
+      transaction
+    });
+
+    const showtimeSeatIds = bookingSeats.map((bs) => bs.showtimeSeatId);
+    if (showtimeSeatIds.length > 0) {
+      await ShowtimeSeat.update({
+        status: 'AVAILABLE',
+        lockedAt: null
+      }, {
+        where: { id: showtimeSeatIds },
+        transaction
+      });
+    }
+
+    await transaction.commit();
+    res.json({ message: 'Booking cancelled successfully.' });
+  } catch (error) {
+    await transaction.rollback();
+    console.error('Admin cancel booking error:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
 
@@ -110,16 +273,47 @@ exports.updateBooking = async (req, res) => {
 
 // DELETE /admin/bookings/:id -> deleteBooking
 exports.deleteBooking = async (req, res) => {
+  const transaction = await sequelize.transaction();
   try {
     const { id } = req.params;
-    const booking = await Booking.findByPk(id);
+
+    const booking = await Booking.findByPk(id, {
+      transaction,
+      lock: transaction.LOCK.UPDATE
+    });
+
     if (!booking) {
+      await transaction.rollback();
       return res.status(404).json({ message: 'Booking not found' });
     }
-    await booking.destroy();
+
+    const bookingSeats = await BookingSeat.findAll({
+      where: { bookingId: booking.id },
+      transaction
+    });
+
+    const showtimeSeatIds = bookingSeats.map((bs) => bs.showtimeSeatId);
+
+    if (showtimeSeatIds.length > 0) {
+      await ShowtimeSeat.update({
+        status: 'AVAILABLE',
+        lockedAt: null
+      }, {
+        where: { id: showtimeSeatIds },
+        transaction
+      });
+    }
+
+    // Clean up child records explicitly (do not rely on DB cascade)
+    await BookingSeat.destroy({ where: { bookingId: booking.id }, transaction });
+    await BookingFood.destroy({ where: { bookingId: booking.id }, transaction });
+    await booking.destroy({ transaction });
+
+    await transaction.commit();
     res.status(200).json({ message: 'Booking deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'deleteBooking error' });
+    await transaction.rollback();
+    res.status(500).json({ message: 'deleteBooking error', error: error.message });
   }
 };
 

@@ -12,6 +12,16 @@ const bookingService = {
       status: "USED",
     });
   },
+  create(payload) {
+    return axiosAdmin
+      .post("/bookings", payload)
+      .then((res) => ({ success: true, data: res.data }))
+      .catch((err) => ({
+        success: false,
+        error: err.response?.data?.message || "Booking failed",
+      }));
+  },
+
 };
 
 export default bookingService;

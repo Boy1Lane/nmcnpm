@@ -2,6 +2,12 @@ const express = require('express');
 const router = express.Router();
 const bookingController = require('../../controllers/admin/bookingController');
 
+// POST /admin/bookings/confirm -> confirmBooking
+router.post('/confirm', bookingController.confirmBooking);
+
+// POST /admin/bookings/:bookingId/cancel -> cancelBooking
+router.post('/:bookingId/cancel', bookingController.cancelBooking);
+
 // GET /admin/bookings/summary -> getBookingSummary?month=&year=
 router.get('/summary', bookingController.getBookingSummary);
 
