@@ -8,7 +8,8 @@ const {
   Showtime,
   ShowtimeSeat,
   Booking,
-  BookingSeat
+  BookingSeat,
+  Promotion // ⭐ THÊM
 } = require('./models');
 const bcrypt = require('bcrypt');
 
@@ -259,6 +260,50 @@ async function seedData() {
         await seat.save();
       }
     }
+        // =========================
+    // PROMOTIONS
+    // =========================
+    await Promotion.bulkCreate([
+      {
+        code: 'SALE10',
+        description: 'Giảm 10% cho mọi đơn vé',
+        discountPercentage: 10,
+        validFrom: new Date('2025-01-01'),
+        validTo: new Date('2025-12-31'),
+        usageLimit: 100,
+        timesUsed: 0
+      },
+      {
+        code: 'SALE20',
+        description: 'Giảm 20% vé cuối tuần',
+        discountPercentage: 20,
+        validFrom: new Date('2025-01-01'),
+        validTo: new Date('2025-06-30'),
+        usageLimit: 50,
+        timesUsed: 0
+      },
+      {
+        code: 'NEWUSER15',
+        description: 'Khuyến mãi cho khách hàng mới',
+        discountPercentage: 15,
+        validFrom: new Date('2025-01-01'),
+        validTo: new Date('2025-12-31'),
+        usageLimit: null, // không giới hạn
+        timesUsed: 0
+      },
+      {
+        code: 'FLASH30',
+        description: 'Flash sale giảm 30%',
+        discountPercentage: 30,
+        validFrom: new Date(),
+        validTo: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        usageLimit: 20,
+        timesUsed: 0
+      }
+    ]);
+
+    console.log('🎁 Promotions seeded');
+
 
     console.log('🎉 SEED DATA CREATED SUCCESSFULLY');
     process.exit(0);
