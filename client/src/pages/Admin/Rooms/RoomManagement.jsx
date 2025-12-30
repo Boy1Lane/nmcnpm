@@ -23,6 +23,9 @@ import CreateRoomModal from "./CreateRoomModal";
 import SeatMapModal from "./SeatMapModal";
 import EditRoomModal from "./EditRoomModal";
 
+// Import file CSS dùng chung
+import "../../../styles/Admin/Room.css";
+
 const { Title, Text } = Typography;
 
 export default function RoomManagement() {
@@ -38,28 +41,32 @@ export default function RoomManagement() {
   const [openEdit, setOpenEdit] = useState(false);
 
   const loadData = async () => {
-    const [roomRes, showtimeRes] = await Promise.all([
-      roomService.getAll(),
-      showtimeService.getAll(),
-    ]);
+    try {
+      const [roomRes, showtimeRes] = await Promise.all([
+        roomService.getAll(),
+        showtimeService.getAll(),
+      ]);
 
-    const now = new Date();
+      const now = new Date();
 
-    const roomsWithFlag = roomRes.data.map((room) => ({
-      ...room,
-      hasFutureShowtime: showtimeRes.data.some(
-        (st) => st.roomId === room.id && new Date(st.startTime) > now
-      ),
-    }));
+      const roomsWithFlag = roomRes.data.map((room) => ({
+        ...room,
+        hasFutureShowtime: showtimeRes.data.some(
+          (st) => st.roomId === room.id && new Date(st.startTime) > now
+        ),
+      }));
 
-    // lấy danh sách rạp từ rooms
-    const cinemaMap = {};
-    roomsWithFlag.forEach((r) => {
-      if (r.Cinema) cinemaMap[r.Cinema.id] = r.Cinema;
-    });
+      // lấy danh sách rạp từ rooms
+      const cinemaMap = {};
+      roomsWithFlag.forEach((r) => {
+        if (r.Cinema) cinemaMap[r.Cinema.id] = r.Cinema;
+      });
 
-    setRooms(roomsWithFlag);
-    setCinemas(Object.values(cinemaMap));
+      setRooms(roomsWithFlag);
+      setCinemas(Object.values(cinemaMap));
+    } catch (error) {
+      console.error("Failed to load data", error);
+    }
   };
 
   useEffect(() => {
@@ -80,84 +87,100 @@ export default function RoomManagement() {
     }
     if (!confirm(`Xóa phòng ${room.name}?`)) return;
 
-    await roomService.delete(room.id);
-    message.success("Đã xóa phòng chiếu");
-    loadData();
+    try {
+      await roomService.delete(room.id);
+      message.success("Đã xóa phòng chiếu");
+      loadData();
+    } catch (error) {
+      message.error("Lỗi khi xóa phòng");
+    }
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <Title level={3}>Quản lý Phòng chiếu</Title>
+    <div className="admin-room-page">
+      <div className="page-header">
+        <Title level={3} className="page-title">
+          Quản lý Phòng chiếu
+        </Title>
+      </div>
 
-      {/* ===== FILTER BAR ===== */}
-      <Space style={{ marginBottom: 20 }}>
-        <Select
-          value={selectedCinema}
-          onChange={setSelectedCinema}
-          style={{ width: 220 }}
-        >
-          <Select.Option value="all">Tất cả Rạp</Select.Option>
-          {cinemas.map((c) => (
-            <Select.Option key={c.id} value={c.id}>
-              {c.name}
-            </Select.Option>
-          ))}
-        </Select>
+      {/* ===== FILTER BAR (Đã tách CSS) ===== */}
+      <div className="filter-section">
+        <div className="filter-left">
+          <Select
+            value={selectedCinema}
+            onChange={setSelectedCinema}
+            className="custom-select"
+            style={{ width: 220 }}
+            placeholder="Chọn rạp"
+          >
+            <Select.Option value="all">Tất cả Rạp</Select.Option>
+            {cinemas.map((c) => (
+              <Select.Option key={c.id} value={c.id}>
+                {c.name}
+              </Select.Option>
+            ))}
+          </Select>
 
-        <Tabs
-          activeKey={typeFilter}
-          onChange={setTypeFilter}
-          items={[
-            { key: "all", label: "Tất cả" },
-            { key: "2D", label: "2D" },
-            { key: "3D", label: "3D" },
-            { key: "IMAX", label: "IMAX" },
-          ]}
-        />
+          <Tabs
+            activeKey={typeFilter}
+            onChange={setTypeFilter}
+            className="filter-tabs"
+            items={[
+              { key: "all", label: "Tất cả" },
+              { key: "2D", label: "2D" },
+              { key: "3D", label: "3D" },
+              { key: "IMAX", label: "IMAX" },
+            ]}
+          />
+        </div>
 
         <Button
           type="primary"
           icon={<PlusOutlined />}
+          className="btn-add"
           onClick={() => setOpenCreate(true)}
         >
           Thêm phòng
         </Button>
-      </Space>
+      </div>
 
       {/* ===== ROOM LIST ===== */}
-      <Space orientation="vertical" style={{ width: "100%" }} size="large">
+      <Space direction="vertical" style={{ width: "100%" }} size="middle">
         {filteredRooms.map((room) => (
           <Card
             key={room.id}
-            style={{ borderRadius: 12 }}
+            className="room-card"
             title={
               <Space>
-                <Text strong>{room.name}</Text>
-                <Tag color="blue">{room.type}</Tag>
+                <span className="room-name">{room.name}</span>
+                <Tag color="geekblue">{room.type}</Tag>
               </Space>
             }
             extra={
               room.hasFutureShowtime ? (
-                <Tag color="red">Có lịch chiếu</Tag>
+                <Tag color="red" style={{ borderRadius: 4 }}>
+                  Có lịch chiếu
+                </Tag>
               ) : (
-                <Tag color="green">Lịch trống</Tag>
+                <Tag color="success" style={{ borderRadius: 4 }}>
+                  Lịch trống
+                </Tag>
               )
             }
           >
-            <Space
-              style={{ width: "100%" }}
-              align="center"
-              justify="space-between"
-            >
+            <div className="room-info">
+              {/* Thông tin bên trái */}
               <div>
-                <Text>{room.Cinema?.name}</Text>
-                <br />
-                <Text type="secondary">Tổng ghế: {room.totalSeats}</Text>
+                <span className="cinema-name">{room.Cinema?.name}</span>
+                <span className="seat-count">Tổng ghế: {room.totalSeats}</span>
               </div>
 
+              {/* Nút thao tác bên phải */}
               <Space>
                 <Tooltip title="Sửa thông tin phòng">
                   <Button
+                    className="action-btn"
                     icon={<EditOutlined />}
                     onClick={() => {
                       setSelectedRoom(room);
@@ -174,6 +197,7 @@ export default function RoomManagement() {
                   }
                 >
                   <Button
+                    className="action-btn"
                     icon={<AppstoreOutlined />}
                     disabled={room.hasFutureShowtime}
                     onClick={() => {
@@ -186,17 +210,18 @@ export default function RoomManagement() {
                 <Tooltip title="Xóa phòng">
                   <Button
                     danger
+                    className="action-btn action-btn-danger"
                     icon={<DeleteOutlined />}
                     onClick={() => handleDelete(room)}
                   />
                 </Tooltip>
               </Space>
-            </Space>
+            </div>
           </Card>
         ))}
       </Space>
 
-      {/* ===== MODALS ===== */}
+      {/* ===== MODALS (Logic giữ nguyên) ===== */}
       {openCreate && (
         <CreateRoomModal
           open={openCreate}
@@ -218,7 +243,7 @@ export default function RoomManagement() {
       )}
       {openEdit && selectedRoom && (
         <EditRoomModal
-          key={selectedRoom.id} // ⭐ DÒNG QUAN TRỌNG
+          key={selectedRoom.id}
           open={openEdit}
           room={selectedRoom}
           onClose={() => {

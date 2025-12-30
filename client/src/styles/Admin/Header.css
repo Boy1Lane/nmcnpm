@@ -1,61 +1,58 @@
+/* src/styles/Admin/Header.css */
+
 .header-container {
-  height: 65px;
-  background: #0f172a; /* xanh đậm */
+  height: 80px;
+  background: #0f172a; /* Màu Navy đậm (Trùng màu Sidebar) */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 25px;
-  border-bottom: 2px solid #1e293b; 
-  color: white;
+  padding: 0 40px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Viền mờ ngăn cách nội dung */
+  color: #fff;
 }
 
-.header-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #e2e8f0;
-}
-
+/* Khu vực bên phải */
 .header-right {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 16px;
 }
 
 .welcome-text {
-  font-size: 14px;
-  color: #cbd5e1;
+  font-size: 15px;
+  color: #94a3b8; /* Màu xám sáng (Slate 400) */
+  font-weight: 500;
 }
 
+.welcome-text b {
+  color: #fff; /* Tên Admin màu trắng nổi bật */
+}
+
+/* Avatar Box - Dark Theme */
 .avatar-box {
-  width: 36px;
-  height: 36px;
-  background: #334155;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1); /* Nền trong suốt nhẹ */
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Viền sáng mờ */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.avatar-box:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #ff4d4f; /* Hover vào viền đỏ nhẹ */
 }
 
 .avatar-icon {
-  font-size: 18px;
-  color: #f1f5f9;
+  font-size: 20px;
+  color: #e2e8f0; /* Icon màu trắng xám */
 }
 
+/* Khu vực bên trái (nếu sau này dùng) */
 .header-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.header-logo-left {
-  width: 100px;
-  height: 50px;
-  object-fit: cover;
-  border-radius: 6px;
-}
-
-.header-app-name {
-  font-size: 18px;
-  font-weight: 600;
-  color: #e2e8f0;
+  flex: 1;
 }

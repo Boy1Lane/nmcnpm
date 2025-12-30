@@ -10,6 +10,7 @@ const Booking = require('./Booking');
 const BookingSeat = require('./BookingSeat');
 const BookingFood = require('./BookingFood');
 const FoodCombo = require('./FoodCombo');
+const Promotion = require('./Promotion'); // ⭐ THÊM
 
 // Relationship: A Cinema has many Rooms
 Cinema.hasMany(Room, { foreignKey: 'cinemaId' });
@@ -76,5 +77,6 @@ module.exports = {
     Showtime,
     ShowtimeSeat,
     Booking,
-    BookingSeat
+    BookingSeat,
+    Promotion
 };

@@ -4,4 +4,6 @@ body {
   padding: 0;
   box-sizing: border-box;
   font-family: "Inter", sans-serif;
+  background-color: #f1f5f9; /* Màu nền tổng thể sáng nhẹ */
 }
+

@@ -1,6 +1,13 @@
 import { Card, Form, Input, Button, message } from "antd";
 import { useNavigate } from "react-router-dom";
+import {
+  UserOutlined,
+  LockOutlined,
+  MailOutlined,
+  PhoneOutlined,
+} from "@ant-design/icons"; // Thêm icon
 import authService from "../../services/authService";
+import "../../styles/Auth/Auth.css";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -16,53 +23,60 @@ export default function Register() {
   };
 
   return (
-    <div style={styles.wrapper}>
-      <Card title="Đăng ký tài khoản" style={styles.card}>
-        <Form layout="vertical" onFinish={onFinish}>
+    <div className="auth-wrapper">
+      <Card className="auth-card">
+        {/* Tiêu đề đẹp hơn */}
+        <div className="auth-title">Đăng Ký Tài Khoản</div>
+
+        <Form
+          layout="vertical"
+          onFinish={onFinish}
+          size="large" // Form to rõ hơn
+          className="auth-form"
+        >
+          {/* Họ tên */}
           <Form.Item
             name="fullName"
-            label="Họ tên"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Vui lòng nhập họ tên!" }]}
           >
-            <Input />
+            <Input prefix={<UserOutlined />} placeholder="Họ và tên" />
           </Form.Item>
 
+          {/* Email */}
           <Form.Item
             name="email"
-            label="Email"
-            rules={[{ required: true, type: "email" }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập email!" },
+              { type: "email", message: "Email không hợp lệ!" },
+            ]}
           >
-            <Input />
+            <Input prefix={<MailOutlined />} placeholder="Email" />
           </Form.Item>
 
-          <Form.Item name="phone" label="Số điện thoại">
-            <Input />
+          {/* Số điện thoại */}
+          <Form.Item name="phone">
+            <Input prefix={<PhoneOutlined />} placeholder="Số điện thoại" />
           </Form.Item>
 
+          {/* Mật khẩu */}
           <Form.Item
             name="password"
-            label="Mật khẩu"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
           >
-            <Input.Password />
+            <Input.Password prefix={<LockOutlined />} placeholder="Mật khẩu" />
           </Form.Item>
 
-          <Button type="primary" htmlType="submit" block>
+          {/* Nút Đăng ký */}
+          <Button type="primary" htmlType="submit" block className="auth-btn">
             Đăng ký
           </Button>
+
+          {/* Chuyển qua Login */}
+          <div className="auth-footer">
+            Đã có tài khoản? <a href="/login">Đăng nhập ngay</a>
+          </div>
         </Form>
       </Card>
     </div>
   );
 }
-
-const styles = {
-  wrapper: {
-    minHeight: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "#f5f5f5",
-  },
-  card: { width: 420 },
-};

@@ -1,76 +1,104 @@
+/* src/styles/Admin/SideMenu.css */
+
 /* --- SIDEBAR CONTAINER --- */
 .sidebar {
-  width: 220px;
+  /* Thay đổi: Bỏ margin để sidebar sát lề trái và nối liền header (nếu muốn) 
+     hoặc giữ nguyên style "nổi" nhưng cùng tông màu */
+  width: 260px;
+  height: calc(100vh - 32px); /* Cách trên dưới 16px */
+  margin: 16px; 
   background: #0f172a; /* Navy đậm */
-  height: 100vh;
-  padding-top: 18px;
-  color: #e2e8f0;
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  /* Đổ bóng đậm hơn chút để tách khỏi nền content sáng */
+  box-shadow: 4px 4px 24px rgba(0, 0, 0, 0.2); 
+  color: #94a3b8;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05); /* Thêm viền mờ cho sang */
 }
 
 /* --- LOGO --- */
 .sidebar-logo {
-  font-size: 18px;
-  font-weight: 600;
-  padding-left: 20px;
-  padding-bottom: 20px;
+  height: 80px; /* Khớp chiều cao Header */
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #f8fafc;
+  padding: 0 28px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+  /* Viền dưới mờ trùng màu viền Header */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+}
+
+.sidebar-logo span {
+  color: #ff4d4f;
+  margin-left: 8px;
 }
 
 /* --- MENU ITEMS --- */
 .sidebar-menu {
+  flex: 1;
+  padding: 20px 0;
   display: flex;
   flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
 }
 
 .menu-item {
-  padding: 12px 20px;
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: #cbd5e1;
-  cursor: pointer;
-  border-left: 4px solid transparent;
-  transition: 0.2s;
+  gap: 14px;
+  padding: 14px 28px;
   font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  color: #94a3b8;
 }
 
 .menu-item:hover {
-  background: #1e293b;
-  color: white;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
 }
 
-/* Item được chọn */
+/* Item Active: Giữ nguyên màu đỏ nổi bật trên nền tối */
 .menu-item.active {
-  background: #dc2626;
-  color: white;
+  background: linear-gradient(90deg, #ff4d4f 0%, #d9363e 100%);
+  color: #fff;
   font-weight: 600;
-  border-left: 4px solid #fff;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
 }
 
-/* --- FOOTER: Đăng xuất --- */
+.menu-item span {
+  white-space: nowrap;
+}
+
+/* --- FOOTER --- */
 .sidebar-footer {
-  padding: 14px 20px;
-  color: #f87171;
+  height: 60px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  padding: 0 28px;
+  margin-bottom: 10px;
   cursor: pointer;
+  color: #fca5a5;
+  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Viền trên mờ */
+  transition: 0.2s;
+  font-weight: 500;
 }
 
 .sidebar-footer:hover {
-  background: #1e293b;
-  color: #fca5a5;
-}
-.sidebar {
-  border-radius: 12px;
-  margin: 10px;
+  background: rgba(220, 38, 38, 0.15);
+  color: #ff4d4f;
 }
 
-
-
+.logout-icon {
+  margin-right: 12px;
+  font-size: 18px;
+}

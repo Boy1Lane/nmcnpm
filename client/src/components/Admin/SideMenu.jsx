@@ -1,3 +1,4 @@
+import React from "react";
 import "../../styles/Admin/SideMenu.css";
 import { useAuth } from "../../context/AuthContext";
 import { message } from "antd";
@@ -9,6 +10,8 @@ import {
   UserOutlined,
   BarChartOutlined,
   LogoutOutlined,
+  GiftOutlined, // ⭐ THÊM
+  CoffeeOutlined, // ⭐ ICON THỨC ĂN
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -22,45 +25,51 @@ export default function SideMenu() {
     await logout();
   };
 
-  // ===== MENU ADMIN =====
   const adminMenuItems = [
     { key: "/dashboard", label: "Dashboard", icon: <DashboardOutlined /> },
+    // ⭐ THÊM DÒNG NÀY
+    {
+      key: "/promotions",
+      label: "Khuyến mãi",
+      icon: <GiftOutlined />,
+    },
+    {
+      key: "/foods",
+      label: "Thức ăn & Combo",
+      icon: <CoffeeOutlined />,
+    },
+
     {
       key: "/movie-management",
-      label: "Quản lý phim",
+      label: "Phim",
       icon: <VideoCameraOutlined />,
     },
     { key: "/showtimes", label: "Lịch chiếu", icon: <ScheduleOutlined /> },
-    { key: "/room-seat", label: "Phòng & Ghế", icon: <AppstoreOutlined /> },
+    { key: "/room-seat", label: "Phòng và Ghế", icon: <AppstoreOutlined /> },
     { key: "/user", label: "Người dùng", icon: <UserOutlined /> },
     { key: "/report", label: "Báo cáo", icon: <BarChartOutlined /> },
   ];
 
-  // ===== MENU STAFF =====
   const staffMenuItems = [
     { key: "/dashboard", label: "Dashboard", icon: <DashboardOutlined /> },
-    {
-      key: "/check-in",
-      label: "Soát vé",
-      icon: <ScheduleOutlined />,
-    },
+    { key: "/check-in", label: "Soát vé", icon: <ScheduleOutlined /> },
     {
       key: "sale",
       label: "Bán vé",
       icon: <VideoCameraOutlined />,
-      onClick: () => window.open("/", "_blank"),
     },
   ];
 
-  // ⭐⭐ DÒNG QUAN TRỌNG NHẤT ⭐⭐
   const menuItems = user?.role === "staff" ? staffMenuItems : adminMenuItems;
 
   return (
     <div className="sidebar">
+      {/* Logo Area */}
       <div className="sidebar-logo">
         🎬 <span>AdminPanel</span>
       </div>
 
+      {/* Menu Items */}
       <div className="sidebar-menu">
         {menuItems.map((item) => (
           <div
@@ -76,11 +85,8 @@ export default function SideMenu() {
         ))}
       </div>
 
-      <div
-        className="sidebar-footer"
-        onClick={handleLogout}
-        style={{ cursor: "pointer" }}
-      >
+      {/* Footer / Logout */}
+      <div className="sidebar-footer" onClick={handleLogout}>
         <LogoutOutlined className="logout-icon" />
         <span>Đăng xuất</span>
       </div>

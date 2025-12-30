@@ -1,16 +1,276 @@
-.tag-coming-soon {
-  background-color: #FFF4D6;
-  color: #9A6B00;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 500;
+/* --- Global Layout & Spacing --- */
+.page-wrapper {
+  padding: 24px;
+  background-color: #f4f5f7; /* Màu nền xám nhẹ tổng thể */
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
 }
-.tag-now-showing {
-  background-color: #D4F7D4;
-  color: #1A7F37;
-  padding: 4px 12px;
+
+/* --- Page Header --- */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1c23;
+  margin-bottom: 4px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+/* --- Search Input --- */
+.search-input {
+  width: 300px;
+  border-radius: 8px;
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.search-input:hover, .search-input:focus {
+  border-color: #7e3af2; /* Màu tím chủ đạo */
+}
+
+/* --- Buttons --- */
+/* Nút chính (Thêm mới) - Màu Tím theo mẫu Báo cáo */
+.btn-primary-custom {
+  background-color: #7e3af2 !important; 
+  border-color: #7e3af2 !important;
+  color: #fff !important;
+  border-radius: 8px !important;
+  font-weight: 600;
+  height: 40px;
+  padding: 0 20px;
+  box-shadow: 0 4px 6px rgba(126, 58, 242, 0.2);
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-custom:hover {
+  background-color: #6c2bd9 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px rgba(126, 58, 242, 0.3);
+}
+
+/* Nút Action trong bảng (Sửa/Xóa) */
+.action-btn {
+  border: none;
+  background: #f4f5f7;
+  color: #4c4f52;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  background: #e5e7eb;
+  color: #7e3af2; /* Hover màu tím */
+}
+
+.action-btn.delete:hover {
+  background: #fde8e8;
+  color: #e02424; /* Hover màu đỏ cho nút xóa */
+}
+
+/* --- Content Card (Khối trắng chứa bảng) --- */
+.content-card {
+  background: #ffffff;
+  border-radius: 16px; /* Bo góc lớn giống mẫu */
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.05); /* Bóng nhẹ tinh tế */
+}
+
+/* --- Table Styling Override --- */
+/* Header bảng */
+.ant-table-thead > tr > th {
+  background: #f9fafb !important; /* Nền header xám rất nhạt */
+  color: #6b7280 !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  font-size: 12px !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  padding: 16px !important;
+}
+
+/* Body bảng */
+.ant-table-tbody > tr > td {
+  padding: 16px !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+  vertical-align: middle;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background-color: #f9fafb !important;
+}
+
+/* --- Poster Image --- */
+.table-poster-box {
+  width: 50px;
+  height: 75px;
+  overflow: hidden;
+  border-radius: 8px; /* Bo góc ảnh */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-poster-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.table-poster-img:hover {
+  transform: scale(1.1);
+}
+
+/* --- Status Badges (Trạng thái) --- */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 999px; /* Hình viên thuốc */
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  display: inline-block;
+  min-width: 90px;
+  text-align: center;
+}
+
+/* Màu sắc trạng thái */
+.status-coming {
+  background-color: #e0e7ff; /* Tím nhạt */
+  color: #4338ca;
+}
+
+.status-showing {
+  background-color: #d1fae5; /* Xanh lá nhạt */
+  color: #065f46;
+}
+
+.status-ended {
+  background-color: #f3f4f6; /* Xám */
+  color: #374151;
+}
+
+/* --- Pagination Override --- */
+.ant-pagination-item-active {
+  border-color: #7e3af2 !important;
+}
+.ant-pagination-item-active a {
+  color: #7e3af2 !important;
+}
+
+/* --- Modal Styles (CreateMovieModal) --- */
+
+/* Tinh chỉnh khung Modal */
+.movie-modal .ant-modal-content {
+  border-radius: 16px !important; /* Bo góc mềm mại */
+  padding: 0 !important; /* Reset padding để custom header */
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Header của Modal */
+.movie-modal .ant-modal-header {
+  background-color: #fff;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f3f4f6;
+  margin-bottom: 24px;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1c23;
+}
+
+/* Body Modal */
+.movie-modal .ant-modal-body {
+  padding: 0 24px 24px 24px;
+}
+
+/* Nút đóng (X) */
+.movie-modal .ant-modal-close {
+  top: 20px;
+  right: 24px;
+}
+
+/* --- Form Fields Styles --- */
+/* Làm các input cao hơn, thoáng hơn */
+.ant-input,
+.ant-input-number,
+.ant-picker,
+.ant-select-selector {
+  border-radius: 8px !important;
+  border-color: #e2e8f0 !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+}
+
+.ant-input:hover, .ant-input:focus,
+.ant-picker:hover, .ant-picker-focused,
+.ant-select-selector:hover, .ant-select-focused {
+  border-color: #7e3af2 !important; /* Màu tím chủ đạo */
+  box-shadow: 0 0 0 2px rgba(126, 58, 242, 0.1) !important;
+}
+
+/* Label của Form */
+.ant-form-item-label > label {
+  color: #4c4f52 !important;
+  font-weight: 600 !important;
+  font-size: 14px;
+}
+
+/* --- Poster Upload Area --- */
+.poster-upload-wrapper {
+  width: 100%;
+  height: 280px; /* Chiều cao cố định cho khung poster */
+  background-color: #f9fafb;
+  border: 2px dashed #d1d5db; /* Viền nét đứt */
   border-radius: 12px;
-  font-size: 13px;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.poster-upload-wrapper:hover {
+  border-color: #7e3af2;
+  background-color: #f3f0ff; /* Tím rất nhạt khi hover */
+}
+
+.poster-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Đảm bảo ảnh full khung đẹp */
+  border-radius: 10px;
+}
+
+/* --- Footer Action Buttons --- */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid #f3f4f6;
+  margin-top: 10px;
 }
