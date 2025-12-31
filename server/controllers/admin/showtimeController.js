@@ -4,6 +4,8 @@ const ShowtimeSeat = require('../../models/ShowtimeSeat');
 const { Op } = require("sequelize");
 const Movie = require("../../models/Movie");
 const Room = require("../../models/Room");
+const Seat = require('../../models/Seat');
+const sequelize = require('../../config/db');
 
 // GET /admin/showtimes -> getAllShowtimes
 // exports.getAllShowtimes = async (req, res) => {
@@ -23,13 +25,55 @@ exports.createShowtime = async (req, res) => {
     if (!movieId || !roomId || !startTime || !endTime || !basePrice) {
       return res.status(400).json({ message: 'Missing value (movieId, roomId, startTime, endTime, basePrice)!' });
     }
-    const newShowtime = await Showtime.create({ movieId, roomId, startTime, endTime, basePrice });
+
+    const parsedBasePrice = Number(basePrice);
+    if (!Number.isFinite(parsedBasePrice) || parsedBasePrice <= 0) {
+      return res.status(400).json({ message: 'basePrice must be a positive number' });
+    }
+
+    const result = await sequelize.transaction(async (transaction) => {
+      const newShowtime = await Showtime.create(
+        {
+          movieId,
+          roomId,
+          startTime,
+          endTime,
+          basePrice: parsedBasePrice
+        },
+        { transaction }
+      );
+
+      const seats = await Seat.findAll({ where: { roomId }, transaction });
+      if (!seats || seats.length === 0) {
+        const err = new Error('Selected room has no seats to initialize for this showtime.');
+        err.statusCode = 400;
+        throw err;
+      }
+
+      const showtimeSeats = seats.map((seat) => ({
+        showtimeId: newShowtime.id,
+        seatId: seat.id,
+        status: 'AVAILABLE',
+        price: Math.round(parsedBasePrice * Number(seat.priceMultiplier ?? 1))
+      }));
+
+      await ShowtimeSeat.bulkCreate(showtimeSeats, { transaction });
+
+      return { newShowtime, initializedSeats: showtimeSeats.length };
+    });
+
     res.status(201).json({
       message: 'Showtime created successfully!',
-      data: newShowtime
+      data: result.newShowtime,
+      initializedSeats: result.initializedSeats
     });
   } catch (error) {
     console.error(error);
+
+    if (error?.statusCode) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+
     res.status(500).json({ message: 'server error', error: error.message });
   }
 };
