@@ -24,7 +24,7 @@ const FoodCombo = sequelize.define('FoodCombo', {
     allowNull: true
   }
 }, {
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = FoodCombo;

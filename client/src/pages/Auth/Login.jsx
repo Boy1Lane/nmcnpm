@@ -41,10 +41,9 @@ export default function Login() {
       const role = res.data.user.role;
       if (role === "customer") {
         navigate("/");
-      } else if (role === "admin") {
-        navigate("/dashboard");
-      } else if (role === "staff") {
-        navigate("/dashboard"); // hoặc /staff nếu có
+        // navigate(0); // Optional: reload để cập nhật state nếu cần
+      } else if (role === "admin" || role === "staff") {
+        navigate("/admin/dashboard");
       }
     } catch (err) {
       message.error(err.response?.data?.message || "Đăng nhập thất bại");

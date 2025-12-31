@@ -2,10 +2,9 @@ import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import AdminRoute from "./routes/AdminRoute.jsx";
 import StaffRoute from "./routes/StaffRoute.jsx";
-import ClientRoute from "./routes/ClientRoute.jsx"; 
 
 import AdminLayout from "./layout/AdminLayout.jsx";
-import ClientLayout from "./layout/ClientLayout.jsx"; 
+import ClientLayout from "./layout/ClientLayout.jsx";
 
 // Admin pages
 import Dashboard from "./pages/Admin/Dashboard.jsx";
@@ -36,32 +35,21 @@ export default function App() {
   return (
     <AuthProvider>
       <Routes>
-        {/* ===== AUTHENTICATION ===== */}
+        {/* ===== PUBLIC AUTH ===== */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* ===== CLIENT ROUTES (DÀNH CHO KHÁCH HÀNG) ===== */}
+        {/* ===== CLIENT (CUSTOMER) ===== */}
         <Route path="/" element={<ClientLayout />}>
           <Route index element={<HomePage />} />
           <Route path="movie/:id" element={<MovieDetail />} />
-          
-          {/* Bắt buộc đăng nhập mới được vào luồng đặt vé */}
-          <Route element={<ClientRoute />}>
-            {/* Bước 1: Chọn ghế theo Suất chiếu */}
-            <Route path="booking/:scheduleId" element={<BookingPage />} />
-            
-            {/* Bước 2: Chọn bắp nước (nếu có) */}
-            <Route path="booking/:scheduleId/concessions" element={<ConcessionsPage />} />
-            
-            {/* Bước 3: Thanh toán theo ID của đơn hàng PENDING */}
-            <Route path="payment/:bookingId" element={<PaymentPage />} />
-            
-            {/* Bước 4: Hoàn tất */}
-            <Route path="ticket-success" element={<TicketSuccess />} />
-          </Route>
+          <Route path="booking/:scheduleId" element={<BookingPage />} />
+          <Route path="concessions/:scheduleId" element={<ConcessionsPage />} />
+          <Route path="payment" element={<PaymentPage />} />
+          <Route path="ticket-success" element={<TicketSuccess />} />
         </Route>
 
-        {/* ===== ADMIN + STAFF (KHUNG QUẢN TRỊ) ===== */}
+        {/* ===== ADMIN + STAFF (PRIVATE) ===== */}
         <Route
           path="/admin"
           element={
@@ -70,33 +58,12 @@ export default function App() {
             </StaffRoute>
           }
         >
+          {/* STAFF + ADMIN ACCESSIBLE */}
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="check-in" element={<CheckInPage />} />
           {/* <Route path="sale" element={<CounterBookingPage />} /> */}
 
-
-          {/* ADMIN ONLY ROUTES */}
-          <Route element={<AdminRoute />}>
-            <Route path="movie-management" element={<MovieManagement />} />
-            <Route path="promotions" element={<PromotionManagement />} />
-            <Route path="room-seat" element={<RoomManagement />} />
-            <Route path="showtimes" element={<ShowtimesPage />} />
-            <Route path="report" element={<RevenueReport />} />
-            <Route path="user" element={<UserManagement />} />
-          </Route>
-{/* ===== ADMIN + STAFF (KHUNG QUẢN TRỊ) ===== */}
-        <Route
-          path="/admin"
-          element={
-            <StaffRoute>
-              <AdminLayout />
-            </StaffRoute>
-          }
-        >
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="check-in" element={<CheckInPage />} />
-          
-          {/* ===== ADMIN ONLY ===== */}
+          {/* ADMIN ONLY */}
           <Route
             path="foods"
             element={
@@ -159,7 +126,6 @@ export default function App() {
               </AdminRoute>
             }
           />
-        </Route>
         </Route>
       </Routes>
     </AuthProvider>

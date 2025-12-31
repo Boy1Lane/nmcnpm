@@ -37,7 +37,7 @@ const Promotion = sequelize.define('Promotion', {
     defaultValue: 0
   }
 }, {
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = Promotion;

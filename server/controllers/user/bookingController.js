@@ -1,10 +1,11 @@
-const { Booking, BookingSeat, Showtime, Seat, Movie, Cinema, Room, ShowtimeSeat } = require('../../models');
+const { Booking, BookingSeat, Showtime, Seat, Movie, Cinema, Room, ShowtimeSeat, FoodCombo, BookingFood, Promotion } = require('../../models');
 const sequelize = require('../../config/db');
+const { Op } = require('sequelize');
 
 exports.createBooking = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    const { showtimeId, seatIds, paymentMethod } = req.body;
+    const { showtimeId, seatIds, paymentMethod, foodItems, promotionCode } = req.body;
     const userId = req.user.id; // Extracted from auth middleware
 
     // Validate Showtime
@@ -36,17 +37,76 @@ exports.createBooking = async (req, res) => {
         return res.status(409).json({ message: 'One or more seats are already booked or held.' });
     }
 
-    // Calculate Total Price
-    const calculatedTotal = showtimeSeats.reduce((sum, seat) => sum + seat.price, 0);
+    // Calculate Seat Total
+    const seatTotal = showtimeSeats.reduce((sum, seat) => sum + seat.price, 0);
+
+    // Calculate Food Total
+    let foodTotal = 0;
+    const bookingFoodData = [];
+    
+    if (foodItems && foodItems.length > 0) {
+        for (const item of foodItems) {
+            const food = await FoodCombo.findByPk(item.foodId);
+            if (!food) {
+                await transaction.rollback();
+                return res.status(404).json({ message: `Food item with ID ${item.foodId} not found` });
+            }
+            foodTotal += food.price * item.quantity;
+            bookingFoodData.push({
+                foodComboId: food.id,
+                quantity: item.quantity,
+                price: food.price // Store price at time of booking if needed, but BookingFood model might not have it. 
+                                  // Checking BookingFood model: it only has quantity. 
+                                  // Ideally we should store price snapshot, but for now we just calculate total.
+            });
+        }
+    }
+
+    // Handle Promotion
+    let discountAmount = 0;
+    let promotionId = null;
+
+    if (promotionCode) {
+        const promotion = await Promotion.findOne({
+            where: {
+                code: promotionCode,
+                validFrom: { [Op.lte]: new Date() },
+                validTo: { [Op.gte]: new Date() }
+            },
+            transaction
+        });
+
+        if (!promotion) {
+            await transaction.rollback();
+            return res.status(400).json({ message: 'Invalid or expired promotion code' });
+        }
+
+        if (promotion.usageLimit && promotion.timesUsed >= promotion.usageLimit) {
+            await transaction.rollback();
+            return res.status(400).json({ message: 'Promotion usage limit reached' });
+        }
+
+        // Calculate discount
+        const subtotal = seatTotal + foodTotal;
+        discountAmount = (subtotal * promotion.discountPercentage) / 100;
+        promotionId = promotion.id;
+
+        // Update promotion usage
+        await promotion.increment('timesUsed', { transaction });
+    }
+
+    const finalTotal = seatTotal + foodTotal - discountAmount;
 
     // Create the Booking (PENDING)
     const booking = await Booking.create({
       userId,
       showtimeId,
-      totalPrice: calculatedTotal,
+      totalPrice: finalTotal > 0 ? finalTotal : 0, // Ensure non-negative
       paymentMethod,
       status: 'PENDING', // Initial status
-      bookingDate: new Date()
+      bookingDate: new Date(),
+      promotionId,
+      discountAmount
     }, { transaction });
 
     // Update ShowtimeSeats to LOCKED
@@ -69,6 +129,15 @@ exports.createBooking = async (req, res) => {
 
     await BookingSeat.bulkCreate(bookingSeatsData, { transaction });
 
+    // Create BookingFood entries
+    if (bookingFoodData.length > 0) {
+        const foodDataWithBookingId = bookingFoodData.map(f => ({
+            ...f,
+            bookingId: booking.id
+        }));
+        await BookingFood.bulkCreate(foodDataWithBookingId, { transaction });
+    }
+
     await transaction.commit();
 
     // Fetch the complete booking with details to return
@@ -81,12 +150,13 @@ exports.createBooking = async (req, res) => {
                 include: [Seat]
             }] 
         },
+        { model: BookingFood, include: [FoodCombo] },
         { model: Showtime, include: [Movie] }
       ]
     });
 
     res.status(201).json({ 
-      message: 'Seats held successfully. Please proceed to payment.', 
+      message: 'Booking created successfully. Please proceed to payment.', 
       booking: completeBooking 
     });
 

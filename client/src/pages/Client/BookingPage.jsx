@@ -15,23 +15,23 @@ const BookingPage = () => {
 
   const handleSeatClick = (sts) => {
     if (sts.status !== 'AVAILABLE') return;
-    setSelectedSeats(prev => 
+    setSelectedSeats(prev =>
       prev.find(s => s.id === sts.id) ? prev.filter(s => s.id !== sts.id) : [...prev, sts]
     );
   };
 
   const calculateTotal = () => selectedSeats.reduce((sum, s) => sum + s.price, 0);
 
-  const handleCreateBooking = async () => {
-    try {
-      const seatIds = selectedSeats.map(s => s.seatId);
-      // Gửi showtimeId và seatIds đúng theo Controller
-      const res = await bookingService.createBooking(scheduleId, seatIds, 'CASH');
-      // Chuyển sang PaymentPage với ID của Booking PENDING vừa tạo
-      navigate(`/payment/${res.booking.id}`);
-    } catch (err) {
-      alert(err.response?.data?.message || "Lỗi giữ ghế");
-    }
+  const handleNext = () => {
+    // Chuyển sang trang chọn bắp nước, gửi kèm danh sách ghế đã chọn
+    const seatIds = selectedSeats.map(s => s.seatId);
+    navigate(`/concessions/${scheduleId}`, {
+      state: {
+        selectedSeatIds: seatIds,
+        reservedSeats: selectedSeats, // Gửi cả object ghế để hiển thị tên ghế
+        seatsPrice: calculateTotal()
+      }
+    });
   };
 
   return (
@@ -42,7 +42,7 @@ const BookingPage = () => {
 
       <div className="seats-container" style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 1fr)', gap: '10px', maxWidth: '800px', margin: '0 auto' }}>
         {showtimeSeats.map(sts => (
-          <div 
+          <div
             key={sts.id}
             onClick={() => handleSeatClick(sts)}
             className={`seat ${sts.status.toLowerCase()}`}
@@ -60,8 +60,8 @@ const BookingPage = () => {
       <div className="booking-footer" style={{ marginTop: '50px', textAlign: 'center', borderTop: '1px solid #333', paddingTop: '20px' }}>
         <p>Số ghế chọn: {selectedSeats.length}</p>
         <h3 style={{ margin: '15px 0' }}>Tổng tiền: {calculateTotal().toLocaleString()} đ</h3>
-        <button 
-          onClick={handleCreateBooking}
+        <button
+          onClick={handleNext}
           disabled={selectedSeats.length === 0}
           style={{ padding: '15px 50px', background: '#e50914', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}
         >GIỮ GHẾ & TIẾP TỤC</button>

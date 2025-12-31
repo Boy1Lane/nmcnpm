@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 // Cập nhật đường dẫn đến service trong thư mục Client
-import bookingService from '../../services/Client/bookingService'; 
+import bookingService from '../../services/Client/bookingService';
 // Cập nhật đường dẫn CSS
-import './ConcessionsPage.css'; 
+import './ConcessionsPage.css';
 
 const ConcessionsPage = () => {
   const { scheduleId } = useParams();
@@ -65,11 +65,13 @@ const ConcessionsPage = () => {
         quantity: cart[food.id]
       }));
 
-    navigate(`/payment/${scheduleId}`, {
+    navigate(`/payment`, {
       state: {
         selectedSeatIds,
+        reservedSeats: location.state?.reservedSeats, // Truyền tiếp tục thông tin ghế chi tiết
         seatsPrice,
-        selectedFoods // Gửi thông tin đồ ăn kèm theo để thanh toán
+        selectedFoods, // Gửi thông tin đồ ăn kèm theo để thanh toán
+        scheduleId // Truyền scheduleId để PaymentPage dùng gọi createBooking
       }
     });
   };
@@ -87,7 +89,7 @@ const ConcessionsPage = () => {
   return (
     <div className="concessions-page">
       <h2 className="section-title">Chọn Bắp & Nước</h2>
-      
+
       {loading ? (
         <div className="loading-spinner">Đang tải menu...</div>
       ) : (
@@ -96,20 +98,20 @@ const ConcessionsPage = () => {
             <div key={item.id} className="food-item-card">
               <div className="food-info">
                 <h3 className="food-name">{item.name}</h3>
-                <p className="food-description">{item.items || 'Combo bắp nước hấp dẫn'}</p> 
+                <p className="food-description">{item.items || 'Combo bắp nước hấp dẫn'}</p>
                 <span className="food-price">{item.price.toLocaleString()} đ</span>
               </div>
-              
+
               <div className="quantity-control">
-                <button 
-                  className="btn-qty" 
+                <button
+                  className="btn-qty"
                   onClick={() => updateQuantity(item.id, -1)}
                 >
                   -
                 </button>
                 <span className="qty-display">{cart[item.id] || 0}</span>
-                <button 
-                  className="btn-qty" 
+                <button
+                  className="btn-qty"
                   onClick={() => updateQuantity(item.id, 1)}
                 >
                   +

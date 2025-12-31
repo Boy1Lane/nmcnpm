@@ -24,6 +24,20 @@ exports.createShowtime = async (req, res) => {
       return res.status(400).json({ message: 'Missing value (movieId, roomId, startTime, endTime, basePrice)!' });
     }
     const newShowtime = await Showtime.create({ movieId, roomId, startTime, endTime, basePrice });
+
+    // 1. Lấy tất cả ghế trong phòng đó
+    const seats = await Seat.findAll({ where: { roomId } });
+
+    // 2. Tạo ShowtimeSeat cho từng ghế
+    const showtimeSeats = seats.map(seat => ({
+      showtimeId: newShowtime.id,
+      seatId: seat.id,
+      status: 'AVAILABLE',
+      price: Math.round(basePrice * seat.priceMultiplier) // Tính giá theo hệ số ghế VIP/Thường
+    }));
+
+    await ShowtimeSeat.bulkCreate(showtimeSeats);
+
     res.status(201).json({
       message: 'Showtime created successfully!',
       data: newShowtime
@@ -36,14 +50,14 @@ exports.createShowtime = async (req, res) => {
 
 // GET /admin/showtimes/:id -> getAShowtime
 exports.getAShowtime = async (req, res) => {
-  try { 
+  try {
     const { id } = req.params;
     const showtime = await Showtime.findByPk(id);
     if (!showtime) {
       return res.status(404).json({ message: 'Showtime not found' });
     }
     res.status(200).json(showtime);
-    } catch (error) {
+  } catch (error) {
     res.status(500).json({ message: 'getAShowtime error' });
   }
 };
@@ -63,22 +77,22 @@ exports.updateShowtime = async (req, res) => {
     showtime.endTime = endTime || showtime.endTime;
     showtime.basePrice = basePrice || showtime.basePrice;
     await showtime.save();
-    res.status(200).json({ 
-        message: 'Showtime updated successfully', showtime 
+    res.status(200).json({
+      message: 'Showtime updated successfully', showtime
     });
   }
-    catch (error) {
+  catch (error) {
     res.status(500).json({ message: 'updateShowtime error' });
   }
 };
 
 // DELETE /admin/showtimes/:id -> deleteShowtime
 exports.deleteShowtime = async (req, res) => {
-  try { 
+  try {
     const { id } = req.params;
     const showtime = await Showtime.findByPk(id);
     if (!showtime) {
-        return res.status(404).json({ message: 'Showtime not found' });
+      return res.status(404).json({ message: 'Showtime not found' });
     }
     await showtime.destroy();
     res.status(200).json({ message: 'Showtime deleted successfully' });
@@ -164,7 +178,7 @@ exports.addSeatsToShowtime = async (req, res) => {
 // DELETE /admin/showtimes/:showtimeId/seats/:seatId -> removeSeatFromShowtime
 exports.removeSeatFromShowtime = async (req, res) => {
   try {
-    const { showtimeId, seatId } = req.params;  
+    const { showtimeId, seatId } = req.params;
     const showtime = await Showtime.findByPk(showtimeId);
     if (!showtime) {
       return res.status(404).json({ message: 'Showtime not found' });
