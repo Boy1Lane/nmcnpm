@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import bookingService from '../../services/Client/bookingService';
-import { message } from 'antd'; // Sử dụng antd message cho đẹp
-import './PaymentPage.css'; // Sẽ tạo file css này hoặc dùng lại style cũ
+import { Layout, Steps, Card, Button, Typography, message, Descriptions, Input, Divider, Row, Col, Space } from 'antd';
+import { UserOutlined, ShoppingCartOutlined, CreditCardOutlined, GiftOutlined } from '@ant-design/icons';
+import './PaymentPage.css';
+
+const { Content, Footer } = Layout;
+const { Title, Text } = Typography;
 
 const PaymentPage = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
 
-  // Lấy dữ liệu từ state
   const { selectedSeatIds, reservedSeats, seatsPrice, selectedFoods, scheduleId } = state || {};
 
   const [promotionCode, setPromotionCode] = useState('');
@@ -17,47 +20,32 @@ const PaymentPage = () => {
   if (!state) {
     return (
       <div style={{ textAlign: 'center', padding: '50px', color: 'white' }}>
-        <h2>Không tìm thấy thông tin đặt vé</h2>
-        <button onClick={() => navigate('/')}>Về trang chủ</button>
+        <Title level={3} style={{ color: '#fff' }}>Không tìm thấy thông tin đặt vé</Title>
+        <Button onClick={() => navigate('/')} type="primary">Về trang chủ</Button>
       </div>
     );
   }
 
-  // Tính toán
   const foodTotal = selectedFoods ? selectedFoods.reduce((acc, item) => acc + (item.price * item.quantity), 0) : 0;
   const subTotal = (seatsPrice || 0) + foodTotal;
-  // TODO: Nếu có API check promo trước thì gọi ở đây để lấy discountAmount realtime. 
-  // Hiện tại logic server là tính lúc createBooking. 
-  // Để đơn giản, ta sẽ chỉ input code, server sẽ tính và trả về giá cuối sau khi bấm Thanh Toán.
 
   const handlePayment = async () => {
     try {
       setLoading(true);
 
-      // Chuẩn bị dữ liệu đồ ăn
       const foodItemsPayload = selectedFoods ? selectedFoods.map(f => ({
         foodId: f.id,
         quantity: f.quantity
       })) : [];
 
-      // 1. Gọi API tạo Booking (Lúc này mới giữ ghế và áp code)
-      // scheduleId cần được truyền từ các trang trước. 
-      // BookingPage -> ConcessionsPage -> PaymentPage
-      // Cần đảm bảo ConcessionsPage nhận scheduleId và truyền tiếp.
-
-      // Ở đây ta giả sử scheduleId có trong state (cần update BookingPage/ConcessionsPage để truyền nó)
       if (!selectedSeatIds || selectedSeatIds.length === 0) {
         message.error("Vui lòng chọn ghế!");
+        setLoading(false);
         return;
       }
 
-      // Hack: Nếu state không có scheduleId (do luồng cũ), ta có thể lấy từ URL nếu PaymentPage có param. 
-      // Nhưng ta dùng route /payment chung. Nên bắt buộc phải pass trong state.
-
       const createRes = await bookingService.createBooking(
-        // scheduleId lấy từ state (cần verify flow)
-        // Nếu ConcessionsPage dùng useParams để lấy scheduleId, nó phải pass vào state khi nav sang Payment
-        state.scheduleId,
+        scheduleId, // scheduleId must be passed in state
         selectedSeatIds,
         'CASH',
         foodItemsPayload,
@@ -67,7 +55,6 @@ const PaymentPage = () => {
       const bookingId = createRes.booking.id;
       message.success("Đã tạo đơn hàng thành công!");
 
-      // 2. Xác nhận thanh toán ngay (Giả lập thanh toán thành công)
       await bookingService.confirmBooking(bookingId);
 
       message.success("Thanh toán thành công!");
@@ -82,74 +69,95 @@ const PaymentPage = () => {
   };
 
   return (
-    <div className="payment-page-container" style={{ background: '#0a0a0a', color: 'white', minHeight: '100vh', padding: '40px 20px' }}>
-      <div className="payment-content" style={{ maxWidth: '800px', margin: '0 auto', background: '#1a1a1a', padding: '30px', borderRadius: '12px' }}>
-        <h2 style={{ textAlign: 'center', color: '#e50914', marginBottom: '30px' }}>XÁC NHẬN & THANH TOÁN</h2>
+    <Layout style={{ minHeight: '100vh', background: '#001529' }}>
+      <Content style={{ padding: '40px 20px', maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
+        <Steps
+          current={2}
+          items={[
+            { title: 'Chọn Ghế', icon: <UserOutlined /> },
+            { title: 'Bắp Nước', icon: <ShoppingCartOutlined /> },
+            { title: 'Thanh Toán', icon: <CreditCardOutlined /> },
+          ]}
+          style={{ marginBottom: '40px' }}
+          className="booking-steps"
+        />
 
-        <div className="review-section">
-          {/* 1. Thông tin Ghế */}
-          <div className="review-block">
-            <h3>Danh sách ghế</h3>
-            <p>{reservedSeats && reservedSeats.map(s => `${s.Seat.row}${s.Seat.number}`).join(', ')}</p>
-            <p>Giá vé: <strong>{seatsPrice?.toLocaleString()} đ</strong></p>
-          </div>
-          <hr style={{ borderColor: '#333' }} />
+        <Title level={2} style={{ textAlign: 'center', color: '#e50914', marginBottom: '40px' }}>
+          XÁC NHẬN ĐƠN HÀNG
+        </Title>
 
-          {/* 2. Thông tin Bắp Nước */}
-          {selectedFoods && selectedFoods.length > 0 && (
-            <div className="review-block">
-              <h3>Bắp & Nước</h3>
-              {selectedFoods.map((f, idx) => (
-                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>{f.name} (x{f.quantity})</span>
-                  <span>{(f.price * f.quantity).toLocaleString()} đ</span>
-                </div>
-              ))}
-              <p style={{ marginTop: '10px' }}>Tổng bắp nước: <strong>{foodTotal.toLocaleString()} đ</strong></p>
-              <hr style={{ borderColor: '#333' }} />
-            </div>
-          )}
+        <Row gutter={40}>
+          {/* Cột thông tin chi tiết */}
+          <Col xs={24} md={16}>
+            <Card title="Chi tiết đặt vé" bordered={false} style={{ background: '#fff', marginBottom: '20px' }}>
+              <Descriptions column={1} bordered size="small">
+                <Descriptions.Item label="Ghế đã chọn">
+                  {reservedSeats && reservedSeats.map(s => <span key={s.id} style={{ marginRight: '8px', fontWeight: 'bold' }}>{s.Seat.row}{s.Seat.number}</span>)}
+                </Descriptions.Item>
+                <Descriptions.Item label="Giá vé">
+                  {seatsPrice?.toLocaleString()} đ
+                </Descriptions.Item>
+                <Descriptions.Item label="Bắp & Nước">
+                  {selectedFoods && selectedFoods.length > 0 ? (
+                    <ul style={{ paddingLeft: '20px', margin: 0 }}>
+                      {selectedFoods.map((f, idx) => (
+                        <li key={idx}>
+                          {f.name} x {f.quantity} = {(f.price * f.quantity).toLocaleString()} đ
+                        </li>
+                      ))}
+                    </ul>
+                  ) : 'Không chọn'}
+                </Descriptions.Item>
+              </Descriptions>
+            </Card>
 
-          {/* 3. Khuyến mãi */}
-          <div className="promotion-block" style={{ margin: '20px 0' }}>
-            <label style={{ display: 'block', marginBottom: '8px' }}>Mã giảm giá (nếu có):</label>
-            <input
-              type="text"
-              value={promotionCode}
-              onChange={(e) => setPromotionCode(e.target.value)}
-              placeholder="Nhập mã khuyến mãi..."
-              style={{ padding: '10px', width: '100%', borderRadius: '4px', border: '1px solid #444', background: '#333', color: 'white' }}
-            />
-          </div>
+            <Card title="Khuyến mãi" bordered={false} style={{ background: '#fff' }}>
+              <Space>
+                <Input
+                  prefix={<GiftOutlined />}
+                  placeholder="Nhập mã khuyến mãi"
+                  value={promotionCode}
+                  onChange={(e) => setPromotionCode(e.target.value)}
+                  style={{ width: '300px' }}
+                />
+                <Button>Áp dụng</Button>
+              </Space>
+            </Card>
+          </Col>
 
-          {/* 4. Tổng tiền tạm tính */}
-          <div className="total-block" style={{ textAlign: 'right', fontSize: '1.2rem', marginTop: '20px' }}>
-            <p>Tạm tính: {subTotal.toLocaleString()} đ</p>
-            <p style={{ fontSize: '0.9rem', color: '#ccc' }}>(Tiền giảm giá sẽ được trừ sau khi bấm Thanh Toán)</p>
-          </div>
-        </div>
+          {/* Cột Tổng tiền & Thanh toán */}
+          <Col xs={24} md={8}>
+            <Card style={{ background: '#1f1f1f', border: '1px solid #333', color: '#fff' }}>
+              <Title level={4} style={{ color: '#fff', marginBottom: '20px' }}>TỔNG CỘNG</Title>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <Text style={{ color: '#bfbfbf' }}>Tạm tính:</Text>
+                <Text style={{ color: '#fff', fontWeight: 'bold' }}>{subTotal.toLocaleString()} đ</Text>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <Text style={{ color: '#bfbfbf' }}>Giảm giá:</Text>
+                <Text style={{ color: '#fff', fontWeight: 'bold' }}>0 đ</Text>
+              </div>
+              <Divider style={{ borderColor: '#444', margin: '15px 0' }} />
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                <Title level={3} style={{ color: '#e50914', margin: 0 }}>{subTotal.toLocaleString()} đ</Title>
+              </div>
 
-        <div className="action-footer" style={{ marginTop: '40px', textAlign: 'center' }}>
-          <button
-            onClick={handlePayment}
-            disabled={loading}
-            style={{
-              padding: '15px 60px',
-              background: loading ? '#666' : '#e50914',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              width: '100%'
-            }}
-          >
-            {loading ? 'ĐANG XỬ LÝ...' : `THANH TOÁN • ${subTotal.toLocaleString()} đ`}
-          </button>
-        </div>
-      </div>
-    </div>
+              <Button
+                type="primary"
+                size="large"
+                block
+                danger
+                onClick={handlePayment}
+                loading={loading}
+                style={{ height: '50px', fontSize: '18px', fontWeight: 'bold' }}
+              >
+                THANH TOÁN
+              </Button>
+            </Card>
+          </Col>
+        </Row>
+      </Content>
+    </Layout>
   );
 };
 

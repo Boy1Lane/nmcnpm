@@ -1,90 +1,53 @@
-.payment-page-container {
-  background: #0a0a0a;
-  color: white;
-  min-height: 100vh;
-  padding: 40px 20px;
+/* Shared styles for Booking Flow */
+
+/* Customize Ant Design Steps for Dark Background */
+.booking-steps .ant-steps-item-title {
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 
-.payment-content {
-  max-width: 800px;
-  margin: 0 auto;
-  background: #1a1a1a;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-}
-
-.payment-content h2 {
-  text-align: center;
-  color: #e50914; /* Netflix Red style */
-  margin-bottom: 30px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.review-block {
-  margin-bottom: 20px;
-}
-
-.review-block h3 {
-  font-size: 1.1rem;
-  color: #aaa;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #333;
-  padding-bottom: 5px;
-}
-
-.review-block p {
-  font-size: 1rem;
-  margin: 5px 0;
-  display: flex;
-  justify-content: space-between;
-}
-
-.promotion-block input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px solid #444;
-  background: #333;
-  color: white;
-  font-size: 1rem;
-  transition: border-color 0.3s;
-}
-
-.promotion-block input:focus {
-  border-color: #e50914;
-  outline: none;
-}
-
-.total-block {
-  text-align: right;
-  font-size: 1.2rem;
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px dashed #444;
-}
-
-.action-footer button {
-  padding: 15px 60px;
-  background: #e50914;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
+.booking-steps .ant-steps-item-process .ant-steps-item-title {
+  color: #fff !important;
   font-weight: bold;
-  cursor: pointer;
-  width: 100%;
-  transition: background 0.3s, transform 0.2s;
 }
 
-.action-footer button:hover {
-  background: #f40612;
-  transform: translateY(-2px);
+.booking-steps .ant-steps-item-wait .ant-steps-item-title {
+  color: rgba(255, 255, 255, 0.4) !important;
 }
 
-.action-footer button:disabled {
-  background: #666;
-  cursor: not-allowed;
-  transform: none;
+.booking-steps .ant-steps-item-tail::after {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Ensure icons have correct color */
+.booking-steps .ant-steps-item-icon {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.booking-steps .ant-steps-item-process .ant-steps-item-icon {
+  background-color: #e50914;
+  border-color: #e50914;
+}
+
+.booking-steps .ant-steps-item-finish .ant-steps-item-icon {
+  background-color: transparent;
+  border-color: #e50914;
+}
+
+.booking-steps .ant-steps-item-finish .ant-steps-item-icon>.ant-steps-icon {
+  color: #e50914;
+}
+
+/* Payment Page specific */
+.ant-card-head {
+  color: #333;
+  /* For white cards */
+}
+
+.ant-descriptions-item-label {
+  color: #666 !important;
+}
+
+.ant-descriptions-item-content {
+  color: #000 !important;
 }
