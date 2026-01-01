@@ -1,0 +1,18 @@
+/* ConcessionsPage.css */
+
+/* Reusing similar dark theme overrides if necessary */
+
+.food-item-card:hover {
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Ant Card customization */
+.ant-card-meta-title {
+  color: #fff !important;
+}
+
+.ant-card-meta-description {
+  color: #ccc !important;
+}

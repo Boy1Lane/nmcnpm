@@ -63,7 +63,7 @@ class AuthService {
     const accessToken = jwt.sign(
       { id: user.id, role: user.role },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "1m" }
+      { expiresIn: "1d" }
     );
 
     const refreshToken = jwt.sign(
@@ -94,7 +94,7 @@ class AuthService {
   }
 
   async logout(userId) {
-    await User.update({ refreshToken: null }, {where: { id: userId } });
+    await User.update({ refreshToken: null }, { where: { id: userId } });
   }
   
   async forgotPassword(email) {

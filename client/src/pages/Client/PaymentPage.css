@@ -1,0 +1,53 @@
+/* Shared styles for Booking Flow */
+
+/* Customize Ant Design Steps for Dark Background */
+.booking-steps .ant-steps-item-title {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.booking-steps .ant-steps-item-process .ant-steps-item-title {
+  color: #fff !important;
+  font-weight: bold;
+}
+
+.booking-steps .ant-steps-item-wait .ant-steps-item-title {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.booking-steps .ant-steps-item-tail::after {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Ensure icons have correct color */
+.booking-steps .ant-steps-item-icon {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.booking-steps .ant-steps-item-process .ant-steps-item-icon {
+  background-color: #e50914;
+  border-color: #e50914;
+}
+
+.booking-steps .ant-steps-item-finish .ant-steps-item-icon {
+  background-color: transparent;
+  border-color: #e50914;
+}
+
+.booking-steps .ant-steps-item-finish .ant-steps-item-icon>.ant-steps-icon {
+  color: #e50914;
+}
+
+/* Payment Page specific */
+.ant-card-head {
+  color: #333;
+  /* For white cards */
+}
+
+.ant-descriptions-item-label {
+  color: #666 !important;
+}
+
+.ant-descriptions-item-content {
+  color: #000 !important;
+}

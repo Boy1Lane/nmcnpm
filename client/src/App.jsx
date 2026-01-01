@@ -4,6 +4,7 @@ import AdminRoute from "./routes/AdminRoute.jsx";
 import StaffRoute from "./routes/StaffRoute.jsx";
 
 import AdminLayout from "./layout/AdminLayout.jsx";
+import ClientLayout from "./layout/ClientLayout.jsx";
 
 // Admin pages
 import Dashboard from "./pages/Admin/Dashboard.jsx";
@@ -18,6 +19,14 @@ import FoodManagement from "./pages/Admin/Foods/FoodManagement.jsx";
 // Staff pages
 import CheckInPage from "./pages/Staff/Checkin/CheckinPage.jsx";
 
+// Client pages
+import HomePage from "./pages/Client/HomePage.jsx";
+import MovieDetail from "./pages/Client/MovieDetail.jsx";
+import BookingPage from "./pages/Client/BookingPage.jsx";
+import ConcessionsPage from "./pages/Client/ConcessionsPage.jsx";
+import PaymentPage from "./pages/Client/PaymentPage.jsx";
+import TicketSuccess from "./pages/Client/TicketSuccess.jsx";
+
 // Auth pages
 import Login from "./pages/Auth/Login.jsx";
 import Register from "./pages/Auth/Register.jsx";
@@ -26,25 +35,35 @@ export default function App() {
   return (
     <AuthProvider>
       <Routes>
-        {/* ===== PUBLIC ===== */}
+        {/* ===== PUBLIC AUTH ===== */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* ===== ADMIN + STAFF (KHUNG CHUNG) ===== */}
+        {/* ===== CLIENT (CUSTOMER) ===== */}
+        <Route path="/" element={<ClientLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="movie/:id" element={<MovieDetail />} />
+          <Route path="booking/:scheduleId" element={<BookingPage />} />
+          <Route path="concessions/:scheduleId" element={<ConcessionsPage />} />
+          <Route path="payment" element={<PaymentPage />} />
+          <Route path="ticket-success" element={<TicketSuccess />} />
+        </Route>
+
+        {/* ===== ADMIN + STAFF (PRIVATE) ===== */}
         <Route
-          path="/"
+          path="/admin"
           element={
             <StaffRoute>
               <AdminLayout />
             </StaffRoute>
           }
         >
-          {/* ===== STAFF + ADMIN ===== */}
+          {/* STAFF + ADMIN ACCESSIBLE */}
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="check-in" element={<CheckInPage />} />
           {/* <Route path="sale" element={<CounterBookingPage />} /> */}
 
-          {/* ===== ADMIN ONLY ===== */}
+          {/* ADMIN ONLY */}
           <Route
             path="foods"
             element={

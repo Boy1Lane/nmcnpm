@@ -26,35 +26,34 @@ export default function SideMenu() {
   };
 
   const adminMenuItems = [
-    { key: "/dashboard", label: "Dashboard", icon: <DashboardOutlined /> },
-    // ⭐ THÊM DÒNG NÀY
+    { key: "/admin/dashboard", label: "Dashboard", icon: <DashboardOutlined /> },
     {
-      key: "/promotions",
+      key: "/admin/promotions",
       label: "Khuyến mãi",
       icon: <GiftOutlined />,
     },
     {
-      key: "/foods",
+      key: "/admin/foods",
       label: "Thức ăn & Combo",
       icon: <CoffeeOutlined />,
     },
 
     {
-      key: "/movie-management",
+      key: "/admin/movie-management",
       label: "Phim",
       icon: <VideoCameraOutlined />,
     },
-    { key: "/showtimes", label: "Lịch chiếu", icon: <ScheduleOutlined /> },
-    { key: "/room-seat", label: "Phòng và Ghế", icon: <AppstoreOutlined /> },
-    { key: "/user", label: "Người dùng", icon: <UserOutlined /> },
-    { key: "/report", label: "Báo cáo", icon: <BarChartOutlined /> },
+    { key: "/admin/showtimes", label: "Lịch chiếu", icon: <ScheduleOutlined /> },
+    { key: "/admin/room-seat", label: "Phòng và Ghế", icon: <AppstoreOutlined /> },
+    { key: "/admin/user", label: "Người dùng", icon: <UserOutlined /> },
+    { key: "/admin/report", label: "Báo cáo", icon: <BarChartOutlined /> },
   ];
 
   const staffMenuItems = [
-    { key: "/dashboard", label: "Dashboard", icon: <DashboardOutlined /> },
-    { key: "/check-in", label: "Soát vé", icon: <ScheduleOutlined /> },
+    { key: "/admin/dashboard", label: "Dashboard", icon: <DashboardOutlined /> },
+    { key: "/admin/check-in", label: "Soát vé", icon: <ScheduleOutlined /> },
     {
-      key: "sale",
+      key: "/admin/sale",
       label: "Bán vé",
       icon: <VideoCameraOutlined />,
     },
@@ -74,9 +73,8 @@ export default function SideMenu() {
         {menuItems.map((item) => (
           <div
             key={item.key}
-            className={`menu-item ${
-              location.pathname === item.key ? "active" : ""
-            }`}
+            className={`menu-item ${location.pathname === item.key ? "active" : ""
+              }`}
             onClick={item.onClick || (() => navigate(item.key))}
           >
             {item.icon}
