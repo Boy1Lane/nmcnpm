@@ -1,0 +1,13 @@
+.client-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #000; /* Nền tối đặc trưng của rạp phim */
+  color: #fff;
+}
+
+.client-content {
+  flex: 1; /* Đẩy footer xuống đáy trang */
+  padding: 20px 5%;
+  margin-top: 80px; /* Chừa chỗ cho Header cố định phía trên */
+}

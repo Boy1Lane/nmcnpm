@@ -1,4 +1,4 @@
-const Movie = require('../../models/Movie');
+const { Movie, Showtime, Room, Cinema } = require('../../models');
 
 exports.getAllMovies = async (req, res) => {
   try {
@@ -12,7 +12,19 @@ exports.getAllMovies = async (req, res) => {
 exports.getMovieById = async (req, res) => {
   try {
     const { id } = req.params;
-    const movie = await Movie.findByPk(id);
+    const movie = await Movie.findByPk(id, {
+      include: [
+        {
+          model: Showtime,
+          include: [
+            {
+              model: Room,
+              include: [{ model: Cinema }]
+            }
+          ]
+        }
+      ]
+    });
 
     if (!movie) {
       return res.status(404).json({ message: 'Movie not found' });

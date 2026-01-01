@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 5173 --strictPort",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -12,10 +12,12 @@
   "dependencies": {
     "@ant-design/charts": "^2.6.6",
     "@ant-design/icons": "^6.1.0",
+    "@react-oauth/google": "^0.13.4",
     "antd": "^6.0.1",
     "axios": "^1.13.2",
     "cloudinary": "^1.41.3",
     "file-saver": "^2.0.5",
+    "google-auth-library": "^10.5.0",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "react": "^19.2.0",

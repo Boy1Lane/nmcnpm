@@ -1,5 +1,6 @@
-import { Card, Form, Input, Button, message } from "antd";
-import { useNavigate, Navigate } from "react-router-dom";
+import { Card, Form, Input, Button, message, Divider } from "antd";
+import { useNavigate, Navigate, Link } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 import { UserOutlined, LockOutlined } from "@ant-design/icons"; // Thêm icon cho đẹp
 import authService from "../../services/authService";
 import { useAuth } from "../../context/AuthContext";
@@ -41,13 +42,29 @@ export default function Login() {
       const role = res.data.user.role;
       if (role === "customer") {
         navigate("/");
-      } else if (role === "admin") {
-        navigate("/dashboard");
-      } else if (role === "staff") {
-        navigate("/dashboard"); // hoặc /staff nếu có
+        // navigate(0); // Optional: reload để cập nhật state nếu cần
+      } else if (role === "admin" || role === "staff") {
+        navigate("/admin/dashboard");
       }
     } catch (err) {
       message.error(err.response?.data?.message || "Đăng nhập thất bại");
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      console.log("🔵 Google login success", credentialResponse);
+      const res = await authService.loginWithGoogle(credentialResponse.credential);
+      console.log("🟢 FE nhận response Google:", res.data);
+      login(res.data.user, res.data.accessToken);
+      message.success("Đăng nhập bằng Google thành công");
+
+      const role = res.data.user.role;
+      if (role === "customer") navigate("/");
+      else navigate("/admin/dashboard"); // Should not happen for google usually
+    } catch (error) {
+      console.error("🔴 Google login failed", error);
+      message.error("Đăng nhập Google thất bại");
     }
   };
 
@@ -77,15 +94,31 @@ export default function Login() {
             <Input.Password prefix={<LockOutlined />} placeholder="Mật khẩu" />
           </Form.Item>
 
+          <div style={{ textAlign: "right", marginBottom: 20 }}>
+            <Link to="/forgot-password">Quên mật khẩu?</Link>
+          </div>
+
           <Button type="primary" htmlType="submit" block className="auth-btn">
             Đăng nhập
           </Button>
+
+          <Divider>HOẶC</Divider>
+
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => {
+                console.log("Login Failed");
+                message.error("Login Failed");
+              }}
+            />
+          </div>
 
           <div className="auth-footer">
             Chưa có tài khoản? <a href="/register">Đăng ký</a>
           </div>
         </Form>
       </Card>
-    </div>
+    </div >
   );
 }

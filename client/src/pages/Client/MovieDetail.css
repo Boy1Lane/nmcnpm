@@ -1,0 +1,97 @@
+/* MovieDetail.css */
+
+.movie-hero-section {
+  background-size: cover;
+  background-position: center top;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.movie-poster-wrapper {
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease;
+}
+
+.movie-poster-wrapper:hover {
+  transform: scale(1.02);
+}
+
+.movie-poster-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Showtime Box Styling */
+.showtime-box {
+  background: #1f1f1f;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.showtime-box:hover {
+  border-color: #e50914;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.st-cinema {
+  font-weight: bold;
+  color: #f1c40f;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.st-room {
+  color: #bfbfbf;
+  font-size: 12px;
+  margin-bottom: 15px;
+}
+
+.showtime-tabs .ant-tabs-nav::before {
+  border-bottom: 1px solid #333 !important;
+}
+
+.showtime-tabs .ant-tabs-tab {
+  background: #111 !important;
+  border-color: #333 !important;
+  color: #888 !important;
+}
+
+.showtime-tabs .ant-tabs-tab-active {
+  background: #e50914 !important;
+  border-color: #e50914 !important;
+}
+
+.showtime-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #fff !important;
+  font-weight: bold;
+}
+
+/* Override Antd Modal for dark theme */
+.trailer-modal .ant-modal-content {
+  background-color: #000;
+  padding: 0;
+  overflow: hidden;
+}
+
+.trailer-modal .ant-modal-header {
+  background-color: #000;
+  border-bottom: 1px solid #222;
+  padding: 15px 24px;
+}
+
+.trailer-modal .ant-modal-title {
+  color: #fff !important;
+}
+
+.trailer-modal .ant-modal-close-icon {
+  color: #fff !important;
+}

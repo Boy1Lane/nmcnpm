@@ -1,4 +1,4 @@
-import { Form, Input, Button, Row, Col } from "antd";
+import { Form, Input, Button } from "antd";
 import {
   CheckCircleFilled,
   CloseCircleFilled,
@@ -12,35 +12,36 @@ import {
 import { useState } from "react";
 import dayjs from "dayjs";
 import checkinService from "../../../services/Admin/checkinService";
+// Đảm bảo đường dẫn import CSS đúng
 import "../../../styles/Admin/CheckinPage.css";
 
-/* ===== MAP STATUS ===== */
+/* ===== MAP STATUS (GIỮ NGUYÊN LOGIC) ===== */
 const renderStatus = (status) => {
   switch (status) {
     case "CONFIRMED":
       return {
         text: "VÉ HỢP LỆ",
-        color: "#10b981",
+        color: "#10b981", // Emerald-500
         icon: <CheckCircleFilled />,
-      }; // Xanh lá
+      };
     case "USED":
       return {
         text: "VÉ ĐÃ SỬ DỤNG",
-        color: "#f59e0b",
+        color: "#f59e0b", // Amber-500
         icon: <ClockCircleOutlined />,
-      }; // Cam
+      };
     case "PENDING":
       return {
         text: "CHƯA THANH TOÁN",
-        color: "#64748b",
+        color: "#64748b", // Slate-500
         icon: <ClockCircleOutlined />,
-      }; // Xám
+      };
     case "CANCELLED":
       return {
         text: "VÉ ĐÃ HUỶ",
-        color: "#ef4444",
+        color: "#ef4444", // Red-500
         icon: <CloseCircleFilled />,
-      }; // Đỏ
+      };
     default:
       return {
         text: "KHÔNG HỢP LỆ",
@@ -50,7 +51,7 @@ const renderStatus = (status) => {
   }
 };
 
-/* ===== MAP ROOM TYPE ===== */
+/* ===== MAP ROOM TYPE (GIỮ NGUYÊN LOGIC) ===== */
 const renderRoomType = (type) => {
   switch (type) {
     case "IMAX":
@@ -58,14 +59,14 @@ const renderRoomType = (type) => {
         icon: <RocketOutlined />,
         text: "IMAX",
         bg: "#f3e8ff",
-        color: "#7c3aed", // Tím nhạt
+        color: "#7c3aed",
       };
     case "3D":
       return {
         icon: <EyeOutlined />,
         text: "3D",
         bg: "#e0f2fe",
-        color: "#0284c7", // Xanh dương nhạt
+        color: "#0284c7",
       };
     case "2D":
     default:
@@ -73,7 +74,7 @@ const renderRoomType = (type) => {
         icon: <VideoCameraOutlined />,
         text: "2D",
         bg: "#f1f5f9",
-        color: "#475569", // Xám nhạt
+        color: "#475569",
       };
   }
 };
@@ -83,6 +84,7 @@ export default function CheckInPage() {
   const [result, setResult] = useState(null);
   const [form] = Form.useForm();
 
+  // Logic xử lý (Không đổi)
   const onFinish = async ({ bookingId }) => {
     try {
       setLoading(true);
@@ -92,7 +94,6 @@ export default function CheckInPage() {
       const { booking, showtime, movie, room, cinema, seats, roomType } = data;
       const isConfirmed = booking.status === "CONFIRMED";
 
-      // Set data hiển thị
       setResult({
         status: booking.status,
         movie: movie?.title || "N/A",
@@ -108,7 +109,6 @@ export default function CheckInPage() {
         seats: seats?.length ? seats.join(", ") : "N/A",
       });
 
-      // Check-in nếu vé hợp lệ
       if (isConfirmed) {
         await checkinService.checkInBooking(bookingId);
       }
@@ -125,114 +125,98 @@ export default function CheckInPage() {
   return (
     <div className="checkin-container">
       <div className="checkin-wrapper">
-        {/* ================= FORM TÌM KIẾM ================= */}
-        <div className="search-card">
-          <div
-            style={{
-              marginBottom: 16,
-              fontWeight: 700,
-              fontSize: 18,
-              color: "#1e293b",
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            <QrcodeOutlined style={{ color: "#2563eb" }} /> SOÁT VÉ NHANH
+        {/* ================= CARD TÌM KIẾM ================= */}
+        <div className="checkin-card search-section">
+          <div className="section-header">
+            <QrcodeOutlined className="header-icon" />
+            <span>SOÁT VÉ NHANH</span>
           </div>
+
           <Form form={form} onFinish={onFinish}>
-            <Row gutter={12}>
-              <Col flex="auto">
-                <Form.Item
-                  name="bookingId"
-                  rules={[{ required: true, message: "Vui lòng nhập mã vé" }]}
-                  style={{ marginBottom: 0 }}
-                >
-                  <Input
-                    className="search-input"
-                    placeholder="Nhập mã booking..."
-                    prefix={
-                      <span style={{ color: "#94a3b8", marginRight: 4 }}></span>
-                    }
-                    allowClear
-                  />
-                </Form.Item>
-              </Col>
-              <Col>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  className="btn-check"
-                >
-                  KIỂM TRA
-                </Button>
-              </Col>
-            </Row>
+            <div className="search-form-row">
+              <Form.Item
+                name="bookingId"
+                rules={[{ required: true, message: "Vui lòng nhập mã vé" }]}
+                style={{ marginBottom: 0, flex: 1 }}
+              >
+                <Input
+                  className="search-input"
+                  placeholder="Nhập mã booking hoặc quét mã..."
+                  allowClear
+                  autoFocus // Tự động focus để dùng súng bắn mã vạch tiện hơn
+                />
+              </Form.Item>
+
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                className="btn-check"
+              >
+                KIỂM TRA
+              </Button>
+            </div>
           </Form>
         </div>
 
-        {/* ================= KẾT QUẢ VÉ ================= */}
+        {/* ================= CARD KẾT QUẢ ================= */}
         {result && !result.error && (
-          <div className="ticket-card">
-            {/* Header màu theo trạng thái */}
+          <div className="checkin-card ticket-section">
+            {/* Thanh trạng thái màu sắc dựa theo status */}
             <div
-              className="ticket-header"
+              className="ticket-status-bar"
               style={{ backgroundColor: statusUI.color }}
             >
-              {statusUI.icon} &nbsp; {statusUI.text}
+              {statusUI.icon} <span>{statusUI.text}</span>
             </div>
 
-            <div className="ticket-body">
-              <div className="movie-title">{result.movie}</div>
+            <div className="ticket-content">
+              <h2 className="movie-title">{result.movie}</h2>
 
-              {/* Thông tin chi tiết */}
-              <div className="info-row">
-                <span className="info-label">Suất chiếu</span>
-                <div className="info-value">
-                  <ClockCircleOutlined
-                    style={{ marginRight: 6, color: "#2563eb" }}
-                  />
-                  {result.time}
-                  <div
-                    style={{
-                      fontSize: 13,
-                      color: "#64748b",
-                      fontWeight: 500,
-                      marginTop: 2,
-                    }}
-                  >
-                    {result.date}
+              <div className="ticket-info-grid">
+                {/* Cột trái: Thời gian */}
+                <div className="info-item">
+                  <span className="info-label">Suất chiếu</span>
+                  <div className="info-value">
+                    <span>{result.time}</span>
+                    <div className="sub-value">
+                      <ClockCircleOutlined style={{ color: "#3b82f6" }} />
+                      {result.date}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="info-row">
-                <span className="info-label">Rạp / Phòng</span>
-                <div className="info-value">
-                  <EnvironmentOutlined
-                    style={{ marginRight: 6, color: "#2563eb" }}
-                  />
-                  {result.cinema}
-                  <div style={{ marginTop: 6 }}>
-                    {result.room}
-                    <span
-                      className="room-tag"
-                      style={{
-                        background: roomTypeUI.bg,
-                        color: roomTypeUI.color,
-                      }}
+                {/* Cột phải: Địa điểm */}
+                <div className="info-item text-right">
+                  <span className="info-label">Rạp / Phòng</span>
+                  <div className="info-value">
+                    <span>{result.cinema}</span>
+                    <div
+                      className="sub-value"
+                      style={{ justifyContent: "flex-end" }}
                     >
-                      {roomTypeUI.icon} {roomTypeUI.text}
-                    </span>
+                      <EnvironmentOutlined style={{ color: "#3b82f6" }} />
+                      {result.room}
+                      {/* Badge Room Type */}
+                      <span
+                        className="room-badge"
+                        style={{
+                          background: roomTypeUI.bg,
+                          color: roomTypeUI.color,
+                          marginLeft: 6,
+                        }}
+                      >
+                        {roomTypeUI.text}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Khu vực Ghế ngồi to rõ */}
-              <div className="seats-container">
-                <div className="seats-label">Vị trí ghế ngồi</div>
-                <div className="seats-value">{result.seats}</div>
+              {/* Box Ghế Ngồi */}
+              <div className="seats-box">
+                <div className="seats-title">VỊ TRÍ GHẾ NGỒI</div>
+                <div className="seats-number">{result.seats}</div>
               </div>
             </div>
           </div>
@@ -240,9 +224,10 @@ export default function CheckInPage() {
 
         {/* ================= THÔNG BÁO LỖI ================= */}
         {result?.error && (
-          <div className="error-card">
-            <div className="error-text">
-              <CloseCircleFilled /> {result.error}
+          <div className="checkin-card error-section">
+            <div className="error-content">
+              <CloseCircleFilled style={{ fontSize: "20px" }} />
+              <span>{result.error}</span>
             </div>
           </div>
         )}

@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
   "fullName": "Test User",
-  "email": "test@example.com",
+  "email": "najexab528@cucadas.com",
   "password": "password123",
   "phone": "0123456789"
 }
@@ -15,7 +15,7 @@ POST http://localhost:5000/auth/login
 Content-Type: application/json
 
 {
-  "email": "test@example.com",
+  "email": "najexab528@cucadas.com",
   "password": "password123"
 }
 
@@ -43,3 +43,19 @@ GET http://localhost:5000/api/showtimes?movieId=1&date=2025-01-01
 ### 9. Get Seats for a Specific Showtime (Clicking a Showtime)
 # Replace '1' with a valid showtimeId found in previous requests
 GET http://localhost:5000/api/showtimes/1/seats
+
+### Google Lgoin
+POST http://localhost:5000/auth/google
+Content-Type: application/json
+
+{
+  "token": "PASTE_YOUR_GOOGLE_ID_TOKEN_HERE"
+}
+
+### Forget password
+POST http://localhost:5000/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "najexab528@cucadas.com"
+}
