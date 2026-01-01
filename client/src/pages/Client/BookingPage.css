@@ -1,0 +1,128 @@
+/* BookingPage.css */
+
+.screen-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+  perspective: 500px;
+}
+
+.screen {
+  width: 80%;
+  max-width: 600px;
+  height: 60px;
+  background: linear-gradient(to bottom, #e50914, transparent);
+  transform: rotateX(-30deg) scale(0.9);
+  box-shadow: 0 10px 50px rgba(229, 9, 20, 0.5);
+  border-radius: 50% 50% 0 0 / 20px 20px 0 0;
+  opacity: 0.8;
+}
+
+.screen-text {
+  margin-top: 10px;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #8c8c8c;
+}
+
+.seats-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 12px;
+  justify-content: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.seat-item {
+  width: 100%;
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.seat-available {
+  background-color: #333;
+  color: #fff;
+  border-top: 2px solid #555;
+}
+
+.seat-available:hover {
+  background-color: #555;
+  transform: scale(1.1);
+}
+
+.seat-selected {
+  background-color: #e50914;
+  color: #fff;
+  box-shadow: 0 0 10px #e50914;
+  border: none;
+}
+
+.seat-sold {
+  background-color: #1a1a1a;
+  color: #444;
+  cursor: not-allowed;
+  border: 1px solid #333;
+}
+
+.seat-locked {
+  background-color: #d9d9d9;
+  color: #888;
+  cursor: not-allowed;
+}
+
+/* Legend */
+.seat-legend {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 40px;
+  margin-bottom: 60px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #bfbfbf;
+}
+
+.seat-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.seat-dot.available {
+  background-color: #333;
+  border-top: 2px solid #555;
+}
+
+.seat-dot.selected {
+  background-color: #e50914;
+}
+
+.seat-dot.sold {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+}
+
+@media (max-width: 768px) {
+  .seats-grid {
+    gap: 6px;
+    /* Giảm khoảng cách trên mobile */
+  }
+
+  .seat-item {
+    font-size: 10px;
+  }
+}

@@ -1,0 +1,88 @@
+.success-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 20px;
+  background-color: #0a0a0a;
+}
+
+.ticket-card {
+  background: white;
+  color: black;
+  width: 100%;
+  max-width: 450px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(229, 9, 20, 0.2);
+  text-align: center;
+}
+
+.ticket-header {
+  background: #e50914;
+  color: white;
+  padding: 30px 20px;
+}
+
+.success-icon {
+  font-size: 3rem;
+  background: white;
+  color: #e50914;
+  width: 70px;
+  height: 70px;
+  line-height: 70px;
+  border-radius: 50%;
+  margin: 0 auto 15px;
+}
+
+.ticket-body {
+  padding: 40px 30px;
+  border-bottom: 2px dashed #ccc;
+  position: relative;
+}
+
+/* Tạo hiệu ứng khía răng cưa cho vé */
+.ticket-body::before, .ticket-body::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  width: 30px;
+  height: 30px;
+  background: #0a0a0a;
+  border-radius: 50%;
+}
+.ticket-body::before { left: -15px; }
+.ticket-body::after { right: -15px; }
+
+.value-id {
+  font-size: 2rem;
+  letter-spacing: 5px;
+  color: #333;
+  margin: 10px 0 30px;
+}
+
+.qr-code-section img {
+  border: 10px solid #f9f9f9;
+  border-radius: 10px;
+}
+
+.qr-note {
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 15px;
+}
+
+.btn-home-success {
+  width: 100%;
+  background: #333;
+  color: white;
+  border: none;
+  padding: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-home-success:hover {
+  background: #000;
+}
