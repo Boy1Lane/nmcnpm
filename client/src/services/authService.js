@@ -25,6 +25,9 @@ const authService = {
   resetPassword: (token, password) => {
     return authAxios.post('/auth/reset-password', { token, password });
   },
+  forgotPassword: (email) => authAxios.post("/auth/forgot-password", { email }),
+
+  loginWithGoogle: (credential) => authAxios.post("/auth/google-login", { credential }),
   getProfile: () => {
     return authAxios.get('/auth/me');
   },

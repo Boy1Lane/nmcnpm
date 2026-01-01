@@ -32,108 +32,113 @@ import Login from "./pages/Auth/Login.jsx";
 import Register from "./pages/Auth/Register.jsx";
 import ProfilePage from "./pages/Client/ProfilePage.jsx";
 import ResetPasswordPage from "./pages/Auth/ResetPasswordPage.jsx";
+import ForgotPassword from "./pages/Auth/ForgotPassword.jsx";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID"; // Thay bằng Client ID thật
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        {/* ===== PUBLIC AUTH ===== */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <AuthProvider>
+        <Routes>
+          {/* ===== PUBLIC AUTH ===== */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-        {/* ===== CLIENT (CUSTOMER) ===== */}
-        <Route path="/" element={<ClientLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path="movie/:id" element={<MovieDetail />} />
-          <Route path="booking/:scheduleId" element={<BookingPage />} />
-          <Route path="concessions/:scheduleId" element={<ConcessionsPage />} />
-          <Route path="payment" element={<PaymentPage />} />
-          <Route path="ticket-success" element={<TicketSuccess />} />
-          <Route path="profile" element={<ProfilePage />} />
-        </Route>
+          {/* ===== CLIENT (CUSTOMER) ===== */}
+          <Route path="/" element={<ClientLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="movie/:id" element={<MovieDetail />} />
+            <Route path="booking/:scheduleId" element={<BookingPage />} />
+            <Route path="concessions/:scheduleId" element={<ConcessionsPage />} />
+            <Route path="payment" element={<PaymentPage />} />
+            <Route path="ticket-success" element={<TicketSuccess />} />
+            <Route path="profile" element={<ProfilePage />} />
+          </Route>
 
-        {/* ===== ADMIN + STAFF (PRIVATE) ===== */}
-        <Route
-          path="/admin"
-          element={
-            <StaffRoute>
-              <AdminLayout />
-            </StaffRoute>
-          }
-        >
-          {/* STAFF + ADMIN ACCESSIBLE */}
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="check-in" element={<CheckInPage />} />
-          {/* <Route path="sale" element={<CounterBookingPage />} /> */}
-
-          {/* ADMIN ONLY */}
+          {/* ===== ADMIN + STAFF (PRIVATE) ===== */}
           <Route
-            path="foods"
+            path="/admin"
             element={
-              <AdminRoute>
-                <FoodManagement />
-              </AdminRoute>
+              <StaffRoute>
+                <AdminLayout />
+              </StaffRoute>
             }
-          />
+          >
+            {/* STAFF + ADMIN ACCESSIBLE */}
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="check-in" element={<CheckInPage />} />
+            {/* <Route path="sale" element={<CounterBookingPage />} /> */}
 
-          <Route
-            path="movie-management"
-            element={
-              <AdminRoute>
-                <MovieManagement />
-              </AdminRoute>
-            }
-          />
+            {/* ADMIN ONLY */}
+            <Route
+              path="foods"
+              element={
+                <AdminRoute>
+                  <FoodManagement />
+                </AdminRoute>
+              }
+            />
 
-          <Route
-            path="promotions"
-            element={
-              <AdminRoute>
-                <PromotionManagement />
-              </AdminRoute>
-            }
-          />
+            <Route
+              path="movie-management"
+              element={
+                <AdminRoute>
+                  <MovieManagement />
+                </AdminRoute>
+              }
+            />
 
-          <Route
-            path="room-seat"
-            element={
-              <AdminRoute>
-                <RoomManagement />
-              </AdminRoute>
-            }
-          />
+            <Route
+              path="promotions"
+              element={
+                <AdminRoute>
+                  <PromotionManagement />
+                </AdminRoute>
+              }
+            />
 
-          <Route
-            path="showtimes"
-            element={
-              <AdminRoute>
-                <ShowtimesPage />
-              </AdminRoute>
-            }
-          />
+            <Route
+              path="room-seat"
+              element={
+                <AdminRoute>
+                  <RoomManagement />
+                </AdminRoute>
+              }
+            />
 
-          <Route
-            path="report"
-            element={
-              <AdminRoute>
-                <RevenueReport />
-              </AdminRoute>
-            }
-          />
+            <Route
+              path="showtimes"
+              element={
+                <AdminRoute>
+                  <ShowtimesPage />
+                </AdminRoute>
+              }
+            />
 
-          <Route
-            path="user"
-            element={
-              <AdminRoute>
-                <UserManagement />
-              </AdminRoute>
-            }
-          />
-        </Route>
-      </Routes>
-    </AuthProvider>
+            <Route
+              path="report"
+              element={
+                <AdminRoute>
+                  <RevenueReport />
+                </AdminRoute>
+              }
+            />
+
+            <Route
+              path="user"
+              element={
+                <AdminRoute>
+                  <UserManagement />
+                </AdminRoute>
+              }
+            />
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   );
 }
