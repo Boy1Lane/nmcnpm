@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import movieService from '../../services/Client/movieService';
 import { Layout, Carousel, Tabs, Card, Row, Col, Typography, Spin, Tag, Button } from 'antd';
-import { PlayCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, ClockCircleOutlined, BarcodeOutlined } from '@ant-design/icons';
 import './Homepage.css';
 
 const { Content } = Layout;
@@ -57,24 +57,24 @@ const HomePage = () => {
                 <div className="poster-wrapper">
                   <img alt={movie.title} src={movie.posterUrl} loading="lazy" />
                   <div className="overlay">
-                    <Button type="primary" shape="round" icon={<PlayCircleOutlined />} size="large" danger>
+                    <Button type="primary" shape="round" icon={<BarcodeOutlined />} size="large" danger>
                       Mua Vé
                     </Button>
                   </div>
                 </div>
               }
               bordered={false}
-              bodyStyle={{ padding: '12px', backgroundColor: '#1f1f1f' }}
-              style={{ overflow: 'hidden', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}
+              styles={{ body: { padding: '12px', backgroundColor: '#1f1f1f', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' } }}
+              style={{ overflow: 'hidden', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', height: '100%', display: 'flex', flexDirection: 'column' }}
             >
               <Meta
                 title={
-                  <Title level={5} style={{ color: '#fff', marginBottom: 0 }} ellipsis>
+                  <Title level={5} style={{ color: '#fff', marginBottom: 0, minHeight: '48px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }} title={movie.title}>
                     {movie.title}
                   </Title>
                 }
                 description={
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, justifyContent: 'flex-end' }}>
                     <Text style={{ color: '#8c8c8c', fontSize: '13px' }}>
                       {movie.genre || 'Hành động'}
                     </Text>
@@ -142,9 +142,7 @@ const HomePage = () => {
               <Paragraph style={{ color: '#e0e0e0', fontSize: '18px', maxWidth: '600px', textShadow: '0 2px 4px rgba(0,0,0,0.6)' }}>
                 {banner.description}
               </Paragraph>
-              <Button type="primary" size="large" danger style={{ height: '48px', padding: '0 40px', fontSize: '18px', fontWeight: 'bold' }}>
-                Khám Phá Ngay
-              </Button>
+
             </div>
           </div>
         ))}

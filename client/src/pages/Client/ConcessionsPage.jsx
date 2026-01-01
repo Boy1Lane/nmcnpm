@@ -170,21 +170,26 @@ const ConcessionsPage = () => {
         justifyContent: 'space-between',
         alignItems: 'center'
       }}>
-        <div style={{ display: 'flex', gap: '40px' }}>
-          <div>
-            <Text type="secondary">Ghế: </Text>
-            <Text strong>{seatsPrice?.toLocaleString()} đ</Text>
-          </div>
-          <div>
-            <Text type="secondary">Bắp nước: </Text>
-            <Text strong>{foodTotal.toLocaleString()} đ</Text>
+        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+          <Button onClick={() => navigate(-1)} size="large" style={{ fontWeight: 'bold' }}>
+            QUAY LẠI
+          </Button>
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <div>
+              <Text type="secondary" style={{ fontSize: '12px' }}>Ghế: </Text>
+              <Text strong>{seatsPrice?.toLocaleString()} đ</Text>
+            </div>
+            <div>
+              <Text type="secondary" style={{ fontSize: '12px' }}>Bắp nước: </Text>
+              <Text strong>{foodTotal.toLocaleString()} đ</Text>
+            </div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div>
-            <Text>Tổng cộng: </Text>
-            <Text style={{ fontSize: '20px', color: '#e50914', fontWeight: 'bold' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+          <div style={{ textAlign: 'right' }}>
+            <Text style={{ display: 'block', fontSize: '14px', color: '#8c8c8c' }}>Tổng cộng</Text>
+            <Text style={{ fontSize: '24px', color: '#e50914', fontWeight: 'bold', lineHeight: 1 }}>
               {finalTotal.toLocaleString()} đ
             </Text>
           </div>
@@ -193,9 +198,9 @@ const ConcessionsPage = () => {
             size="large"
             danger
             onClick={handleNext}
-            style={{ padding: '0 40px', fontWeight: 'bold' }}
+            style={{ padding: '0 40px', fontWeight: 'bold', height: '50px' }}
           >
-            THANH TOÁN
+            TIẾP TỤC
           </Button>
         </div>
       </Footer>

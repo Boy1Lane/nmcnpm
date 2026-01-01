@@ -12,8 +12,7 @@ router.post("/refresh", authController.refresh);
 // POST /auth/logout -> logout
 router.post("/logout", authMiddleware, authController.logout);
 
-router.post("/google", authController.googleLogin.bind(authController));
-router.post("/forgot-password", authController.forgotPassword.bind(authController));
-router.post("/reset-password", authController.resetPassword.bind(authController));
+// GET /auth/me -> get profile
+router.get("/me", authMiddleware, authController.getProfile);
 
 module.exports = router;

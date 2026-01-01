@@ -30,6 +30,11 @@ import TicketSuccess from "./pages/Client/TicketSuccess.jsx";
 // Auth pages
 import Login from "./pages/Auth/Login.jsx";
 import Register from "./pages/Auth/Register.jsx";
+import ProfilePage from "./pages/Client/ProfilePage.jsx";
+import ResetPasswordPage from "./pages/Auth/ResetPasswordPage.jsx";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID"; // Thay bằng Client ID thật
 
 export default function App() {
   return (
@@ -47,6 +52,7 @@ export default function App() {
           <Route path="concessions/:scheduleId" element={<ConcessionsPage />} />
           <Route path="payment" element={<PaymentPage />} />
           <Route path="ticket-success" element={<TicketSuccess />} />
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
 
         {/* ===== ADMIN + STAFF (PRIVATE) ===== */}

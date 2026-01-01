@@ -26,15 +26,15 @@ exports.createBooking = async (req, res) => {
     });
 
     if (showtimeSeats.length !== seatIds.length) {
-        await transaction.rollback();
-        return res.status(400).json({ message: 'Invalid seat IDs for this showtime.' });
+      await transaction.rollback();
+      return res.status(400).json({ message: 'Invalid seat IDs for this showtime.' });
     }
 
     // Check if any seat is not AVAILABLE
     const unavailable = showtimeSeats.some(seat => seat.status !== 'AVAILABLE');
     if (unavailable) {
-        await transaction.rollback();
-        return res.status(409).json({ message: 'One or more seats are already booked or held.' });
+      await transaction.rollback();
+      return res.status(409).json({ message: 'One or more seats are already booked or held.' });
     }
 
     // Calculate Seat Total
@@ -43,23 +43,23 @@ exports.createBooking = async (req, res) => {
     // Calculate Food Total
     let foodTotal = 0;
     const bookingFoodData = [];
-    
+
     if (foodItems && foodItems.length > 0) {
-        for (const item of foodItems) {
-            const food = await FoodCombo.findByPk(item.foodId);
-            if (!food) {
-                await transaction.rollback();
-                return res.status(404).json({ message: `Food item with ID ${item.foodId} not found` });
-            }
-            foodTotal += food.price * item.quantity;
-            bookingFoodData.push({
-                foodComboId: food.id,
-                quantity: item.quantity,
-                price: food.price // Store price at time of booking if needed, but BookingFood model might not have it. 
-                                  // Checking BookingFood model: it only has quantity. 
-                                  // Ideally we should store price snapshot, but for now we just calculate total.
-            });
+      for (const item of foodItems) {
+        const food = await FoodCombo.findByPk(item.foodId);
+        if (!food) {
+          await transaction.rollback();
+          return res.status(404).json({ message: `Food item with ID ${item.foodId} not found` });
         }
+        foodTotal += food.price * item.quantity;
+        bookingFoodData.push({
+          foodComboId: food.id,
+          quantity: item.quantity,
+          price: food.price // Store price at time of booking if needed, but BookingFood model might not have it. 
+          // Checking BookingFood model: it only has quantity. 
+          // Ideally we should store price snapshot, but for now we just calculate total.
+        });
+      }
     }
 
     // Handle Promotion
@@ -67,32 +67,32 @@ exports.createBooking = async (req, res) => {
     let promotionId = null;
 
     if (promotionCode) {
-        const promotion = await Promotion.findOne({
-            where: {
-                code: promotionCode,
-                validFrom: { [Op.lte]: new Date() },
-                validTo: { [Op.gte]: new Date() }
-            },
-            transaction
-        });
+      const promotion = await Promotion.findOne({
+        where: {
+          code: promotionCode,
+          validFrom: { [Op.lte]: new Date() },
+          validTo: { [Op.gte]: new Date() }
+        },
+        transaction
+      });
 
-        if (!promotion) {
-            await transaction.rollback();
-            return res.status(400).json({ message: 'Invalid or expired promotion code' });
-        }
+      if (!promotion) {
+        await transaction.rollback();
+        return res.status(400).json({ message: 'Invalid or expired promotion code' });
+      }
 
-        if (promotion.usageLimit && promotion.timesUsed >= promotion.usageLimit) {
-            await transaction.rollback();
-            return res.status(400).json({ message: 'Promotion usage limit reached' });
-        }
+      if (promotion.usageLimit && promotion.timesUsed >= promotion.usageLimit) {
+        await transaction.rollback();
+        return res.status(400).json({ message: 'Promotion usage limit reached' });
+      }
 
-        // Calculate discount
-        const subtotal = seatTotal + foodTotal;
-        discountAmount = (subtotal * promotion.discountPercentage) / 100;
-        promotionId = promotion.id;
+      // Calculate discount
+      const subtotal = seatTotal + foodTotal;
+      discountAmount = (subtotal * promotion.discountPercentage) / 100;
+      promotionId = promotion.id;
 
-        // Update promotion usage
-        await promotion.increment('timesUsed', { transaction });
+      // Update promotion usage
+      await promotion.increment('timesUsed', { transaction });
     }
 
     const finalTotal = seatTotal + foodTotal - discountAmount;
@@ -111,13 +111,13 @@ exports.createBooking = async (req, res) => {
 
     // Update ShowtimeSeats to LOCKED
     await ShowtimeSeat.update({
-        status: 'LOCKED',
-        lockedAt: new Date()
+      status: 'LOCKED',
+      lockedAt: new Date()
     }, {
-        where: {
-            id: showtimeSeats.map(s => s.id)
-        },
-        transaction
+      where: {
+        id: showtimeSeats.map(s => s.id)
+      },
+      transaction
     });
 
     // Create BookingSeat entries
@@ -131,11 +131,11 @@ exports.createBooking = async (req, res) => {
 
     // Create BookingFood entries
     if (bookingFoodData.length > 0) {
-        const foodDataWithBookingId = bookingFoodData.map(f => ({
-            ...f,
-            bookingId: booking.id
-        }));
-        await BookingFood.bulkCreate(foodDataWithBookingId, { transaction });
+      const foodDataWithBookingId = bookingFoodData.map(f => ({
+        ...f,
+        bookingId: booking.id
+      }));
+      await BookingFood.bulkCreate(foodDataWithBookingId, { transaction });
     }
 
     await transaction.commit();
@@ -143,77 +143,81 @@ exports.createBooking = async (req, res) => {
     // Fetch the complete booking with details to return
     const completeBooking = await Booking.findByPk(booking.id, {
       include: [
-        { 
-            model: BookingSeat, 
-            include: [{
-                model: ShowtimeSeat,
-                include: [Seat]
-            }] 
+        {
+          model: BookingSeat,
+          include: [{
+            model: ShowtimeSeat,
+            include: [Seat]
+          }]
         },
         { model: BookingFood, include: [FoodCombo] },
         { model: Showtime, include: [Movie] }
       ]
     });
 
-    res.status(201).json({ 
-      message: 'Booking created successfully. Please proceed to payment.', 
-      booking: completeBooking 
+    res.status(201).json({
+      message: 'Booking created successfully. Please proceed to payment.',
+      booking: completeBooking
     });
 
   } catch (error) {
-    await transaction.rollback();
-    console.error('Booking error:', error);
+    if (transaction) await transaction.rollback();
+    console.error('#################### BOOKING ERROR ####################');
+    console.error('Error Message:', error.message);
+    console.error('Error Stack:', error.stack);
+    console.error('Request Body:', req.body);
+    console.error('#######################################################');
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
 
 exports.confirmBooking = async (req, res) => {
-    const transaction = await sequelize.transaction();
-    try {
-        const { bookingId } = req.body;
-        const userId = req.user.id;
+  const transaction = await sequelize.transaction();
+  try {
+    const { bookingId } = req.body;
+    const userId = req.user.id;
 
-        const booking = await Booking.findOne({
-            where: { id: bookingId, userId, status: 'PENDING' },
-            transaction,
-            lock: transaction.LOCK.UPDATE
-        });
+    const booking = await Booking.findOne({
+      where: { id: bookingId, userId, status: 'PENDING' },
+      transaction,
+      lock: transaction.LOCK.UPDATE
+    });
 
-        if (!booking) {
-            await transaction.rollback();
-            return res.status(404).json({ message: 'Booking not found or already processed.' });
-        }
-
-        // Update Booking to CONFIRMED
-        booking.status = 'CONFIRMED';
-        await booking.save({ transaction });
-
-        // Find BookingSeats to get ShowtimeSeatIds
-        const bookingSeats = await BookingSeat.findAll({
-            where: { bookingId: booking.id },
-            transaction
-        });
-        
-        const showtimeSeatIds = bookingSeats.map(bs => bs.showtimeSeatId);
-
-        // Update ShowtimeSeats to SOLD
-        await ShowtimeSeat.update({
-            status: 'SOLD',
-            lockedAt: null // Clear lock time or keep it as sold time
-        }, {
-            where: { id: showtimeSeatIds },
-            transaction
-        });
-
-        await transaction.commit();
-
-        res.json({ message: 'Booking confirmed successfully.', booking });
-
-    } catch (error) {
-        await transaction.rollback();
-        console.error('Confirm booking error:', error);
-        res.status(500).json({ message: 'Internal server error' });
+    if (!booking) {
+      await transaction.rollback();
+      return res.status(404).json({ message: 'Booking not found or already processed.' });
     }
+
+    // Update Booking to CONFIRMED
+    booking.status = 'CONFIRMED';
+    await booking.save({ transaction });
+
+    // Find BookingSeats to get ShowtimeSeatIds
+    const bookingSeats = await BookingSeat.findAll({
+      where: { bookingId: booking.id },
+      transaction
+    });
+
+    const showtimeSeatIds = bookingSeats.map(bs => bs.showtimeSeatId);
+
+    // Update ShowtimeSeats to SOLD
+    await ShowtimeSeat.update({
+      status: 'SOLD',
+      lockedAt: null // Clear lock time or keep it as sold time
+    }, {
+      where: { id: showtimeSeatIds },
+      transaction
+    });
+
+    await transaction.commit();
+
+    res.json({ message: 'Booking confirmed successfully.', booking });
+
+  } catch (error) {
+    await transaction.rollback();
+    console.error('Confirm booking error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
 exports.cancelBooking = async (req, res) => {
@@ -226,7 +230,7 @@ exports.cancelBooking = async (req, res) => {
     const booking = await Booking.findOne({
       where: { id: bookingId, userId, status: 'PENDING' },
       transaction,
-      lock: transaction.LOCK.UPDATE 
+      lock: transaction.LOCK.UPDATE
     });
 
     if (!booking) {
@@ -251,7 +255,7 @@ exports.cancelBooking = async (req, res) => {
 
     // 2. Release Seats 
     const showtimeSeatIds = bookingSeats.map(bs => bs.showtimeSeatId);
-    
+
     if (showtimeSeatIds.length > 0) {
       await ShowtimeSeat.update({
         status: 'AVAILABLE',
@@ -275,7 +279,7 @@ exports.cancelBooking = async (req, res) => {
 exports.getUserBookings = async (req, res) => {
   try {
     const userId = req.user.id;
-    
+
     const bookings = await Booking.findAll({
       where: { userId },
       include: [
@@ -284,12 +288,12 @@ exports.getUserBookings = async (req, res) => {
           attributes: ['startTime', 'endTime', 'basePrice'],
           include: [
             { model: Movie, attributes: ['title', 'posterUrl', 'duration'] },
-            { 
-              model: Room, 
+            {
+              model: Room,
               attributes: ['name'],
-              include: [{ 
-                  model: Cinema, 
-                  attributes: ['name', 'address'] 
+              include: [{
+                model: Cinema,
+                attributes: ['name', 'address']
               }]
             }
           ]
@@ -300,9 +304,9 @@ exports.getUserBookings = async (req, res) => {
             {
               model: ShowtimeSeat,
               include: [
-                { 
-                  model: Seat, 
-                  attributes: ['row', 'number', 'type'] 
+                {
+                  model: Seat,
+                  attributes: ['row', 'number', 'type']
                 }
               ]
             }

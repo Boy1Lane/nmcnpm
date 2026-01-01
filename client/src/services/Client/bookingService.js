@@ -28,6 +28,11 @@ const bookingService = {
   confirmBooking: async (bookingId) => {
     const response = await axiosClient.post('/bookings/confirm', { bookingId });
     return response.data;
+  },
+
+  getMyBookings: async () => {
+    const response = await axiosClient.get('/bookings/my-bookings');
+    return response.data;
   }
 };
 export default bookingService;

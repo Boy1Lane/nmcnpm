@@ -122,7 +122,7 @@ const BookingPage = () => {
         {/* Seat Legend */}
         <div className="seat-legend">
           <div className="legend-item"><div className="seat-dot available"></div><span>Ghế trống</span></div>
-          <div className="legend-item"><div className="seat-dot selected"></div><span>Đâng chọn</span></div>
+          <div className="legend-item"><div className="seat-dot selected"></div><span>Đang chọn</span></div>
           <div className="legend-item"><div className="seat-dot sold"></div><span>Đã bán</span></div>
         </div>
       </Content>
@@ -139,17 +139,22 @@ const BookingPage = () => {
         justifyContent: 'space-between',
         alignItems: 'center'
       }}>
-        <div>
-          <Text strong style={{ fontSize: '16px', marginRight: '10px' }}>Ghế đang chọn:</Text>
-          <Text style={{ color: '#e50914', fontWeight: 'bold' }}>
-            {selectedSeats.length > 0 ? selectedSeats.map(s => `${s.Seat.row}${s.Seat.number}`).join(', ') : 'Chưa chọn'}
-          </Text>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <Button onClick={() => navigate(-1)} size="large" style={{ fontWeight: 'bold' }}>
+            QUAY LẠI
+          </Button>
+          <div>
+            <Text strong style={{ fontSize: '16px', marginRight: '10px' }}>Ghế đang chọn:</Text>
+            <Text style={{ color: '#e50914', fontWeight: 'bold' }}>
+              {selectedSeats.length > 0 ? selectedSeats.map(s => `${s.Seat.row}${s.Seat.number}`).join(', ') : 'Chưa chọn'}
+            </Text>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div>
-            <Text>Tổng cộng: </Text>
-            <Text style={{ fontSize: '20px', color: '#e50914', fontWeight: 'bold' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+          <div style={{ textAlign: 'right' }}>
+            <Text style={{ display: 'block', fontSize: '14px', color: '#8c8c8c' }}>Tổng cộng</Text>
+            <Text style={{ fontSize: '24px', color: '#e50914', fontWeight: 'bold', lineHeight: 1 }}>
               {calculateTotal().toLocaleString()} đ
             </Text>
           </div>
@@ -159,7 +164,7 @@ const BookingPage = () => {
             danger
             onClick={handleNext}
             disabled={selectedSeats.length === 0}
-            style={{ padding: '0 40px', fontWeight: 'bold' }}
+            style={{ padding: '0 40px', fontWeight: 'bold', height: '50px' }}
           >
             TIẾP TỤC
           </Button>

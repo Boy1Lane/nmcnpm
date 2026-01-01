@@ -4,18 +4,21 @@ body {
   padding: 0;
   box-sizing: border-box;
   font-family: "Inter", "Segoe UI", Roboto, sans-serif;
-  
+
   /* SỬA TẠI ĐÂY: Dùng màu nền tối để đồng bộ với Cinema Theme */
-  background-color: #0a0a0a; 
-  color: #ffffff; /* Chữ mặc định là trắng */
-  
+  background-color: #0a0a0a;
+  color: #ffffff;
+  /* Chữ mặc định là trắng */
+
   /* Giúp cuộn trang mượt mà hơn */
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
 }
 
 /* Đảm bảo các box-sizing hoạt động đúng cho toàn bộ dự án */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: inherit;
 }
 
@@ -23,4 +26,56 @@ body {
 a {
   text-decoration: none;
   color: inherit;
+}
+
+/* Override Ant Design Steps for Dark Theme */
+.booking-steps .ant-steps-item-icon {
+  border-color: rgba(255, 255, 255, 0.45) !important;
+  background-color: transparent !important;
+}
+
+.booking-steps .ant-steps-item-process .ant-steps-item-icon {
+  background-color: #e50914 !important;
+  border-color: #e50914 !important;
+}
+
+.booking-steps .ant-steps-item-finish .ant-steps-item-icon {
+  background-color: transparent !important;
+  border-color: #e50914 !important;
+}
+
+.booking-steps .ant-steps-item-finish .ant-steps-item-icon>.ant-steps-icon {
+  color: #e50914 !important;
+}
+
+.booking-steps .ant-steps-item-title {
+  color: rgba(255, 255, 255, 0.45) !important;
+  font-weight: 500 !important;
+}
+
+.booking-steps .ant-steps-item-process .ant-steps-item-title {
+  color: white !important;
+  font-weight: bold !important;
+}
+
+.booking-steps .ant-steps-item-finish .ant-steps-item-title {
+  color: white !important;
+}
+
+/* Lines between steps */
+.booking-steps .ant-steps-item-tail::after {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.booking-steps .ant-steps-item-finish>.ant-steps-item-container>.ant-steps-item-tail::after {
+  background-color: #e50914 !important;
+}
+
+/* White icons inside circles */
+.booking-steps .ant-steps-icon .anticon {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.booking-steps .ant-steps-item-process .ant-steps-icon .anticon {
+  color: white;
 }

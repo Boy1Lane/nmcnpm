@@ -197,7 +197,7 @@ const MovieDetail = () => {
         footer={null}
         width={800}
         centered
-        destroyOnClose
+        destroyOnHidden
         className="trailer-modal"
       >
         <div style={{ position: 'relative', paddingTop: '56.25%' }}>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Layout, Menu, Button, theme } from 'antd';
-import { LoginOutlined, LogoutOutlined, HomeOutlined } from '@ant-design/icons';
+import { LoginOutlined, LogoutOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
 
 const { Header: AntHeader } = Layout;
 
@@ -33,10 +33,11 @@ const Header = () => {
         top: 0,
         zIndex: 1000,
         width: '100%',
+        height: '72px', // Tăng chiều cao
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: '#001529', // Dark theme standard
+        backgroundColor: '#001529',
         padding: '0 5%',
         boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
       }}
@@ -74,14 +75,24 @@ const Header = () => {
 
       <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
         {token ? (
-          <Button
-            type="primary"
-            danger
-            icon={<LogoutOutlined />}
-            onClick={handleLogout}
-          >
-            Đăng xuất
-          </Button>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <Button
+              type="text"
+              style={{ color: 'white' }}
+              icon={<UserOutlined />}
+              onClick={() => navigate('/profile')}
+            >
+              Tài khoản
+            </Button>
+            <Button
+              type="primary"
+              danger
+              icon={<LogoutOutlined />}
+              onClick={handleLogout}
+            >
+              Đăng xuất
+            </Button>
+          </div>
         ) : (
           <Link to="/login">
             <Button type="primary" style={{ backgroundColor: '#e50914' }} icon={<LoginOutlined />}>
