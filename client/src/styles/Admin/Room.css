@@ -42,6 +42,10 @@
   flex-wrap: wrap;
 }
 
+.filter-actions {
+  display: flex;
+  align-items: center;
+}
 .custom-select .ant-select-selector {
   border-radius: 8px !important;
   height: 40px !important;

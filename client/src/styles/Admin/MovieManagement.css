@@ -251,7 +251,11 @@
   transition: all 0.3s ease;
   overflow: hidden;
   position: relative;
+  aspect-ratio: 2 / 3;          /* ✅ KHÓA TỶ LỆ 2:3 */
+  overflow: hidden;             /* ✅ CHẶN LỐ */
 }
+
+
 
 .poster-upload-wrapper:hover {
   border-color: #7e3af2;

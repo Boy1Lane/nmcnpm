@@ -21,6 +21,7 @@ import {
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import movieService from "../../../services/Admin/movieService";
+import ImageCropper from "../../../components/Admin/ImageCropper";
 
 // Import CSS
 import "../../../styles/Admin/MovieManagement.css";
@@ -33,6 +34,9 @@ export default function CreateMovieModal({ open, movie, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [posterFile, setPosterFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const [cropVisible, setCropVisible] = useState(false);
+  const [cropSrc, setCropSrc] = useState(null);
+  const [pendingFile, setPendingFile] = useState(null);
   const [trailerFile, setTrailerFile] = useState(null);
   const [previewTrailer, setPreviewTrailer] = useState(null);
 
@@ -60,9 +64,20 @@ export default function CreateMovieModal({ open, movie, onClose, onSuccess }) {
   // Xử lý upload ảnh (chỉ hiển thị preview, chưa gửi server)
   const handlePreview = (file) => {
     const objectUrl = URL.createObjectURL(file);
+    setPendingFile(file);
+    setCropSrc(objectUrl);
+    setCropVisible(true);
+    return false; // Chặn auto upload
+  };
+
+  const handleCropDone = async (blob) => {
+    if (!blob) return;
+    const file = new File([blob], pendingFile.name, { type: "image/jpeg" });
     setPosterFile(file);
-    setPreviewImage(objectUrl);
-    return false; // Chặn auto upload của Antd
+    setPreviewImage(URL.createObjectURL(blob));
+    setCropVisible(false);
+    setCropSrc(null);
+    setPendingFile(null);
   };
 
   const handleTrailerUpload = (file) => {
@@ -185,6 +200,20 @@ export default function CreateMovieModal({ open, movie, onClose, onSuccess }) {
                 </div>
               </Upload>
             </Form.Item>
+
+            {cropVisible && (
+              <ImageCropper
+                visible={cropVisible}
+                src={cropSrc}
+                aspect={2 / 3}
+                onCancel={() => {
+                  setCropVisible(false);
+                  setCropSrc(null);
+                  setPendingFile(null);
+                }}
+                onCropDone={handleCropDone}
+              />
+            )}
 
             <Form.Item
               label="Thời lượng (phút)"

@@ -1,41 +1,52 @@
-import {
-  Card,
-  Form,
-  Input,
-  Button,
-  Typography,
-  Space,
-  Row,
-  Col,
-  Divider,
-} from "antd";
+import { Form, Input, Button, Row, Col } from "antd";
 import {
   CheckCircleFilled,
+  CloseCircleFilled,
   ClockCircleOutlined,
   EnvironmentOutlined,
   VideoCameraOutlined,
   EyeOutlined,
   RocketOutlined,
+  QrcodeOutlined,
 } from "@ant-design/icons";
 import { useState } from "react";
 import dayjs from "dayjs";
 import checkinService from "../../../services/Admin/checkinService";
-
-const { Title, Text } = Typography;
+import "../../../styles/Admin/CheckinPage.css";
 
 /* ===== MAP STATUS ===== */
 const renderStatus = (status) => {
   switch (status) {
     case "CONFIRMED":
-      return { text: "VÉ HỢP LỆ", color: "#00c48c" };
+      return {
+        text: "VÉ HỢP LỆ",
+        color: "#10b981",
+        icon: <CheckCircleFilled />,
+      }; // Xanh lá
     case "USED":
-      return { text: "VÉ ĐÃ SỬ DỤNG", color: "#22c55e" };
+      return {
+        text: "VÉ ĐÃ SỬ DỤNG",
+        color: "#f59e0b",
+        icon: <ClockCircleOutlined />,
+      }; // Cam
     case "PENDING":
-      return { text: "CHƯA THANH TOÁN", color: "#f59e0b" };
+      return {
+        text: "CHƯA THANH TOÁN",
+        color: "#64748b",
+        icon: <ClockCircleOutlined />,
+      }; // Xám
     case "CANCELLED":
-      return { text: "VÉ ĐÃ HUỶ", color: "#ef4444" };
+      return {
+        text: "VÉ ĐÃ HUỶ",
+        color: "#ef4444",
+        icon: <CloseCircleFilled />,
+      }; // Đỏ
     default:
-      return { text: "KHÔNG HỢP LỆ", color: "#ef4444" };
+      return {
+        text: "KHÔNG HỢP LỆ",
+        color: "#ef4444",
+        icon: <CloseCircleFilled />,
+      };
   }
 };
 
@@ -47,14 +58,14 @@ const renderRoomType = (type) => {
         icon: <RocketOutlined />,
         text: "IMAX",
         bg: "#f3e8ff",
-        color: "#7c3aed",
+        color: "#7c3aed", // Tím nhạt
       };
     case "3D":
       return {
         icon: <EyeOutlined />,
         text: "3D",
         bg: "#e0f2fe",
-        color: "#0284c7",
+        color: "#0284c7", // Xanh dương nhạt
       };
     case "2D":
     default:
@@ -62,7 +73,7 @@ const renderRoomType = (type) => {
         icon: <VideoCameraOutlined />,
         text: "2D",
         bg: "#f1f5f9",
-        color: "#334155",
+        color: "#475569", // Xám nhạt
       };
   }
 };
@@ -79,165 +90,135 @@ export default function CheckInPage() {
 
       const data = await checkinService.getCheckInInfo(bookingId);
       const { booking, showtime, movie, room, cinema, seats, roomType } = data;
-
       const isConfirmed = booking.status === "CONFIRMED";
 
-      // 👉 IN RA TRƯỚC
+      // Set data hiển thị
       setResult({
         status: booking.status,
         movie: movie?.title || "N/A",
         time: showtime
           ? `${dayjs(showtime.startTime).format("HH:mm")} - ${dayjs(
               showtime.endTime
-            ).format("HH:mm")} | ${dayjs(showtime.startTime).format(
-              "DD/MM/YYYY"
-            )}`
+            ).format("HH:mm")}`
           : "N/A",
+        date: showtime ? dayjs(showtime.startTime).format("DD/MM/YYYY") : "N/A",
         cinema: cinema?.name || "N/A",
         room: room?.name || "N/A",
         roomType: roomType || "N/A",
         seats: seats?.length ? seats.join(", ") : "N/A",
       });
 
-      // 👉 SAU ĐÓ MỚI CHECK-IN
+      // Check-in nếu vé hợp lệ
       if (isConfirmed) {
         await checkinService.checkInBooking(bookingId);
       }
     } catch {
-      setResult({ error: "VÉ KHÔNG TỒN TẠI" });
+      setResult({ error: "KHÔNG TÌM THẤY VÉ HOẶC MÃ KHÔNG ĐÚNG" });
     } finally {
       setLoading(false);
     }
   };
 
-  const statusUI = result && renderStatus(result.status);
-  const roomTypeUI = result && renderRoomType(result.roomType);
+  const statusUI = result && !result.error && renderStatus(result.status);
+  const roomTypeUI = result && !result.error && renderRoomType(result.roomType);
 
   return (
-    <Row
-      justify="center"
-      style={{
-        padding: "48px 32px",
-        minHeight: "calc(100vh - 64px)",
-      }}
-    >
-      <Col style={{ width: "100%", maxWidth: 880 }}>
-        {/* ================= FORM ================= */}
-        <Card
-          style={{
-            borderRadius: 22,
-            background: "#fafafa",
-            boxShadow: "0 10px 32px rgba(0,0,0,0.06)",
-            marginBottom: 32,
-          }}
-        >
+    <div className="checkin-container">
+      <div className="checkin-wrapper">
+        {/* ================= FORM TÌM KIẾM ================= */}
+        <div className="search-card">
+          <div
+            style={{
+              marginBottom: 16,
+              fontWeight: 700,
+              fontSize: 18,
+              color: "#1e293b",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <QrcodeOutlined style={{ color: "#2563eb" }} /> SOÁT VÉ NHANH
+          </div>
           <Form form={form} onFinish={onFinish}>
-            <Row gutter={20} align="middle">
+            <Row gutter={12}>
               <Col flex="auto">
                 <Form.Item
                   name="bookingId"
-                  rules={[{ required: true, message: "Nhập mã booking" }]}
+                  rules={[{ required: true, message: "Vui lòng nhập mã vé" }]}
                   style={{ marginBottom: 0 }}
                 >
                   <Input
-                    size="large"
-                    placeholder="Nhập mã booking"
-                    style={{
-                      height: 54,
-                      fontSize: 18,
-                      borderRadius: 14,
-                    }}
+                    className="search-input"
+                    placeholder="Nhập mã booking..."
+                    prefix={
+                      <span style={{ color: "#94a3b8", marginRight: 4 }}></span>
+                    }
+                    allowClear
                   />
                 </Form.Item>
               </Col>
-
               <Col>
                 <Button
                   type="primary"
                   htmlType="submit"
                   loading={loading}
-                  style={{
-                    height: 54,
-                    minWidth: 180,
-                    fontSize: 16,
-                    fontWeight: 700,
-                    borderRadius: 14,
-                    background: "linear-gradient(135deg, #7c3aed, #5b21b6)",
-                    border: "none",
-                  }}
+                  className="btn-check"
                 >
                   KIỂM TRA
                 </Button>
               </Col>
             </Row>
           </Form>
-        </Card>
+        </div>
 
-        {/* ================= KẾT QUẢ ================= */}
+        {/* ================= KẾT QUẢ VÉ ================= */}
         {result && !result.error && (
-          <Card
-            style={{
-              borderRadius: 24,
-              overflow: "hidden",
-              boxShadow: "0 16px 40px rgba(0,0,0,0.08)",
-            }}
-            styles={{ body: { padding: 0 } }}
-          >
-            {/* HEADER */}
+          <div className="ticket-card">
+            {/* Header màu theo trạng thái */}
             <div
-              style={{
-                background: statusUI.color,
-                padding: "16px 24px",
-                textAlign: "center",
-                color: "#fff",
-                fontWeight: 700,
-                fontSize: 16,
-              }}
+              className="ticket-header"
+              style={{ backgroundColor: statusUI.color }}
             >
-              <CheckCircleFilled /> {statusUI.text}
+              {statusUI.icon} &nbsp; {statusUI.text}
             </div>
 
-            {/* BODY */}
-            <div style={{ padding: 32 }}>
-              <Title level={3} style={{ marginBottom: 24 }}>
-                {result.movie}
-              </Title>
+            <div className="ticket-body">
+              <div className="movie-title">{result.movie}</div>
 
-              <Row gutter={32}>
-                <Col span={12}>
-                  <Text type="secondary">THỜI GIAN</Text>
-                  <div style={{ marginTop: 8, fontWeight: 600 }}>
-                    <ClockCircleOutlined /> {result.time}
-                  </div>
-                </Col>
-
-                <Col span={12}>
-                  <Text type="secondary">RẠP / PHÒNG</Text>
-
-                  <div style={{ marginTop: 8, fontWeight: 600 }}>
-                    <EnvironmentOutlined /> {result.cinema}
-                  </div>
-
+              {/* Thông tin chi tiết */}
+              <div className="info-row">
+                <span className="info-label">Suất chiếu</span>
+                <div className="info-value">
+                  <ClockCircleOutlined
+                    style={{ marginRight: 6, color: "#2563eb" }}
+                  />
+                  {result.time}
                   <div
                     style={{
-                      marginTop: 6,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
+                      fontSize: 13,
+                      color: "#64748b",
+                      fontWeight: 500,
+                      marginTop: 2,
                     }}
                   >
-                    <Text strong>Phòng:</Text>
-                    <Text>{result.room}</Text>
+                    {result.date}
+                  </div>
+                </div>
+              </div>
 
+              <div className="info-row">
+                <span className="info-label">Rạp / Phòng</span>
+                <div className="info-value">
+                  <EnvironmentOutlined
+                    style={{ marginRight: 6, color: "#2563eb" }}
+                  />
+                  {result.cinema}
+                  <div style={{ marginTop: 6 }}>
+                    {result.room}
                     <span
+                      className="room-tag"
                       style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 6,
-                        padding: "4px 12px",
-                        borderRadius: 999,
-                        fontSize: 13,
-                        fontWeight: 700,
                         background: roomTypeUI.bg,
                         color: roomTypeUI.color,
                       }}
@@ -245,53 +226,27 @@ export default function CheckInPage() {
                       {roomTypeUI.icon} {roomTypeUI.text}
                     </span>
                   </div>
-                </Col>
-              </Row>
-
-              <Divider style={{ margin: "28px 0" }} />
-
-              {/* GHẾ */}
-              <Card
-                variant="outlined"
-                style={{
-                  background: "#f4f5f7",
-                  borderRadius: 18,
-                  textAlign: "center",
-                }}
-              >
-                <Text type="secondary">Vị trí ghế</Text>
-                <div
-                  style={{
-                    fontSize: 32,
-                    fontWeight: 800,
-                    color: "#7c3aed",
-                    marginTop: 10,
-                    letterSpacing: 2,
-                  }}
-                >
-                  {result.seats}
                 </div>
-              </Card>
+              </div>
+
+              {/* Khu vực Ghế ngồi to rõ */}
+              <div className="seats-container">
+                <div className="seats-label">Vị trí ghế ngồi</div>
+                <div className="seats-value">{result.seats}</div>
+              </div>
             </div>
-          </Card>
+          </div>
         )}
 
-        {/* ================= LỖI ================= */}
+        {/* ================= THÔNG BÁO LỖI ================= */}
         {result?.error && (
-          <Card
-            style={{
-              borderRadius: 18,
-              marginTop: 24,
-              background: "#fff1f0",
-              borderColor: "#ffccc7",
-            }}
-          >
-            <Text type="danger" strong>
-              ❌ {result.error}
-            </Text>
-          </Card>
+          <div className="error-card">
+            <div className="error-text">
+              <CloseCircleFilled /> {result.error}
+            </div>
+          </div>
         )}
-      </Col>
-    </Row>
+      </div>
+    </div>
   );
 }

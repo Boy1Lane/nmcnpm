@@ -1,0 +1,186 @@
+/* src/styles/Admin/Dashboard.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.dashboard-container {
+  font-family: 'Inter', sans-serif;
+  color: #1e293b;
+  padding-bottom: 40px;
+}
+
+/* ===== HERO SECTION ===== */
+.dashboard-hero {
+  /* Gradient Tím - Hồng - Cam rực rỡ hơn */
+  background: linear-gradient(120deg, #7c3aed 0%, #db2777 50%, #f97316 100%);
+  border-radius: 24px;
+  padding: 48px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 40px;
+  box-shadow: 0 20px 40px -10px rgba(124, 58, 237, 0.4); /* Bóng tím */
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  max-width: 700px;
+}
+
+.dashboard-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dashboard-hero h1 {
+  font-size: 36px; /* Chữ to hơn */
+  font-weight: 800;
+  margin: 0 0 16px 0;
+  line-height: 1.2;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.dashboard-quote {
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 500;
+  opacity: 0.95;
+  background: rgba(0, 0, 0, 0.15); /* Nền mờ sau quote để dễ đọc */
+  padding: 8px 16px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.dashboard-sub {
+  font-size: 15px;
+  opacity: 0.9;
+  margin-top: 8px;
+}
+
+/* Icon nền trang trí */
+.hero-bg-icon {
+  position: absolute;
+  right: -30px;
+  bottom: -50px;
+  font-size: 300px; /* Siêu to */
+  color: white;
+  opacity: 0.08; /* Rất mờ */
+  transform: rotate(-15deg);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ===== STATS CARDS ===== */
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  
+  /* ⭐ QUAN TRỌNG: SỬA ĐOẠN NÀY ĐỂ HẾT BỊ CĂN GIỮA */
+  display: flex;
+  flex-direction: row;       /* Xếp ngang (thay vì dọc) */
+  align-items: center;       /* Căn giữa theo trục dọc */
+  justify-content: flex-start; /* Căn trái (thay vì center) */
+  gap: 20px;
+  
+  /* Giữ nguyên hiệu ứng bóng */
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s ease;
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  
+  /* ⭐ QUAN TRỌNG: CĂN TRÁI CHỮ */
+  align-items: flex-start; 
+  text-align: left;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.1);
+  border-color: #e2e8f0;
+}
+
+/* Wrapper cho Icon: QUAN TRỌNG ĐỂ ICON ĐẸP */
+.stat-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px; /* Bo góc mềm mại */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px; /* Kích thước icon bên trong */
+  flex-shrink: 0;
+}
+
+/* Màu sắc từng loại Card - Đậm hơn bản cũ */
+.stat-icon-wrapper.blue {
+  background: #eff6ff; /* Nền xanh nhạt */
+  color: #3b82f6;      /* Icon xanh đậm */
+}
+
+.stat-icon-wrapper.green {
+  background: #f0fdf4;
+  color: #10b981;
+}
+
+.stat-icon-wrapper.purple {
+  background: #f5f3ff;
+  color: #8b5cf6;
+}
+
+.stat-icon-wrapper.orange {
+  background: #fff7ed;
+  color: #f97316;
+}
+
+
+.stat-label {
+  font-size: 13px;
+  text-transform: uppercase;
+  color: #64748b; /* Màu xám trung tính */
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a; /* Màu đen đậm */
+  line-height: 1;
+}
+
+/* --- TÌM ĐOẠN NÀY ĐỂ SỬA MÀU CHỮ TIỀN --- */
+.stat-value.revenue-text {
+  font-size: 24px;
+  /* color: #f97316; <-- XÓA DÒNG NÀY ĐỂ NÓ VỀ MÀU ĐEN NHƯ CÁC SỐ KHÁC */
+  color: #0f172a; /* Màu đen đậm */
+}
+
+.stat-value small {
+  font-size: 14px;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-left: 4px;
+  vertical-align: middle;
+}

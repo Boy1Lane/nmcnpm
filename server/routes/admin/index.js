@@ -6,7 +6,9 @@ const userRoutes = require('./userRoute.js');
 const bookingRoutes = require('./bookingRoute.js');
 const promotionRoutes = require('./promotionRoute');
 const foodRoutes = require('./foodRoute');
+const dashboardRoutes = require("./dashboardRoute");
 const router = require('express').Router();
+
 
 
 // /admin/movies -> movieRoutes
@@ -32,6 +34,9 @@ router.use('/foods', foodRoutes);
 
 // /admin/promotions -> promotionRoutes
 router.use('/promotions', promotionRoutes);
+
+// /admin/dashboard -> dashboardRoutes
+router.use("/dashboard", dashboardRoutes);
 
 // /admin 
 router.get('/', (req, res) => {

@@ -35,7 +35,7 @@ export default function SideMenu() {
     },
     {
       key: "/foods",
-      label: "Thức ăn & Combo",
+      label: "Thức ăn & đồ uống",
       icon: <CoffeeOutlined />,
     },
 
@@ -66,7 +66,7 @@ export default function SideMenu() {
     <div className="sidebar">
       {/* Logo Area */}
       <div className="sidebar-logo">
-        🎬 <span>AdminPanel</span>
+        🎬 <span>{user?.role === "staff" ? "StaffPanel" : "AdminPanel"}</span>
       </div>
 
       {/* Menu Items */}

@@ -155,8 +155,8 @@ exports.getAllShowtimes = async (req, res) => {
           attributes: ["id", "title", "posterUrl", "duration"]
         },
         {
-          model: Room,
-          attributes: ["id", "name", "type", "totalSeats"]
+            model: Room,
+            attributes: ["id", "name", "type", "totalSeats", "cinemaId"]
         }
       ],
       order: [["startTime", "ASC"]]

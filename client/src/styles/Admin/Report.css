@@ -16,11 +16,18 @@
 }
 
 .page-title {
-    font-size: 26px;
-    font-weight: 800;
-    color: #0f172a;
-    margin: 0;
-    letter-spacing: -0.5px;
+  font-size: 24px; 
+  font-weight: 800;
+  color: var(--text-main);
+  
+  border-left: 5px solid #f59e0b; /* Màu cam vàng */
+  padding-left: 12px;
+  line-height: 1.2;
+  
+  margin-bottom: 16px;
+  margin-top: 0;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
 }
 
 .page-subtitle {

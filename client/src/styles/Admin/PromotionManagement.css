@@ -1,14 +1,16 @@
-/* PromotionManagement.css */
+/* Import Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-/* 1. Layout tổng thể: Nền xám nhạt */
+/* --- LAYOUT CHUNG --- */
 .page-wrapper {
-  background-color: #f5f5fa; /* Màu nền giống trang báo cáo */
+  background-color: #f8f9fa; /* Nền xám sáng sạch sẽ */
   min-height: 100vh;
   padding: 24px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Inter', sans-serif;
+  color: #1e293b;
 }
 
-/* 2. Header: Title bên trái, Nút bên phải */
+/* --- HEADER --- */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -20,195 +22,152 @@
   margin: 0;
   font-size: 24px;
   font-weight: 700;
-  color: #1a1a2e; /* Màu chữ đậm, chuyên nghiệp */
+  color: #1e293b;
 }
 
 .page-subtitle {
   margin: 4px 0 0;
-  color: #8c90aa;
+  color: #64748b;
   font-size: 14px;
 }
 
-/* Nút thêm mới: Bo góc mềm, shadow nhẹ */
 .btn-primary-custom {
-  background-color: #3e79f7;
-  border-color: #3e79f7;
+  background-color: #2563eb; /* Xanh chuẩn doanh nghiệp */
+  border-color: #2563eb;
   border-radius: 8px;
   font-weight: 600;
-  box-shadow: 0 4px 10px rgba(62, 121, 247, 0.2);
-  height: 42px;
-  display: flex;
-  align-items: center;
+  height: 44px;
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+  transition: all 0.3s;
 }
 
 .btn-primary-custom:hover {
-  background-color: #2b62d9;
-  border-color: #2b62d9;
+  background-color: #1d4ed8 !important;
+  border-color: #1d4ed8 !important;
   transform: translateY(-1px);
 }
 
-/* 3. Card chứa nội dung (Table): Màu trắng, nổi bật trên nền xám */
+/* --- TABLE CONTAINER --- */
 .content-card {
   background: #ffffff;
-  border-radius: 12px; /* Bo góc 12px giống card biểu đồ */
-  padding: 24px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03); /* Đổ bóng rất nhẹ */
-  border: 1px solid rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  padding: 0; /* Để table tràn viền card cho đẹp */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
 }
 
-/* 4. Tùy chỉnh Table Ant Design để trông sạch sẽ hơn */
+/* --- TABLE STYLING --- */
 .ant-table-thead > tr > th {
-  background: #fafafb !important; /* Header bảng màu xám rất nhạt */
-  color: #6e707e;
-  font-weight: 600;
+  background: #f1f5f9 !important; /* Header xám nhạt */
+  color: #475569 !important;
+  font-weight: 700 !important;
   text-transform: uppercase;
-  font-size: 12px;
-  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px !important;
+  border-bottom: 1px solid #cbd5e1;
+  padding: 16px !important;
 }
 
 .ant-table-tbody > tr > td {
-  padding: 16px 16px;
+  padding: 16px !important;
   font-size: 14px;
-  color: #454655;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .ant-table-tbody > tr:hover > td {
-  background-color: #fcfcfd !important;
+  background-color: #f8fafc !important;
 }
 
-/* 5. Các thành phần nhỏ trong bảng */
+/* Code column */
+.promo-code-text {
+  font-family: monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px dashed #bfdbfe;
+}
+
+/* Date column */
 .date-cell {
   display: flex;
   flex-direction: column;
   gap: 4px;
   font-size: 13px;
+  color: #64748b;
 }
 
 .date-row {
   display: flex;
   align-items: center;
-  color: #666;
+  gap: 6px;
 }
 
-/* Nút hành động trong bảng */
-.btn-edit {
-  color: #3e79f7;
-  background: #edf2fe;
+/* Action Buttons */
+.btn-icon {
   border: none;
-  border-radius: 6px;
+  background: transparent;
+  box-shadow: none;
+  color: #94a3b8;
+}
+.btn-icon:hover {
+  background: #f1f5f9;
+  color: #2563eb;
+}
+.btn-icon.delete:hover {
+  color: #ef4444;
+  background: #fef2f2;
 }
 
-.btn-edit:hover {
-  background: #3e79f7;
-  color: #fff;
-}
-
-.btn-delete {
-  color: #ff4d4f;
-  background: #fff1f0;
-  border: none;
-  border-radius: 6px;
-}
-
-.btn-delete:hover {
-  background: #ff4d4f;
-  color: #fff;
-}
-
-/* PromotionModal.css */
-
-/* 1. Tinh chỉnh khung Modal */
+/* --- MODAL --- */
 .promotion-modal .ant-modal-content {
-  border-radius: 16px; /* Bo góc mềm mại */
-  padding: 0; /* Xóa padding mặc định để header đẹp hơn */
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); /* Đổ bóng sâu */
+  padding: 0;
 }
 
-/* 2. Header: Màu nền nhẹ & Title gradient */
 .promotion-modal .ant-modal-header {
-  padding: 20px 24px;
-  background: #fdfdfd;
-  border-bottom: 1px solid #f0f0f0;
+  background: #2563eb; /* Header xanh đơn giản */
+  padding: 16px 24px;
+  border-bottom: none;
 }
 
-.promotion-modal .modal-title {
-  font-size: 20px;
+.promotion-modal .ant-modal-title {
+  color: white !important;
+  font-size: 18px;
   font-weight: 700;
-  /* Gradient Tím - Xanh giống nút "Áp dụng bộ lọc" của bạn */
-  background: linear-gradient(45deg, #696cff, #8489fc);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
-.promotion-modal .ant-modal-body {
+.promotion-modal .ant-modal-close {
+  color: white;
+  top: 16px;
+}
+
+.custom-form {
   padding: 24px;
 }
 
-/* 3. Form Input: Style lại cho to và rõ ràng */
 .custom-form .ant-form-item-label label {
   font-weight: 600;
-  color: #566a7f; /* Màu chữ xám xanh chuyên nghiệp */
-  font-size: 14px;
+  color: #334155;
 }
 
 .custom-form .ant-input,
 .custom-form .ant-input-number,
 .custom-form .ant-picker {
   border-radius: 8px;
-  padding: 8px 11px;
-  border: 1px solid #d9dee3;
-  transition: all 0.3s ease;
+  height: 42px;
+  border-color: #cbd5e1;
 }
 
-/* Hiệu ứng khi click vào input: Viền tím */
-.custom-form .ant-input:focus,
-.custom-form .ant-input-number-focused,
-.custom-form .ant-picker-focused {
-  border-color: #696cff;
-  box-shadow: 0 0 0 2px rgba(105, 108, 255, 0.15);
-}
-
-.custom-form textarea.ant-input {
-  resize: none; /* Không cho kéo giãn lung tung */
-}
-
-/* 4. Footer Buttons */
 .modal-footer-custom {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 10px;
   padding-top: 20px;
-  border-top: 1px solid #f0f0f0;
-}
-
-.btn-cancel {
-  border-radius: 8px;
-  height: 40px;
-  font-weight: 500;
-  color: #8592a3;
-  border-color: #d9dee3;
-}
-
-.btn-cancel:hover {
-  color: #697a8d;
-  border-color: #8592a3;
-  background: #f5f5f9;
-}
-
-/* Nút Save màu Tím chủ đạo */
-.btn-save {
-  border-radius: 8px;
-  height: 40px;
-  font-weight: 600;
-  background-color: #696cff; /* Màu tím AdminPanel */
-  border-color: #696cff;
-  box-shadow: 0 2px 6px rgba(105, 108, 255, 0.3);
-}
-
-.btn-save:hover {
-  background-color: #5f62e6 !important;
-  border-color: #5f62e6 !important;
-  transform: translateY(-1px);
+  border-top: 1px solid #e2e8f0;
+  margin-top: 10px;
 }

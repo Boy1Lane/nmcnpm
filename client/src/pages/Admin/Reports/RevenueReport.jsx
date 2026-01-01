@@ -68,21 +68,23 @@ export default function RevenueReport() {
       );
       const movieMap = Object.fromEntries(movieRes.data.map((m) => [m.id, m]));
 
-      const joined = bookingRes.data.map((b) => {
-        const showtime = showtimeMap[b.showtimeId];
-        const room = roomMap[showtime?.roomId];
-        const cinema = cinemaMap[room?.cinemaId];
-        const movie = movieMap[showtime?.movieId];
+      const joined = bookingRes.data
+        .filter((b) => b.status === "CONFIRMED" || b.status === "USED") // ✅ CHỈ DÒNG NÀY
+        .map((b) => {
+          const showtime = showtimeMap[b.showtimeId];
+          const room = roomMap[showtime?.roomId];
+          const cinema = cinemaMap[room?.cinemaId];
+          const movie = movieMap[showtime?.movieId];
 
-        return {
-          ...b,
-          cinemaId: cinema?.id,
-          movieId: movie?.id,
-          movieTitle: movie?.title || "—",
-          cinemaRoom: cinema && room ? `${cinema.name} - ${room.name}` : "—",
-          ticketCount: b.seats?.length || 0,
-        };
-      });
+          return {
+            ...b,
+            cinemaId: cinema?.id,
+            movieId: movie?.id,
+            movieTitle: movie?.title || "—",
+            cinemaRoom: cinema && room ? `${cinema.name} - ${room.name}` : "—",
+            ticketCount: b.seats?.length || 0,
+          };
+        });
 
       const sorted = joined.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)

@@ -6,7 +6,6 @@ import StaffRoute from "./routes/StaffRoute.jsx";
 import AdminLayout from "./layout/AdminLayout.jsx";
 
 // Admin pages
-import Dashboard from "./pages/Admin/Dashboard.jsx";
 import MovieManagement from "./pages/Admin/Movie/MovieManagement.jsx";
 import RoomManagement from "./pages/Admin/Rooms/RoomManagement.jsx";
 import ShowtimesPage from "./pages/Admin/Showtimes/ShowtimesPage.jsx";
@@ -17,6 +16,10 @@ import FoodManagement from "./pages/Admin/Foods/FoodManagement.jsx";
 
 // Staff pages
 import CheckInPage from "./pages/Staff/Checkin/CheckinPage.jsx";
+import TicketSalesPage from "./pages/Staff/Sale/TicketSalesPage.jsx";
+
+// Admin+Staff pages
+import Dashboard from "./pages/Admin/Dashboard.jsx";
 
 // Auth pages
 import Login from "./pages/Auth/Login.jsx";
@@ -42,6 +45,7 @@ export default function App() {
           {/* ===== STAFF + ADMIN ===== */}
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="check-in" element={<CheckInPage />} />
+          <Route path="sale" element={<TicketSalesPage />} />
           {/* <Route path="sale" element={<CounterBookingPage />} /> */}
 
           {/* ===== ADMIN ONLY ===== */}

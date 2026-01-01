@@ -1,101 +1,87 @@
-/* src/styles/Admin/SideMenu.css */
+/* SideMenu.css */
 
-/* --- SIDEBAR CONTAINER --- */
 .sidebar {
-  /* Thay đổi: Bỏ margin để sidebar sát lề trái và nối liền header (nếu muốn) 
-     hoặc giữ nguyên style "nổi" nhưng cùng tông màu */
-  width: 260px;
-  height: calc(100vh - 32px); /* Cách trên dưới 16px */
-  margin: 16px; 
-  background: #0f172a; /* Navy đậm */
-  border-radius: 20px;
+  width: 260px; /* Độ rộng menu */
+  background: #111827; /* Màu nền tối (theo ảnh bạn gửi) */
+  color: #fff;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  /* Đổ bóng đậm hơn chút để tách khỏi nền content sáng */
-  box-shadow: 4px 4px 24px rgba(0, 0, 0, 0.2); 
-  color: #94a3b8;
-  font-family: 'Inter', sans-serif;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.05); /* Thêm viền mờ cho sang */
+  flex-direction: column; /* Xếp dọc: Logo -> Menu -> Footer */
+  height: 100%; /* Ăn theo chiều cao của cha (.layout-main) */
+  border-right: 1px solid #1f2937;
+  flex-shrink: 0; /* Không cho menu bị co lại */
 }
 
 /* --- LOGO --- */
+/* src/styles/Admin/SideMenu.css */
+
+/* src/styles/Admin/SideMenu.css */
+
 .sidebar-logo {
-  height: 80px; /* Khớp chiều cao Header */
+  height: 64px;
   display: flex;
-  align-items: center;
-  padding: 0 28px;
-  font-size: 22px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 0.5px;
-  /* Viền dưới mờ trùng màu viền Header */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
-}
+  align-items: center; /* Căn giữa theo chiều dọc (mặc định đã có) */
+  
+  /* ⭐ THÊM 2 DÒNG NÀY ĐỂ CĂN GIỮA NGANG */
+  justify-content: center; 
+  gap: 10px; /* Tạo khoảng cách đẹp giữa icon 🎬 và chữ */
 
-.sidebar-logo span {
-  color: #ff4d4f;
-  margin-left: 8px;
+  padding: 0 24px;
+  font-size: 20px;
+  font-weight: 800;
+  border-bottom: 1px solid #1f2937;
+  color: white;
+  flex-shrink: 0;
 }
-
-/* --- MENU ITEMS --- */
+/* --- MENU ITEMS LIST --- */
 .sidebar-menu {
-  flex: 1;
-  padding: 20px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  overflow-y: auto;
+  flex: 1; /* QUAN TRỌNG: Chiếm hết khoảng trống ở giữa */
+  overflow-y: auto; /* Nếu menu quá dài thì hiện thanh cuộn riêng cho menu */
+  padding: 16px 0;
 }
 
+/* Style cho từng item */
 .menu-item {
-  position: relative;
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 28px;
-  font-size: 15px;
-  font-weight: 500;
+  padding: 12px 24px;
   cursor: pointer;
-  transition: all 0.25s ease;
-  color: #94a3b8;
+  transition: all 0.3s;
+  color: #9ca3af;
+  font-weight: 500;
+  font-size: 15px;
 }
 
 .menu-item:hover {
+  color: white;
   background: rgba(255, 255, 255, 0.05);
-  color: #fff;
 }
 
-/* Item Active: Giữ nguyên màu đỏ nổi bật trên nền tối */
 .menu-item.active {
-  background: linear-gradient(90deg, #ff4d4f 0%, #d9363e 100%);
-  color: #fff;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+  background: #6366f1; /* Màu tím active */
+  color: white;
+  border-right: 3px solid white; /* Điểm nhấn bên phải nếu thích */
 }
 
 .menu-item span {
-  white-space: nowrap;
+  margin-left: 12px;
 }
 
-/* --- FOOTER --- */
+/* --- FOOTER (ĐĂNG XUẤT) --- */
 .sidebar-footer {
-  height: 60px;
+  padding: 20px 24px;
+  border-top: 1px solid #1f2937;
+  cursor: pointer;
+  color: #ef4444; /* Màu đỏ cho logout */
+  font-weight: 600;
   display: flex;
   align-items: center;
-  padding: 0 28px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  color: #fca5a5;
-  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Viền trên mờ */
-  transition: 0.2s;
-  font-weight: 500;
+  transition: 0.3s;
+  background: #111827; /* Nền trùng sidebar để che khi scroll */
+  flex-shrink: 0; /* Đảm bảo luôn hiện, không bị co */
 }
 
 .sidebar-footer:hover {
-  background: rgba(220, 38, 38, 0.15);
-  color: #ff4d4f;
+  background: rgba(239, 68, 68, 0.1);
 }
 
 .logout-icon {

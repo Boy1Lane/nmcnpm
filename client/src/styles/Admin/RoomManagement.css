@@ -10,3 +10,22 @@
   font-size: 12px;
   font-weight: bold;
 }
+
+.filter-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.filter-left {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.filter-actions {
+  display: flex;
+  align-items: center;
+}
+

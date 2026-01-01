@@ -159,7 +159,7 @@ export default function UserManagement() {
     <div className="user-page-container">
       {/* Header đẹp hơn */}
       <div className="user-page-header">
-        <h2 className="user-page-title">Quản lý Nhân sự</h2>
+        <h2 className="page-title">Quản lý Nhân sự</h2>
         <Button
           type="primary"
           icon={<PlusOutlined />}

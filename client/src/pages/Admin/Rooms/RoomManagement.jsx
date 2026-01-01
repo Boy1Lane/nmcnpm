@@ -19,14 +19,15 @@ import {
 
 import roomService from "../../../services/Admin/roomService";
 import showtimeService from "../../../services/Admin/showtimeService";
+import cinemaService from "../../../services/Admin/cinemaService";
 import CreateRoomModal from "./CreateRoomModal";
 import SeatMapModal from "./SeatMapModal";
 import EditRoomModal from "./EditRoomModal";
+import CreateCinemaModal from "./CreateCinemaModal";
 
-// Import file CSS dùng chung
 import "../../../styles/Admin/Room.css";
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 export default function RoomManagement() {
   const [rooms, setRooms] = useState([]);
@@ -35,6 +36,7 @@ export default function RoomManagement() {
   const [typeFilter, setTypeFilter] = useState("all");
 
   const [openCreate, setOpenCreate] = useState(false);
+  const [openCreateCinema, setOpenCreateCinema] = useState(false);
   const [openSeatMap, setOpenSeatMap] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
 
@@ -42,9 +44,10 @@ export default function RoomManagement() {
 
   const loadData = async () => {
     try {
-      const [roomRes, showtimeRes] = await Promise.all([
+      const [roomRes, showtimeRes, cinemaRes] = await Promise.all([
         roomService.getAll(),
         showtimeService.getAll(),
+        cinemaService.getAll(),
       ]);
 
       const now = new Date();
@@ -56,8 +59,11 @@ export default function RoomManagement() {
         ),
       }));
 
-      // lấy danh sách rạp từ rooms
+      // lấy danh sách rạp từ API và từ rooms (merge để tránh thiếu)
       const cinemaMap = {};
+      (cinemaRes.data || []).forEach((c) => {
+        if (c && c.id) cinemaMap[c.id] = c;
+      });
       roomsWithFlag.forEach((r) => {
         if (r.Cinema) cinemaMap[r.Cinema.id] = r.Cinema;
       });
@@ -99,9 +105,7 @@ export default function RoomManagement() {
   return (
     <div className="admin-room-page">
       <div className="page-header">
-        <Title level={3} className="page-title">
-          Quản lý Phòng chiếu
-        </Title>
+        <h2 className="page-title">Quản lý Phòng chiếu</h2>
       </div>
 
       {/* ===== FILTER BAR (Đã tách CSS) ===== */}
@@ -135,14 +139,27 @@ export default function RoomManagement() {
           />
         </div>
 
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          className="btn-add"
-          onClick={() => setOpenCreate(true)}
-        >
-          Thêm phòng
-        </Button>
+        <div className="filter-actions">
+          <Space>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              className="btn-add"
+              onClick={() => setOpenCreateCinema(true)}
+            >
+              Thêm rạp
+            </Button>
+
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              className="btn-add"
+              onClick={() => setOpenCreate(true)}
+            >
+              Thêm phòng
+            </Button>
+          </Space>
+        </div>
       </div>
 
       {/* ===== ROOM LIST ===== */}
@@ -227,6 +244,17 @@ export default function RoomManagement() {
           open={openCreate}
           onClose={() => setOpenCreate(false)}
           onSuccess={loadData}
+        />
+      )}
+
+      {openCreateCinema && (
+        <CreateCinemaModal
+          open={openCreateCinema}
+          onClose={() => setOpenCreateCinema(false)}
+          onSuccess={() => {
+            setOpenCreateCinema(false);
+            loadData();
+          }}
         />
       )}
 

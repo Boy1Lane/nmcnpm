@@ -30,7 +30,6 @@ export default function MovieManagement() {
     try {
       setLoading(true);
       const res = await movieService.getAll();
-      // Giả sử res.data là mảng phim, giữ nguyên logic của bạn
       setMovies(res.data);
     } catch (err) {
       message.error("Không thể tải danh sách phim!");
@@ -118,9 +117,9 @@ export default function MovieManagement() {
       width: 140,
       align: "center",
       render: (status) => {
-        let colorClass = "status-coming";
+        let colorClass = "coming_soon";
         let text = "Sắp chiếu";
-        if (status === "now_showing") {
+        if (status === "showing") {
           colorClass = "status-showing";
           text = "Đang chiếu";
         } else if (status === "ended") {
@@ -186,9 +185,6 @@ export default function MovieManagement() {
       <div className="page-header">
         <div>
           <h2 className="page-title">Quản lý Phim</h2>
-          <p style={{ color: "#6b7280", margin: 0, fontSize: "14px" }}>
-            Danh sách phim và lịch chiếu hiện tại
-          </p>
         </div>
 
         <div className="header-actions">

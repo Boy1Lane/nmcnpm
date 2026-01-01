@@ -1,58 +1,65 @@
 /* src/styles/Admin/Header.css */
 
+/* Container chính của Header */
 .header-container {
-  height: 80px;
-  background: #0f172a; /* Màu Navy đậm (Trùng màu Sidebar) */
+  height: 64px; /* Khớp chiều cao với Logo ở Sidebar (nếu có) */
+  background-color: #111827; /* Màu nền tối trùng với Sidebar (#111827) */
+  color: #ffffff; /* Chữ màu trắng */
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0 40px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Viền mờ ngăn cách nội dung */
-  color: #fff;
+  justify-content: space-between; /* Đẩy 2 phần sang 2 bên */
+  padding: 0 24px;
+  border-bottom: 1px solid #1f2937; /* Đường kẻ viền dưới nhẹ */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Bóng mờ nhẹ */
+  flex-shrink: 0; /* Đảm bảo header không bị co lại */
+  z-index: 10; /* Nổi lên trên nội dung nếu cần */
 }
 
-/* Khu vực bên phải */
+/* Phần bên trái (để trống hoặc chứa breadcrumb sau này) */
+.header-left {
+  flex: 1;
+}
+
+/* Phần bên phải (Xin chào + Avatar) */
 .header-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 16px; /* Khoảng cách giữa chữ và avatar */
 }
 
+/* Chữ "Xin chào..." */
 .welcome-text {
-  font-size: 15px;
-  color: #94a3b8; /* Màu xám sáng (Slate 400) */
-  font-weight: 500;
+  font-size: 14px;
+  color: #9ca3af; /* Màu xám nhẹ cho chữ thường */
 }
 
 .welcome-text b {
-  color: #fff; /* Tên Admin màu trắng nổi bật */
+  color: #ffffff; /* Màu trắng đậm cho tên User */
+  font-weight: 600;
 }
 
-/* Avatar Box - Dark Theme */
+/* Hộp chứa Avatar */
 .avatar-box {
   width: 40px;
   height: 40px;
-  background: rgba(255, 255, 255, 0.1); /* Nền trong suốt nhẹ */
-  border-radius: 50%;
+  background: #374151; /* Nền xám đậm cho avatar */
+  border-radius: 50%; /* Bo tròn thành hình tròn */
   display: flex;
-  justify-content: center;
   align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.2); /* Viền sáng mờ */
+  justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  border: 2px solid #1f2937; /* Viền nhẹ */
 }
 
+/* Hiệu ứng khi di chuột vào Avatar */
 .avatar-box:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: #ff4d4f; /* Hover vào viền đỏ nhẹ */
+  background: #4b5563;
+  border-color: #6366f1; /* Viền chuyển màu tím khi hover */
 }
 
+/* Icon Avatar bên trong */
 .avatar-icon {
   font-size: 20px;
-  color: #e2e8f0; /* Icon màu trắng xám */
-}
-
-/* Khu vực bên trái (nếu sau này dùng) */
-.header-left {
-  flex: 1;
+  color: #e5e7eb; /* Màu icon trắng xám */
 }
