@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 import dayjs from "dayjs";
 import checkinService from "../../../services/Admin/checkinService";
-import "../../../styles/Admin/CheckInPage.css";
+import "../../../styles/Admin/CheckinPage.css";
 
 /* ===== MAP STATUS (GIỮ NGUYÊN LOGIC) ===== */
 const renderStatus = (status) => {
