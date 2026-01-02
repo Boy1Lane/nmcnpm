@@ -157,7 +157,7 @@
   padding: 12px;
   font-weight: 600;
   text-align: center;
-  font-size: 14px;
+  font-size: 14px !important;
   color: var(--text-main);
 }
 

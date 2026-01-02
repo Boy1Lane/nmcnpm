@@ -12,8 +12,7 @@ import {
 import { useState } from "react";
 import dayjs from "dayjs";
 import checkinService from "../../../services/Admin/checkinService";
-// Đảm bảo đường dẫn import CSS đúng
-import "../../../styles/Admin/CheckinPage.css";
+import "../../../styles/Admin/CheckInPage.css";
 
 /* ===== MAP STATUS (GIỮ NGUYÊN LOGIC) ===== */
 const renderStatus = (status) => {
@@ -171,7 +170,7 @@ export default function CheckInPage() {
             </div>
 
             <div className="ticket-content">
-              <h2 className="movie-title">{result.movie}</h2>
+              <h2 className="movie-title1">{result.movie}</h2>
 
               <div className="ticket-info-grid">
                 {/* Cột trái: Thời gian */}
