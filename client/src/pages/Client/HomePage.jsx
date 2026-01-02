@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import movieService from '../../services/Client/movieService';
-import { Layout, Carousel, Tabs, Card, Row, Col, Typography, Spin, Tag, Button } from 'antd';
-import { PlayCircleOutlined, ClockCircleOutlined, BarcodeOutlined } from '@ant-design/icons';
+import { Layout, Carousel, Tabs, Card, Row, Col, Typography, Spin, Tag, Button, Space } from 'antd';
+import {
+  PlayCircleOutlined,
+  ClockCircleOutlined,
+  BarcodeOutlined,
+  FacebookOutlined,
+  InstagramOutlined,
+  TwitterOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  EnvironmentOutlined
+} from '@ant-design/icons';
 import './Homepage.css';
 
 const { Content } = Layout;
@@ -64,18 +74,18 @@ const HomePage = () => {
                 </div>
               }
               bordered={false}
-              styles={{ body: { padding: '12px', backgroundColor: '#1f1f1f', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' } }}
-              style={{ overflow: 'hidden', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', height: '100%', display: 'flex', flexDirection: 'column' }}
+              styles={{ body: { padding: '12px', backgroundColor: '#ffffff', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' } }}
+              style={{ overflow: 'hidden', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', height: '100%', display: 'flex', flexDirection: 'column' }}
             >
               <Meta
                 title={
-                  <Title level={5} style={{ color: '#fff', marginBottom: 0, minHeight: '48px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }} title={movie.title}>
+                  <Title level={5} style={{ color: '#000', marginBottom: 0, minHeight: '48px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }} title={movie.title}>
                     {movie.title}
                   </Title>
                 }
                 description={
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, justifyContent: 'flex-end' }}>
-                    <Text style={{ color: '#8c8c8c', fontSize: '13px' }}>
+                    <Text style={{ color: '#595959', fontSize: '13px' }}>
                       {movie.genre || 'Hành động'}
                     </Text>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -117,7 +127,7 @@ const HomePage = () => {
   ];
 
   return (
-    <Content style={{ backgroundColor: '#001529', minHeight: '100vh', paddingBottom: '40px' }}>
+    <Content style={{ backgroundColor: '#ffffff', minHeight: '100vh', paddingBottom: '40px' }}>
       {/* Hero Carousel */}
       <Carousel autoplay effect="fade" style={{ marginBottom: '40px' }}>
         {banners.map((banner) => (
@@ -126,7 +136,7 @@ const HomePage = () => {
               style={{
                 height: '500px',
                 width: '100%',
-                backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), #001529), url(${banner.image})`,
+                backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), #ffffff), url(${banner.image})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 display: 'flex',
@@ -150,14 +160,80 @@ const HomePage = () => {
 
       {/* Main Content Area */}
       <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
-        <Tabs
-          defaultActiveKey="showing"
-          items={tabItems}
-          centered
-          size="large"
-          tabBarStyle={{ color: '#fff' }}
-          className="custom-tabs"
-        />
+        <div style={{
+          backgroundColor: '#ffffff',
+          borderRadius: '24px',
+          padding: '32px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          border: '1px solid #f0f0f0'
+        }}>
+          <Tabs
+            defaultActiveKey="showing"
+            items={tabItems}
+            centered
+            size="large"
+            tabBarStyle={{ color: '#000' }}
+            className="custom-tabs"
+          />
+
+          {/* Footer Section merged inside */}
+          <div style={{ marginTop: '60px', paddingTop: '40px', borderTop: '1px solid #f0f0f0' }}>
+            <Row gutter={[32, 32]} justify="space-between" align="top">
+              {/* Cột 1: Về CinemaVerse */}
+              <Col xs={24} sm={12} md={8}>
+                <Title level={4} style={{ color: '#e50914', marginTop: 0 }}>
+                  CinemaVerse
+                </Title>
+                <Text style={{ color: '#595959', display: 'block', marginBottom: '16px' }}>
+                  Trải nghiệm điện ảnh đỉnh cao với âm thanh sống động và hình ảnh sắc nét.
+                  Đặt vé dễ dàng, ưu đãi hấp dẫn.
+                </Text>
+                <Text style={{ color: '#8c8c8c' }}>
+                  &copy; {new Date().getFullYear()} CinemaVerse. All rights reserved.
+                </Text>
+              </Col>
+
+              {/* Cột 2: Liên hệ */}
+              <Col xs={24} sm={12} md={8} style={{ textAlign: 'left' }}>
+                <Title level={4} style={{ color: '#000', marginTop: 0 }}>
+                  Liên hệ
+                </Title>
+                <Space style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }} size="middle">
+                  <Text style={{ color: '#595959' }}>
+                    <EnvironmentOutlined style={{ marginRight: '8px', color: '#e50914' }} />
+                    123 Đường Điện Ảnh, Hà Nội
+                  </Text>
+                  <Text style={{ color: '#595959' }}>
+                    <PhoneOutlined style={{ marginRight: '8px', color: '#e50914' }} />
+                    1900 1234
+                  </Text>
+                  <Text style={{ color: '#595959' }}>
+                    <MailOutlined style={{ marginRight: '8px', color: '#e50914' }} />
+                    support@cinemaverse.com
+                  </Text>
+                </Space>
+              </Col>
+
+              {/* Cột 3: Kết nối */}
+              <Col xs={24} sm={12} md={8}>
+                <Title level={4} style={{ color: '#000', marginTop: 0 }}>
+                  Kết nối với chúng tôi
+                </Title>
+                <Space size="large">
+                  <a href="#" target="_blank" rel="noreferrer" style={{ color: '#333', fontSize: '24px' }}>
+                    <FacebookOutlined />
+                  </a>
+                  <a href="#" target="_blank" rel="noreferrer" style={{ color: '#333', fontSize: '24px' }}>
+                    <InstagramOutlined />
+                  </a>
+                  <a href="#" target="_blank" rel="noreferrer" style={{ color: '#333', fontSize: '24px' }}>
+                    <TwitterOutlined />
+                  </a>
+                </Space>
+              </Col>
+            </Row>
+          </div>
+        </div>
       </div>
     </Content>
   );

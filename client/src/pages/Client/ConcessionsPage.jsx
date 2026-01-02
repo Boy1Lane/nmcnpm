@@ -84,7 +84,7 @@ const ConcessionsPage = () => {
   }
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#001529' }}>
+    <Layout style={{ minHeight: '100vh', background: '#ffffff' }}>
       <Content style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
         <Steps
           current={1}
@@ -109,9 +109,9 @@ const ConcessionsPage = () => {
               <Col key={item.id} xs={24} sm={12} md={8} lg={6}>
                 <Card
                   hoverable
-                  style={{ background: '#1f1f1f', borderColor: '#333', overflow: 'hidden' }}
+                  style={{ background: '#ffffff', borderColor: '#f0f0f0', overflow: 'hidden' }}
                   cover={
-                    <div style={{ height: '150px', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555' }}>
+                    <div style={{ height: '150px', background: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
                       {/* Placeholder Image because API might not return image url yet */}
                       <img
                         src={item.image || "https://images.unsplash.com/photo-1585647347483-22b66260dfff?q=80&w=2670&auto=format&fit=crop"}
@@ -122,10 +122,10 @@ const ConcessionsPage = () => {
                   }
                 >
                   <Meta
-                    title={<span style={{ color: '#fff' }}>{item.name}</span>}
+                    title={<span style={{ color: '#000' }}>{item.name}</span>}
                     description={
                       <div>
-                        <Paragraph ellipsis={{ rows: 2 }} style={{ color: '#bfbfbf', minHeight: '44px' }}>
+                        <Paragraph ellipsis={{ rows: 2 }} style={{ color: '#595959', minHeight: '44px' }}>
                           {item.items || 'Combo hấp dẫn cho trải nghiệm điện ảnh tuyệt vời.'}
                         </Paragraph>
                         <Title level={4} style={{ color: '#e50914', margin: '10px 0' }}>
@@ -138,7 +138,7 @@ const ConcessionsPage = () => {
                             onClick={() => updateQuantity(item.id, -1)}
                             disabled={!cart[item.id]}
                           />
-                          <span style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold', minWidth: '30px', textAlign: 'center' }}>
+                          <span style={{ color: '#000', fontSize: '18px', fontWeight: 'bold', minWidth: '30px', textAlign: 'center' }}>
                             {cart[item.id] || 0}
                           </span>
                           <Button

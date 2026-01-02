@@ -62,7 +62,7 @@ const BookingPage = () => {
   // Here keeping the grid approach but refined styles
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#001529' }}>
+    <Layout style={{ minHeight: '100vh', background: '#ffffff' }}>
       <Content style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
         {/* Progress Steps */}
         <Steps
@@ -93,10 +93,21 @@ const BookingPage = () => {
         {loading ? (
           <div style={{ textAlign: 'center', padding: '50px' }}><Spin size="large" /></div>
         ) : (
-          <div className="seats-grid">
+          <div
+            className="seats-grid"
+            style={{
+              gridTemplateColumns: `repeat(${Math.max(...showtimeSeats.map(s => s.Seat.number), 1)}, minmax(30px, 45px))`
+            }}
+          >
             {showtimeSeats.map(sts => {
               const isSelected = selectedSeats.find(s => s.id === sts.id);
+              const seatType = sts.Seat.type || 'NORMAL';
+              const rowIndex = sts.Seat.row.charCodeAt(0) - 64; // A=1, B=2
+
               let seatClass = 'seat-available';
+              if (seatType === 'VIP') seatClass += ' seat-vip';
+              if (seatType === 'COUPLE') seatClass += ' seat-couple';
+
               if (sts.status === 'SOLD') seatClass = 'seat-sold';
               else if (sts.status === 'LOCKED') seatClass = 'seat-locked';
               else if (isSelected) seatClass = 'seat-selected';
@@ -104,12 +115,16 @@ const BookingPage = () => {
               return (
                 <Tooltip
                   key={sts.id}
-                  title={`${sts.Seat.row}${sts.Seat.number} - ${sts.price.toLocaleString()}đ`}
+                  title={`${sts.Seat.row}${sts.Seat.number} (${seatType}) - ${sts.price.toLocaleString()}đ`}
                   color="#e50914"
                 >
                   <div
                     onClick={() => handleSeatClick(sts)}
                     className={`seat-item ${seatClass}`}
+                    style={{
+                      gridColumn: sts.Seat.number,
+                      gridRow: rowIndex
+                    }}
                   >
                     {sts.Seat.row}{sts.Seat.number}
                   </div>
@@ -121,7 +136,9 @@ const BookingPage = () => {
 
         {/* Seat Legend */}
         <div className="seat-legend">
-          <div className="legend-item"><div className="seat-dot available"></div><span>Ghế trống</span></div>
+          <div className="legend-item"><div className="seat-dot available"></div><span>Thường</span></div>
+          <div className="legend-item"><div className="seat-dot vip"></div><span>VIP</span></div>
+          <div className="legend-item"><div className="seat-dot couple"></div><span>Couple</span></div>
           <div className="legend-item"><div className="seat-dot selected"></div><span>Đang chọn</span></div>
           <div className="legend-item"><div className="seat-dot sold"></div><span>Đã bán</span></div>
         </div>

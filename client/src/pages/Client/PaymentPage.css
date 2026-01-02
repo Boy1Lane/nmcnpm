@@ -1,32 +1,43 @@
-/* Shared styles for Booking Flow */
+/* PaymentPage.css */
 
-/* Customize Ant Design Steps for Dark Background */
+/* Customize Ant Design Steps for Light Background */
+/* Replicating styles from BookingPage.css for consistency */
+
 .booking-steps .ant-steps-item-title {
-  color: rgba(255, 255, 255, 0.6) !important;
+  color: rgba(0, 0, 0, 0.45) !important;
 }
 
-.booking-steps .ant-steps-item-process .ant-steps-item-title {
-  color: #fff !important;
+.booking-steps .ant-steps-item-process .ant-steps-item-title,
+.booking-steps .ant-steps-item-finish .ant-steps-item-title {
+  color: #000 !important;
   font-weight: bold;
 }
 
 .booking-steps .ant-steps-item-wait .ant-steps-item-title {
-  color: rgba(255, 255, 255, 0.4) !important;
+  color: rgba(0, 0, 0, 0.25) !important;
 }
 
 .booking-steps .ant-steps-item-tail::after {
-  background-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: rgba(0, 0, 0, 0.06) !important;
 }
 
 /* Ensure icons have correct color */
 .booking-steps .ant-steps-item-icon {
   background-color: transparent;
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+.booking-steps .ant-steps-item-icon .ant-steps-icon {
+  color: rgba(0, 0, 0, 0.25);
 }
 
 .booking-steps .ant-steps-item-process .ant-steps-item-icon {
   background-color: #e50914;
   border-color: #e50914;
+}
+
+.booking-steps .ant-steps-item-process .ant-steps-item-icon .ant-steps-icon {
+  color: #fff;
 }
 
 .booking-steps .ant-steps-item-finish .ant-steps-item-icon {
@@ -45,7 +56,7 @@
 }
 
 .ant-descriptions-item-label {
-  color: #666 !important;
+  color: #595959 !important;
 }
 
 .ant-descriptions-item-content {

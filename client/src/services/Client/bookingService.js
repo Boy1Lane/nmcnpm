@@ -13,6 +13,12 @@ const bookingService = {
     return response.data;
   },
 
+  // Kiểm tra mã khuyến mãi
+  checkPromotion: async (code) => {
+    const response = await axiosClient.post('/promotions/check', { code });
+    return response.data;
+  },
+
   // Bước 1: Giữ ghế (Tạo Booking PENDING và LOCKED ghế)
   createBooking: async (showtimeId, seatIds, paymentMethod = 'CASH', foodItems = [], promotionCode = null) => {
     const response = await axiosClient.post('/bookings', {

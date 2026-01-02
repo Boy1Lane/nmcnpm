@@ -1,13 +1,12 @@
 import React from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Layout, Menu, Button, theme } from 'antd';
-import { LoginOutlined, LogoutOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
+import { Link, useNavigate } from 'react-router-dom';
+import { Layout, Button, theme } from 'antd';
+import { LoginOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 
 const { Header: AntHeader } = Layout;
 
 const Header = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const token = localStorage.getItem('accessToken');
   const {
     token: { colorBgContainer, colorTextLightSolid },
@@ -17,14 +16,6 @@ const Header = () => {
     localStorage.clear();
     navigate('/login');
   };
-
-  const menuItems = [
-    {
-      key: '/',
-      icon: <HomeOutlined />,
-      label: 'Trang chủ',
-    },
-  ];
 
   return (
     <AntHeader
@@ -37,12 +28,13 @@ const Header = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: '#001529',
+        backgroundColor: '#ffffff',
         padding: '0 5%',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+        borderBottom: '1px solid #f0f0f0'
       }}
     >
-      <div className="logo" style={{ marginRight: '20px' }}>
+      <div className="logo">
         <Link
           to="/"
           style={{
@@ -59,26 +51,12 @@ const Header = () => {
         </Link>
       </div>
 
-      <Menu
-        theme="dark"
-        mode="horizontal"
-        selectedKeys={[location.pathname]}
-        items={menuItems}
-        onClick={({ key }) => navigate(key)}
-        style={{
-          flex: 1,
-          minWidth: 0,
-          background: 'transparent',
-          borderBottom: 'none',
-        }}
-      />
-
       <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
         {token ? (
           <div style={{ display: 'flex', gap: '8px' }}>
             <Button
               type="text"
-              style={{ color: 'white' }}
+              style={{ color: '#000000' }}
               icon={<UserOutlined />}
               onClick={() => navigate('/profile')}
             >
