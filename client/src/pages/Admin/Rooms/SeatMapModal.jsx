@@ -79,12 +79,16 @@ export default function SeatMapModal({ open, room, disabled, onClose }) {
       <div className="legend-container">
         <Space size="large">
           <div className="legend-item">
-            <Button size="small" className="cursor-default">
+            <Button size="small" className="cursor-default seat-normal">
               Ghế thường
             </Button>
           </div>
           <div className="legend-item">
-            <Button size="small" type="primary" className="cursor-default">
+            <Button
+              size="small"
+              type="primary"
+              className="cursor-default seat-vip"
+            >
               Ghế VIP
             </Button>
           </div>
@@ -116,10 +120,15 @@ export default function SeatMapModal({ open, room, disabled, onClose }) {
               {grouped[row].map((seat) => (
                 <Button
                   key={seat.id}
+                  // 1. Thêm logic class CSS vào đây
+                  className={`seat-btn ${
+                    seat.type === "VIP" ? "seat-vip" : "seat-normal"
+                  }`}
+                  // 2. Có thể bỏ type="primary" đi để tránh màu mặc định của Antd làm rối,
+                  // hoặc giữ lại nếu muốn giữ hiệu ứng click
                   type={seat.type === "VIP" ? "primary" : "default"}
                   onClick={() => toggleSeatType(seat)}
                   disabled={disabled}
-                  className="seat-btn" // Class CSS chỉnh width
                 >
                   {seat.number}
                 </Button>

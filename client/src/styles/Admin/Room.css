@@ -390,14 +390,30 @@
 }
 
 /* Màu ghế */
+
+/* 1. Ghế Thường: Nền trắng, viền xám, chữ xám đen */
 .seat-normal {
   background-color: #ffffff !important;
   border: 1px solid #d9d9d9 !important;
   color: #595959 !important;
 }
 
+/* 2. Ghế VIP: Nền xanh, viền xanh, chữ trắng */
 .seat-vip {
-  background-color: #1890ff !important;
-  border: 1px solid #1890ff !important;
+  background-color: #1890ff !important; /* Màu xanh dương chuẩn */
+  border: 1px solid #1890ff !important; /* Đã thêm mã màu vào đây */
   color: #ffffff !important;
+}
+
+/* 3. (Tùy chọn) Hiệu ứng khi di chuột vào ghế cho đẹp */
+.seat-normal:hover {
+  border-color: #1890ff !important;
+  color: #1890ff !important;
+  cursor: pointer;
+}
+
+.seat-vip:hover {
+  background-color: #40a9ff !important; /* Xanh sáng hơn khi hover */
+  border-color: #40a9ff !important;
+  cursor: pointer;
 }
