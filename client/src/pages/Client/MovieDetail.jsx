@@ -53,16 +53,17 @@ const MovieDetail = () => {
   // Có thể mở rộng logic group showtimes by date ở đây
 
   return (
-    <Content style={{ background: '#ffffff', minHeight: '100vh', color: '#000' }}>
+    <Content style={{ background: 'transparent', minHeight: '100vh', color: '#000' }}>
       {/* Hero Section */}
       <div
         className="movie-hero-section"
         style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), #ffffff), url(${movie.posterUrl})`,
+          paddingTop: '30px',
+          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), #cccccc), url(${movie.posterUrl})`,
         }}
       >
         <div className="container" style={{
-          maxWidth: '1200px',
+          maxWidth: '100%',
           margin: '0 auto',
           padding: '40px',
           backgroundColor: '#ffffff',
@@ -127,7 +128,7 @@ const MovieDetail = () => {
       </div>
 
       {/* Showtimes Section */}
-      <div id="showtimes" className="container" style={{ maxWidth: '1200px', margin: '40px auto', padding: '0 20px' }}>
+      <div id="showtimes" className="container" style={{ maxWidth: '100%', margin: '40px auto', padding: '0 20px' }}>
         <div style={{
           backgroundColor: '#ffffff',
           borderRadius: '24px',

@@ -136,7 +136,7 @@ const HomePage = () => {
               style={{
                 height: '500px',
                 width: '100%',
-                backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), #ffffff), url(${banner.image})`,
+                backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), #cccccc), url(${banner.image})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 display: 'flex',
@@ -159,7 +159,7 @@ const HomePage = () => {
       </Carousel>
 
       {/* Main Content Area */}
-      <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
+      <div className="container" style={{ maxWidth: '100%', margin: '0 auto', padding: '0 20px' }}>
         <div style={{
           backgroundColor: '#ffffff',
           borderRadius: '24px',

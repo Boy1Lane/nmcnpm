@@ -63,7 +63,7 @@ const BookingPage = () => {
 
   return (
     <Layout style={{ minHeight: '100vh', background: '#ffffff' }}>
-      <Content style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+      <Content style={{ padding: '40px 20px', maxWidth: '100%', margin: '0 auto', width: '100%' }}>
         {/* Progress Steps */}
         <Steps
           current={0}
