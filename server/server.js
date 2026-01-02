@@ -1,13 +1,13 @@
 const express = require("express")
 const cors = require("cors")
 const dotenv = require('dotenv');
+dotenv.config()
 const db = require("./config/db")
 const { User, Movie, Cinema, Room, Seat, Showtime, ShowtimeSeat } = require('./models');
 const Routes = require("./routes/index");
 const cookieParser = require("cookie-parser");
 const startCleanupJob = require('./services/cleanupService');
 
-dotenv.config()
 
 const app = express();
 

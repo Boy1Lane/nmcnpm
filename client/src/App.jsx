@@ -38,7 +38,8 @@ import ResetPasswordPage from "./pages/Auth/ResetPasswordPage.jsx";
 import ForgotPassword from "./pages/Auth/ForgotPassword.jsx";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
-const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID";
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+console.log("App.jsx - Google Client ID:", GOOGLE_CLIENT_ID);
 
 export default function App() {
   return (

@@ -117,6 +117,7 @@ class AuthService {
   }
 
   async googleLogin(credential) {
+    console.log("Server verifying Google Token with Audience:", process.env.GOOGLE_CLIENT_ID);
     const ticket = await client.verifyIdToken({
       idToken: credential,
       audience: process.env.GOOGLE_CLIENT_ID,

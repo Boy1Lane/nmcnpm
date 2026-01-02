@@ -15,7 +15,7 @@ export default function Login() {
   //   if (user.role === "admin") return <Navigate to="/dashboard" replace />;
   //   return <Navigate to="/" replace />;
   // }
-
+  
   const onFinish = async (values) => {
     try {
       console.log("🔵 FE gửi login values:", values); // ⭐ LOG 1
@@ -51,21 +51,21 @@ export default function Login() {
     }
   };
 
+
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      console.log("🔵 Google login success", credentialResponse);
       const res = await authService.loginWithGoogle(credentialResponse.credential);
-      console.log("🟢 FE nhận response Google:", res.data);
       login(res.data.user, res.data.accessToken);
-      message.success("Đăng nhập bằng Google thành công");
-
-      const role = res.data.user.role;
-      if (role === "customer") navigate("/");
-      else navigate("/admin/dashboard"); // Should not happen for google usually
-    } catch (error) {
-      console.error("🔴 Google login failed", error);
-      message.error("Đăng nhập Google thất bại");
+      message.success("Google Login Successful");
+      handleNavigate(res.data.user.role);
+    } catch (err) {
+      message.error("Google Login Failed: " + (err.response?.data?.message || err.message));
     }
+  };
+
+  const handleNavigate = (role) => {
+    if (role === "customer") navigate("/");
+    else navigate("/dashboard");
   };
 
   return (
