@@ -1,25 +1,28 @@
-/* AdminLayout.css */
+/* src/styles/Admin/AdminLayout.css */
 
-/* Container tổng bao gồm Header và Main */
-.layout-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh; /* Quan trọng: Chiều cao fix cứng bằng màn hình */
-  overflow: hidden; /* Không cho scroll thanh cuộn ngoài cùng */
+/* Container bao quanh toàn bộ trang Admin */
+.admin-layout {
+  display: flex;          /* Xếp SideMenu và Content nằm ngang */
+  width: 100vw;           /* Full chiều rộng */
+  height: 100vh;          /* Full chiều cao màn hình (QUAN TRỌNG) */
+  overflow: hidden;       /* Không cho body cuộn, chỉ cho content con cuộn */
+  background-color: #f3f4f6; /* Màu nền xám nhạt */
 }
 
-/* Phần Main chứa SideMenu và Content */
-.layout-main {
+/* Wrapper cho phần bên phải (Header + Nội dung trang) */
+.admin-main-wrapper {
+  flex: 1;                /* Chiếm hết phần rộng còn lại sau khi trừ SideMenu */
   display: flex;
-  flex: 1; /* Chiếm hết phần chiều cao còn lại sau khi trừ Header */
-  overflow: hidden; /* Quan trọng để chia vùng scroll riêng biệt */
+  flex-direction: column; /* Xếp Header lên trên, Content xuống dưới */
+  height: 100%;           /* Full chiều cao của cha */
+  overflow: hidden;       /* Ẩn thanh cuộn thừa */
 }
 
-/* Phần nội dung bên phải (Outlet) */
-.layout-content {
-  flex: 1;
-  background-color: #f3f4f6; /* Màu nền xám nhẹ cho nội dung */
-  padding: 24px;
-  overflow-y: auto; /* Chỉ cho phép scroll ở vùng nội dung này */
+/* Khu vực nội dung thay đổi (nơi render Outlet) */
+.admin-content {
+  flex: 1;                /* Chiếm hết chiều cao còn lại sau khi trừ Header */
+  overflow-y: auto;       /* CHỈ CHO PHÉP KHU VỰC NÀY CUỘN DỌC */
+  padding: 24px;          /* Khoảng cách lề nội dung */
+  background-color: #f3f6fb;
   position: relative;
 }
