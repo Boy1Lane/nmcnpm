@@ -40,7 +40,7 @@ const TicketSalesPage = () => {
   const ACCOUNT_NAME = "CINEMA ADMIN";
 
   const qrUrl =
-    bookingId && paymentMethod === "CREDIT_CARD"
+    bookingId && paymentMethod === "BANKING"
       ? `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-compact.png?amount=${grandTotal}&addInfo=BOOKING-${bookingId}`
       : null;
 
@@ -403,17 +403,17 @@ const TicketSalesPage = () => {
                     (st.Room?.Cinema?.id || st.Room?.cinemaId) ===
                     selectedCinema.id
                 ).length === 0 && (
-                    <p
-                      style={{
-                        color: "var(--text-sub)",
-                        width: "100%",
-                        textAlign: "center",
-                        padding: 20,
-                      }}
-                    >
-                      Không có suất chiếu tại rạp này.
-                    </p>
-                  )}
+                  <p
+                    style={{
+                      color: "var(--text-sub)",
+                      width: "100%",
+                      textAlign: "center",
+                      padding: 20,
+                    }}
+                  >
+                    Không có suất chiếu tại rạp này.
+                  </p>
+                )}
               </div>
             ) : (
               <div
@@ -773,8 +773,9 @@ const TicketSalesPage = () => {
             </h4>
             <div className="payment-methods">
               <div
-                className={`method-card ${paymentMethod === "CASH" ? "active" : ""
-                  }`}
+                className={`method-card ${
+                  paymentMethod === "CASH" ? "active" : ""
+                }`}
                 onClick={() => setPaymentMethod("CASH")}
               >
                 <span
@@ -789,9 +790,10 @@ const TicketSalesPage = () => {
                 Tiền mặt
               </div>
               <div
-                className={`method-card ${paymentMethod === "CREDIT_CARD" ? "active" : ""
-                  }`}
-                onClick={() => setPaymentMethod("CREDIT_CARD")}
+                className={`method-card ${
+                  paymentMethod === "BANKING" ? "active" : ""
+                }`}
+                onClick={() => setPaymentMethod("BANKING")}
               >
                 <span
                   style={{
@@ -806,7 +808,7 @@ const TicketSalesPage = () => {
               </div>
             </div>
 
-            {paymentMethod === "CREDIT_CARD" && qrUrl && (
+            {paymentMethod === "BANKING" && qrUrl && (
               <div
                 style={{
                   textAlign: "center",

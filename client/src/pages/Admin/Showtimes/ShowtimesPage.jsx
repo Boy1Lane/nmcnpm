@@ -48,7 +48,11 @@ export default function ShowtimesPage() {
     res.data.forEach((r) => {
       if (r.Cinema) unique[r.Cinema.id] = r.Cinema;
     });
-    setCinemas(Object.values(unique));
+    const sortedCinemas = Object.values(unique).sort((a, b) =>
+      a.name.localeCompare(b.name, "vi", { sensitivity: "base" })
+    );
+
+    setCinemas(sortedCinemas);
   };
 
   // ===== LOAD SHOWTIMES =====

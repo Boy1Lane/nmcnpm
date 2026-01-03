@@ -56,8 +56,16 @@ export default function RevenueReport() {
           reportService.getMovies(),
         ]);
 
-      setCinemas(cinemaRes.data);
-      setMovies(movieRes.data);
+      const sortedCinemas = cinemaRes.data.sort((a, b) =>
+        a.name.localeCompare(b.name, "vi", { sensitivity: "base" })
+      );
+
+      const sortedMovies = movieRes.data.sort((a, b) =>
+        a.title.localeCompare(b.title, "vi", { sensitivity: "base" })
+      );
+
+      setCinemas(sortedCinemas);
+      setMovies(sortedMovies);
 
       const showtimeMap = Object.fromEntries(
         showtimeRes.data.map((s) => [s.id, s])
@@ -83,6 +91,7 @@ export default function RevenueReport() {
             movieTitle: movie?.title || "—",
             cinemaRoom: cinema && room ? `${cinema.name} - ${room.name}` : "—",
             ticketCount: b.seats?.length || 0,
+            paymentMethod: b.paymentMethod || "—",
           };
         });
 
@@ -151,14 +160,16 @@ export default function RevenueReport() {
     {
       title: "Ngày giờ",
       dataIndex: "createdAt",
-      render: (date) => dayjs(date).format("DD/MM/YYYY - HH:mm"),
+      render: (date) => (
+        <span style={{ color: "#64748b", fontWeight: 500 }}>
+          {dayjs(date).format("DD/MM/YYYY - HH:mm")}
+        </span>
+      ),
     },
     {
       title: "Phim",
       dataIndex: "movieTitle",
-      render: (text) => (
-        <span style={{ fontWeight: 600, color: "#334155" }}>{text}</span>
-      ),
+      render: (text) => <span style={{ color: "#64748b" }}>{text}</span>,
     },
     {
       title: "Rạp / Phòng",
@@ -169,7 +180,13 @@ export default function RevenueReport() {
       title: "Số vé",
       dataIndex: "ticketCount",
       align: "center",
-      render: (count) => <span style={{ fontWeight: 600 }}>{count}</span>,
+      render: (text) => <span style={{ color: "#64748b" }}>{text}</span>,
+    },
+    {
+      title: "Thanh toán",
+      dataIndex: "paymentMethod",
+      align: "center",
+      render: (text) => <span style={{ color: "#64748b" }}>{text}</span>,
     },
     {
       title: "Tổng tiền",
@@ -207,6 +224,12 @@ export default function RevenueReport() {
             <RangePicker
               style={{ width: "100%", height: "40px" }}
               format="DD/MM/YYYY"
+              locale={{
+                lang: {
+                  locale: "vi_VN",
+                  rangePlaceholder: ["Từ ngày", "Đến ngày"],
+                },
+              }}
               onChange={(dates) => setFilters({ ...filters, dates })}
             />
           </Col>

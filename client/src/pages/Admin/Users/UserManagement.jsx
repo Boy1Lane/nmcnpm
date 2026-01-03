@@ -8,6 +8,8 @@ import {
   message,
   Avatar,
   Tooltip,
+  Select, // 👈 THÊM DÒNG NÀY
+  Input,
 } from "antd";
 import {
   PlusOutlined,
@@ -30,6 +32,9 @@ export default function UserManagement() {
 
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [roleFilter, setRoleFilter] = useState("all");
+
+  const [searchName, setSearchName] = useState("");
 
   // LOGIC GIỮ NGUYÊN
   const fetchUsers = async () => {
@@ -154,21 +159,54 @@ export default function UserManagement() {
       ),
     },
   ];
+  // 🔽 USER SAU KHI LỌC THEO ROLE
+  const filteredUsers = users.filter((u) => {
+    const matchRole = roleFilter === "all" || u.role === roleFilter;
+    const matchName =
+      !searchName ||
+      u.fullName?.toLowerCase().includes(searchName.toLowerCase());
+
+    return matchRole && matchName;
+  });
 
   return (
     <div className="user-page-container">
       {/* Header đẹp hơn */}
       <div className="user-page-header">
         <h2 className="page-title">Quản lý Nhân sự</h2>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          size="large"
-          style={{ height: "44px", padding: "0 24px", borderRadius: "8px" }}
-          onClick={() => setOpenCreate(true)}
-        >
-          Thêm nhân sự
-        </Button>
+
+        <Space>
+          {/* 🔽 THÊM MỚI: SELECT LỌC ROLE */}
+          <Input
+            placeholder="Tìm theo tên..."
+            allowClear
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            style={{ width: 220, height: 44 }}
+          />
+
+          <Select
+            value={roleFilter}
+            onChange={setRoleFilter}
+            style={{ width: 180, height: 44 }}
+          >
+            <Select.Option value="all">Tất cả vai trò</Select.Option>
+            <Select.Option value="admin">Admin</Select.Option>
+            <Select.Option value="staff">Staff</Select.Option>
+            <Select.Option value="customer">Customer</Select.Option>
+          </Select>
+
+          {/* ⛔ GIỮ NGUYÊN NÚT CŨ */}
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            size="large"
+            style={{ height: "44px", padding: "0 24px", borderRadius: "8px" }}
+            onClick={() => setOpenCreate(true)}
+          >
+            Thêm nhân sự
+          </Button>
+        </Space>
       </div>
 
       {/* Bảng nằm trong Card bóng mờ */}
@@ -176,8 +214,8 @@ export default function UserManagement() {
         <Table
           rowKey="id"
           columns={columns}
-          dataSource={users}
-          pagination={{ pageSize: 8 }} // Thêm phân trang cho gọn
+          dataSource={filteredUsers} // 👈 QUAN TRỌNG NHẤT
+          pagination={{ pageSize: 8 }}
         />
       </div>
 

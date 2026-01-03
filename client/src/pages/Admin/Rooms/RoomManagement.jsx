@@ -69,7 +69,11 @@ export default function RoomManagement() {
       });
 
       setRooms(roomsWithFlag);
-      setCinemas(Object.values(cinemaMap));
+      const sortedCinemas = Object.values(cinemaMap).sort((a, b) =>
+        a.name.localeCompare(b.name, "vi", { sensitivity: "base" })
+      );
+
+      setCinemas(sortedCinemas);
     } catch (error) {
       console.error("Failed to load data", error);
     }

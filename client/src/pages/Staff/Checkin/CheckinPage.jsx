@@ -140,7 +140,7 @@ export default function CheckInPage() {
               >
                 <Input
                   className="search-input"
-                  placeholder="Nhập mã booking hoặc quét mã..."
+                  placeholder="Nhập mã booking..."
                   allowClear
                   autoFocus // Tự động focus để dùng súng bắn mã vạch tiện hơn
                 />
