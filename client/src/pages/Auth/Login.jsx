@@ -1,5 +1,5 @@
 import { Card, Form, Input, Button, message, Divider } from "antd";
-import { useNavigate, Navigate, Link } from "react-router-dom";
+import { useNavigate, Navigate, Link, useLocation } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { UserOutlined, LockOutlined } from "@ant-design/icons"; // Thêm icon cho đẹp
 import authService from "../../services/authService";
@@ -8,6 +8,7 @@ import "../../styles/Auth/Auth.css";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, user, loading } = useAuth();
 
   // // ✅ CHẶN: nếu đã đăng nhập thì không render form login nữa
@@ -15,7 +16,28 @@ export default function Login() {
   //   if (user.role === "admin") return <Navigate to="/dashboard" replace />;
   //   return <Navigate to="/" replace />;
   // }
-  
+
+  const handleNavigate = (role) => {
+    // 1. Check sessionStorage (Highest priority)
+    const returnUrl = sessionStorage.getItem('returnUrl');
+    if (returnUrl) {
+      sessionStorage.removeItem('returnUrl');
+      navigate(returnUrl, { replace: true });
+      return;
+    }
+
+    // 2. Check location state (Backup)
+    const state = location.state;
+    if (state?.from) {
+      navigate(state.from, { replace: true });
+      return;
+    }
+
+    // 3. Default redirect based on role
+    if (role === "customer") navigate("/");
+    else navigate("/admin/dashboard");
+  };
+
   const onFinish = async (values) => {
     try {
       console.log("🔵 FE gửi login values:", values); // ⭐ LOG 1
@@ -39,13 +61,7 @@ export default function Login() {
       message.success("Đăng nhập thành công");
 
       // ✅ ĐIỀU HƯỚNG THEO ROLE
-      const role = res.data.user.role;
-      if (role === "customer") {
-        navigate("/");
-        // navigate(0); // Optional: reload để cập nhật state nếu cần
-      } else if (role === "admin" || role === "staff") {
-        navigate("/admin/dashboard");
-      }
+      handleNavigate(res.data.user.role);
     } catch (err) {
       message.error(err.response?.data?.message || "Đăng nhập thất bại");
     }
@@ -61,11 +77,6 @@ export default function Login() {
     } catch (err) {
       message.error("Google Login Failed: " + (err.response?.data?.message || err.message));
     }
-  };
-
-  const handleNavigate = (role) => {
-    if (role === "customer") navigate("/");
-    else navigate("/dashboard");
   };
 
   return (

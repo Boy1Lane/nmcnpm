@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import bookingService from '../../services/Client/bookingService';
+import { useAuth } from '../../context/AuthContext';
 import { Layout, Steps, Button, Tooltip, Typography, message, Spin } from 'antd';
 import { UserOutlined, ShoppingCartOutlined, CreditCardOutlined } from '@ant-design/icons';
 import './BookingPage.css';
@@ -11,17 +12,38 @@ const { Title, Text } = Typography;
 const BookingPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { scheduleId } = location.state || {};
+  const [searchParams] = useSearchParams();
+  const { user, loading: authLoading } = useAuth();
+
+  // Get scheduleId from URL query params (preferred) or state (fallback)
+  const scheduleIdFromQuery = searchParams.get('scheduleId');
+  const { scheduleId: scheduleIdFromState } = location.state || {};
+
+  // Use query param if available, otherwise fallback to state
+  const scheduleId = scheduleIdFromQuery || scheduleIdFromState;
+
   const [showtimeSeats, setShowtimeSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return; // Wait for auth check
+
+    if (!user) {
+      message.warning('Vui lòng đăng nhập để tiếp tục đặt vé!');
+      // Use sessionStorage for reliability
+      const returnUrl = location.pathname + location.search;
+      sessionStorage.setItem('returnUrl', returnUrl);
+      navigate('/login');
+      return;
+    }
+
     if (!scheduleId) {
       message.error('Vui lòng chọn suất chiếu!');
       navigate('/');
       return;
     }
+
     bookingService.getSeatsByShowtime(scheduleId)
       .then(data => {
         setShowtimeSeats(data);
@@ -31,7 +53,7 @@ const BookingPage = () => {
         console.error(err);
         setLoading(false);
       });
-  }, [scheduleId]);
+  }, [scheduleId, user, authLoading, navigate, location]);
 
   const handleSeatClick = (sts) => {
     if (sts.status !== 'AVAILABLE') return;

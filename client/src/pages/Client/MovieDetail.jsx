@@ -33,7 +33,7 @@ const MovieDetail = () => {
   }, [id]);
 
   const handleShowtimeClick = (showtimeId) => {
-    navigate('/booking', { state: { scheduleId: showtimeId } });
+    navigate(`/booking?scheduleId=${showtimeId}`);
   };
 
   const showTrailer = () => {
@@ -152,51 +152,82 @@ const MovieDetail = () => {
             LỊCH CHIẾU
           </Title>
 
-          {movie.Showtimes && movie.Showtimes.length > 0 ? (
-            <Tabs
-              defaultActiveKey="1"
-              type="card"
-              className="showtime-tabs"
-              items={[
-                {
-                  key: '1',
-                  label: `Hôm nay (${new Date().toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })})`,
-                  children: (
-                    <Row gutter={[20, 20]} style={{ marginTop: '20px' }}>
-                      {movie.Showtimes.map(st => (
-                        <Col xs={24} sm={12} md={8} lg={6} key={st.id}>
-                          <div className="showtime-box">
-                            <div className="st-cinema">{st.Room?.Cinema?.name || 'Rạp Trung Tâm'}</div>
-                            <div className="st-room">{st.Room?.name}</div>
-                            <div className="st-time-wrapper">
-                              <Button
-                                type="primary"
-                                ghost
-                                danger
-                                block
-                                style={{ height: '40px', fontWeight: 'bold' }}
-                                onClick={() => handleShowtimeClick(st.id)}
-                              >
-                                {new Date(st.startTime).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
-                              </Button>
-                              <Text type="secondary" style={{ fontSize: '12px', display: 'block', marginTop: '5px', textAlign: 'center', color: '#595959' }}>
-                                {st.basePrice?.toLocaleString()} đ
-                              </Text>
-                            </div>
+          {movie.Showtimes && movie.Showtimes.length > 0 ? (() => {
+            // 1. Group showtimes by date
+            const grouped = {};
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            movie.Showtimes.forEach(st => {
+              const stDate = new Date(st.startTime);
+              const dateKey = new Date(stDate.getFullYear(), stDate.getMonth(), stDate.getDate()).getTime();
+              if (!grouped[dateKey]) grouped[dateKey] = [];
+              grouped[dateKey].push(st);
+            });
+
+            // 2. Sort dates
+            const sortedDates = Object.keys(grouped).sort((a, b) => a - b);
+
+            // If no showtimes at all (should be covered by outer check, but just in case)
+            if (sortedDates.length === 0) return <div>Không có lịch chiếu</div>;
+
+            // 3. Create items for Tabs
+            const items = sortedDates.map(dateKeyStr => {
+              const dateKey = parseInt(dateKeyStr);
+              const dateObj = new Date(dateKey);
+
+              const diffTime = dateKey - today.getTime();
+              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+              // Note: This diffDays calc might be slightly off due to timezones if not careful, 
+              // but since we normalized both to midnight 00:00:00 local time, it should be exact multiples of 24h.
+              // Let's rely on simple equality for Today/Tomorrow for robustness.
+
+              let label = "";
+              if (dateKey === today.getTime()) {
+                label = `Hôm nay (${dateObj.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })})`;
+              } else if (dateKey === today.getTime() + 86400000) {
+                label = `Ngày mai (${dateObj.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })})`;
+              } else {
+                label = dateObj.toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit' });
+                // Capitalize first letter of weekday
+                label = label.charAt(0).toUpperCase() + label.slice(1);
+              }
+
+              return {
+                key: dateKeyStr,
+                label: label,
+                children: (
+                  <Row gutter={[20, 20]} style={{ marginTop: '20px' }}>
+                    {grouped[dateKeyStr].sort((a, b) => new Date(a.startTime) - new Date(b.startTime)).map(st => (
+                      <Col xs={24} sm={12} md={8} lg={6} key={st.id}>
+                        <div className="showtime-box">
+                          <div className="st-cinema">{st.Room?.Cinema?.name || 'Rạp Trung Tâm'}</div>
+                          <div className="st-room">{st.Room?.name}</div>
+                          <div className="st-time-wrapper">
+                            <Button
+                              type="primary"
+                              ghost
+                              danger
+                              block
+                              style={{ height: '40px', fontWeight: 'bold' }}
+                              onClick={() => handleShowtimeClick(st.id)}
+                            >
+                              {new Date(st.startTime).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                            </Button>
+                            <Text type="secondary" style={{ fontSize: '12px', display: 'block', marginTop: '5px', textAlign: 'center', color: '#595959' }}>
+                              {st.basePrice?.toLocaleString()} đ
+                            </Text>
                           </div>
-                        </Col>
-                      ))}
-                    </Row>
-                  )
-                },
-                {
-                  key: '2',
-                  label: 'Ngày mai',
-                  children: <div style={{ padding: '20px', color: '#595959', textAlign: 'center' }}>Chưa có lịch chiếu</div>
-                }
-              ]}
-            />
-          ) : (
+                        </div>
+                      </Col>
+                    ))}
+                  </Row>
+                )
+              };
+            });
+
+            return <Tabs defaultActiveKey={sortedDates[0]} type="card" className="showtime-tabs" items={items} />;
+          })() : (
             <div style={{ padding: '40px', textAlign: 'center', background: '#f5f5f5', borderRadius: '8px' }}>
               <Text style={{ color: '#595959' }}>Hiện chưa có lịch chiếu cho phim này.</Text>
             </div>
