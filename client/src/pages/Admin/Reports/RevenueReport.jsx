@@ -135,17 +135,55 @@ export default function RevenueReport() {
 
   // --- LOGIC EXPORT EXCEL (GIỮ NGUYÊN) ---
   const exportExcel = () => {
-    const data = filtered.map((b) => ({
-      "Mã GD": `ORD-${b.id}`,
+    // ===== 1. XÁC ĐỊNH KHOẢNG THỜI GIAN =====
+    let fromDate;
+    let toDate;
+
+    if (filters.dates) {
+      // Có chọn RangePicker
+      fromDate = filters.dates[0].format("DD/MM/YYYY");
+      toDate = filters.dates[1].format("DD/MM/YYYY");
+    } else if (filtered.length > 0) {
+      // Không chọn → lấy theo dữ liệu đang xuất
+      const timestamps = filtered.map((b) => dayjs(b.createdAt).valueOf());
+
+      fromDate = dayjs(Math.min(...timestamps)).format("DD/MM/YYYY");
+      toDate = dayjs(Math.max(...timestamps)).format("DD/MM/YYYY");
+    } else {
+      // Trường hợp không có dữ liệu
+      fromDate = toDate = "--";
+    }
+
+    const exportTime = dayjs().format("DD/MM/YYYY HH:mm");
+
+    // ===== 2. DỮ LIỆU BẢNG =====
+    const tableData = filtered.map((b) => ({
+      "Mã GD": b.id,
       "Ngày giờ": dayjs(b.createdAt).format("DD/MM/YYYY HH:mm"),
       Phim: b.movieTitle,
       "Rạp / Phòng": b.cinemaRoom,
       "Số vé": b.ticketCount,
+      "Thanh toán": b.paymentMethod,
       "Tổng tiền": b.totalPrice,
     }));
-    const ws = XLSX.utils.json_to_sheet(data);
+
+    // ===== 3. TẠO SHEET VỚI HEADER TRÊN =====
+    const ws = XLSX.utils.aoa_to_sheet([
+      ["BÁO CÁO DOANH THU"],
+      [`Thời gian: ${fromDate} → ${toDate}`],
+      [`Ngày xuất: ${exportTime}`],
+      [],
+    ]);
+
+    XLSX.utils.sheet_add_json(ws, tableData, {
+      origin: "A5",
+      skipHeader: false,
+    });
+
+    // ===== 4. XUẤT FILE =====
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Doanh thu");
+
     const buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     saveAs(new Blob([buf]), "bao_cao_doanh_thu.xlsx");
   };
