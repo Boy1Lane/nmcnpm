@@ -119,12 +119,11 @@ const TicketSalesPage = () => {
     loadMovies();
   }, []);
 
-  // ================= HANDLERS (ĐÃ SỬA ALERT THÀNH MESSAGE) =================
-
   const toggleSeat = (seat) => {
     if (seat.status !== "AVAILABLE") return;
 
     const exists = selectedSeats.find((s) => s.id === seat.id);
+
     const updated = exists
       ? selectedSeats.filter((s) => s.id !== seat.id)
       : [...selectedSeats, seat];
@@ -134,6 +133,10 @@ const TicketSalesPage = () => {
   };
 
   const handleCreateBooking = async () => {
+    if (!selectedShowtime || !selectedShowtime.id) {
+      message.error("Suất chiếu chưa hợp lệ, vui lòng chọn lại!");
+      return;
+    }
     if (selectedSeats.length === 0) {
       return message.warning("Vui lòng chọn ghế trước khi tiếp tục!");
     }
@@ -146,26 +149,14 @@ const TicketSalesPage = () => {
         seatIds: selectedSeats.map((s) => s.id),
       });
 
-      const newBookingId = res.data.booking.id; // Corrected path based on typical API response
+      const newBookingId =
+        res.data?.booking?.id || res.data?.data?.id || res.data?.id;
       setBookingId(newBookingId);
 
-      Modal.confirm({
-        title: "Giữ ghế thành công!",
-        content: `Mã booking: ${newBookingId}. Trạng thái: PENDING (Chờ thanh toán).`,
-        okText: "Tiếp tục bán vé (Bắp nước/Thanh toán)",
-        cancelText: "Kết thúc (Chỉ giữ ghế)",
-        onOk: () => {
-          loadFoods();
-          setStep(4);
-        },
-        onCancel: () => {
-          // Reset page or just close modal? 
-          // If "Ket thuc", we imply the staff is done with this booking (it stays held).
-          // We can reload to clear state for next customer immediately.
-          window.location.reload();
-        }
-      });
+      message.success("Giữ ghế thành công!");
 
+      loadFoods();
+      setStep(4);
     } catch (err) {
       console.error(err);
       message.error("Không thể giữ ghế. Vui lòng thử lại!");
@@ -384,6 +375,10 @@ const TicketSalesPage = () => {
                       key={st.id}
                       className="showtime-pill"
                       onClick={() => {
+                        if (!st?.id) {
+                          message.error("Suất chiếu không hợp lệ!");
+                          return;
+                        }
                         setSelectedShowtime(st);
                         loadSeatsByShowtime(st);
                         setStep(3);
