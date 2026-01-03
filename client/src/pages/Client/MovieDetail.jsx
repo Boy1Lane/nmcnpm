@@ -33,7 +33,7 @@ const MovieDetail = () => {
   }, [id]);
 
   const handleShowtimeClick = (showtimeId) => {
-    navigate(`/booking/${showtimeId}`);
+    navigate('/booking', { state: { scheduleId: showtimeId } });
   };
 
   const showTrailer = () => {
@@ -121,6 +121,18 @@ const MovieDetail = () => {
                 >
                   Mua Vé Ngay
                 </Button>
+
+                {movie.trailerUrl && (
+                  <Button
+                    size="large"
+                    shape="round"
+                    icon={<PlayCircleOutlined />}
+                    style={{ height: '50px', padding: '0 30px', fontSize: '16px' }}
+                    onClick={showTrailer}
+                  >
+                    Xem Trailer
+                  </Button>
+                )}
               </div>
             </Col>
           </Row>

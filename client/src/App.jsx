@@ -56,9 +56,9 @@ export default function App() {
           <Route path="/" element={<ClientLayout />}>
             <Route index element={<HomePage />} />
             <Route path="movie/:id" element={<MovieDetail />} />
-            <Route path="booking/:scheduleId" element={<BookingPage />} />
+            <Route path="booking" element={<BookingPage />} />
             <Route
-              path="concessions/:scheduleId"
+              path="food"
               element={<ConcessionsPage />}
             />
             <Route path="payment" element={<PaymentPage />} />

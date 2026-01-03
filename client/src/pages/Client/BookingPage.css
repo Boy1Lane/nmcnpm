@@ -70,12 +70,6 @@
   color: #fff;
 }
 
-.seat-couple {
-  background-color: #ffadd2;
-  /* Pinkish */
-  border: 1px solid #ff85c0;
-}
-
 /* States Override Types */
 .seat-selected {
   background-color: #e50914 !important;
@@ -138,11 +132,6 @@
 .seat-dot.vip {
   background-color: #1890ff;
   border: 1px solid #0050b3;
-}
-
-.seat-dot.couple {
-  background-color: #ffadd2;
-  border: 1px solid #ff85c0;
 }
 
 /* CSS Override for Ant Design Steps - Light Mode */

@@ -24,7 +24,7 @@ const Seat = sequelize.define('Seat', {
     allowNull: false
   },
   type: {
-    type: DataTypes.ENUM('NORMAL', 'VIP', 'COUPLE'),
+    type: DataTypes.ENUM('NORMAL', 'VIP'),
     defaultValue: 'NORMAL'
   },
   priceMultiplier: {

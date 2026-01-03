@@ -161,7 +161,7 @@ const PaymentPage = () => {
 
           {/* Cột Tổng tiền & Thanh toán */}
           <Col xs={24} md={8}>
-            <Card style={{ background: '#ffffff', border: '1px solid #f0f0f0', color: '#000', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+            <Card variant="outlined" style={{ background: '#ffffff', borderColor: '#f0f0f0', color: '#000', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
               <Title level={4} style={{ color: '#000', marginBottom: '20px', textAlign: 'center' }}>TỔNG CỘNG</Title>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                 <Text style={{ color: '#595959' }}>Tạm tính:</Text>
@@ -181,11 +181,17 @@ const PaymentPage = () => {
               {showQR && (
                 <div style={{ background: '#f9f9f9', padding: 10, borderRadius: 8, marginBottom: 20, textAlign: 'center', border: '1px solid #f0f0f0' }}>
                   <Text strong>Quét mã để thanh toán:</Text>
-                  <div style={{ margin: '10px 0', height: 150, background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {/* Placeholder for QR Code */}
-                    <span style={{ color: '#000' }}>QR CODE</span>
+                  <div style={{ margin: '10px 0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px' }}>
+                    <img
+                      src={`https://img.vietqr.io/image/MB-0389523487-compact.png?amount=${finalTotal}&addInfo=BOOKING ${createdBookingId}`}
+                      alt="VietQR"
+                      style={{ maxWidth: '100%', height: 'auto', maxHeight: '250px' }}
+                    />
                   </div>
-                  <Text type="secondary">Nội dung: {createdBookingId ? `Thanh toán vé #${createdBookingId}` : 'Vui lòng ghi mã đặt vé'}</Text>
+                  <Text type="secondary">Nội dung: {createdBookingId ? `BOOKING ${createdBookingId}` : 'Vui lòng ghi mã đặt vé'}</Text>
+                  <Text style={{ display: 'block', fontWeight: 'bold', marginTop: '5px', color: '#1890ff' }}>
+                    Số tiền: {finalTotal.toLocaleString()} đ
+                  </Text>
                 </div>
               )}
 

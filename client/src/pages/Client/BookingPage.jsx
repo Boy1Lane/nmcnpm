@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import bookingService from '../../services/Client/bookingService';
 import { Layout, Steps, Button, Tooltip, Typography, message, Spin } from 'antd';
 import { UserOutlined, ShoppingCartOutlined, CreditCardOutlined } from '@ant-design/icons';
@@ -9,13 +9,19 @@ const { Content, Footer } = Layout;
 const { Title, Text } = Typography;
 
 const BookingPage = () => {
-  const { scheduleId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { scheduleId } = location.state || {};
   const [showtimeSeats, setShowtimeSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!scheduleId) {
+      message.error('Vui lòng chọn suất chiếu!');
+      navigate('/');
+      return;
+    }
     bookingService.getSeatsByShowtime(scheduleId)
       .then(data => {
         setShowtimeSeats(data);
@@ -49,11 +55,12 @@ const BookingPage = () => {
 
   const handleNext = () => {
     const seatIds = selectedSeats.map(s => s.seatId);
-    navigate(`/concessions/${scheduleId}`, {
+    navigate('/food', {
       state: {
         selectedSeatIds: seatIds,
         reservedSeats: selectedSeats,
-        seatsPrice: calculateTotal()
+        seatsPrice: calculateTotal(),
+        scheduleId // Pass scheduleId to the next page
       }
     });
   };
@@ -106,7 +113,6 @@ const BookingPage = () => {
 
               let seatClass = 'seat-available';
               if (seatType === 'VIP') seatClass += ' seat-vip';
-              if (seatType === 'COUPLE') seatClass += ' seat-couple';
 
               if (sts.status === 'SOLD') seatClass = 'seat-sold';
               else if (sts.status === 'LOCKED') seatClass = 'seat-locked';
@@ -138,7 +144,6 @@ const BookingPage = () => {
         <div className="seat-legend">
           <div className="legend-item"><div className="seat-dot available"></div><span>Thường</span></div>
           <div className="legend-item"><div className="seat-dot vip"></div><span>VIP</span></div>
-          <div className="legend-item"><div className="seat-dot couple"></div><span>Couple</span></div>
           <div className="legend-item"><div className="seat-dot selected"></div><span>Đang chọn</span></div>
           <div className="legend-item"><div className="seat-dot sold"></div><span>Đã bán</span></div>
         </div>

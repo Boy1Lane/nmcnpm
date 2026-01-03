@@ -10,11 +10,11 @@ const { Title, Text, Paragraph } = Typography;
 const { Meta } = Card;
 
 const ConcessionsPage = () => {
-  const { scheduleId } = useParams();
-  const navigate = useNavigate();
-  const location = useLocation();
 
-  const { selectedSeatIds, seatsPrice, reservedSeats } = location.state || {};
+  const location = useLocation();
+  const navigate = useNavigate();
+  // const { scheduleId } = useParams(); // No longer from params
+  const { selectedSeatIds, seatsPrice, reservedSeats, scheduleId } = location.state || {};
 
   const [foods, setFoods] = useState([]);
   const [cart, setCart] = useState({});

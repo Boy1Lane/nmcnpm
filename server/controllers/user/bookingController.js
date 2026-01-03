@@ -54,10 +54,8 @@ exports.createBooking = async (req, res) => {
         foodTotal += food.price * item.quantity;
         bookingFoodData.push({
           foodComboId: food.id,
-          quantity: item.quantity,
-          price: food.price // Store price at time of booking if needed, but BookingFood model might not have it. 
-          // Checking BookingFood model: it only has quantity. 
-          // Ideally we should store price snapshot, but for now we just calculate total.
+          quantity: item.quantity
+          // price: food.price removed to avoid 500 if model doesn't support it
         });
       }
     }

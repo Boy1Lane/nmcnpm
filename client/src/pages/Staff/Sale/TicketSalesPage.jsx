@@ -386,17 +386,17 @@ const TicketSalesPage = () => {
                     (st.Room?.Cinema?.id || st.Room?.cinemaId) ===
                     selectedCinema.id
                 ).length === 0 && (
-                  <p
-                    style={{
-                      color: "var(--text-sub)",
-                      width: "100%",
-                      textAlign: "center",
-                      padding: 20,
-                    }}
-                  >
-                    Không có suất chiếu tại rạp này.
-                  </p>
-                )}
+                    <p
+                      style={{
+                        color: "var(--text-sub)",
+                        width: "100%",
+                        textAlign: "center",
+                        padding: 20,
+                      }}
+                    >
+                      Không có suất chiếu tại rạp này.
+                    </p>
+                  )}
               </div>
             ) : (
               <div
@@ -432,7 +432,7 @@ const TicketSalesPage = () => {
               {(() => {
                 const seatsByRow = {};
                 showtimeSeats.forEach((seat) => {
-                  if (seat.Seat?.type === "COUPLE") return;
+                  // if (seat.Seat?.type === "COUPLE") return;
                   const row = seat.Seat?.row;
                   if (!seatsByRow[row]) {
                     seatsByRow[row] = [];
@@ -756,9 +756,8 @@ const TicketSalesPage = () => {
             </h4>
             <div className="payment-methods">
               <div
-                className={`method-card ${
-                  paymentMethod === "CASH" ? "active" : ""
-                }`}
+                className={`method-card ${paymentMethod === "CASH" ? "active" : ""
+                  }`}
                 onClick={() => setPaymentMethod("CASH")}
               >
                 <span
@@ -773,9 +772,8 @@ const TicketSalesPage = () => {
                 Tiền mặt
               </div>
               <div
-                className={`method-card ${
-                  paymentMethod === "CREDIT_CARD" ? "active" : ""
-                }`}
+                className={`method-card ${paymentMethod === "CREDIT_CARD" ? "active" : ""
+                  }`}
                 onClick={() => setPaymentMethod("CREDIT_CARD")}
               >
                 <span
