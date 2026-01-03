@@ -32,6 +32,8 @@ const authService = {
     return authAxios.get('/auth/me');
   },
 
+  updateProfile: (data) => authAxios.put("/users/profile", data),
+
   logout: () => authAxios.post("/auth/logout"),
 };
 

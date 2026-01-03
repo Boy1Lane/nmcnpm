@@ -44,7 +44,9 @@ const HomePage = () => {
       try {
         setLoading(true);
         const data = await movieService.getAllMovies();
-        setMovies(data);
+        // Sort alphabetically by title
+        const sortedData = data.sort((a, b) => a.title.localeCompare(b.title));
+        setMovies(sortedData);
       } catch (err) {
         console.error("Lỗi tải phim:", err);
       } finally {
@@ -79,16 +81,16 @@ const HomePage = () => {
             >
               <Meta
                 title={
-                  <Title level={5} style={{ color: '#000', marginBottom: 0, minHeight: '48px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }} title={movie.title}>
+                  <Title level={5} style={{ color: '#000', margin: 0, textAlign: 'center', minHeight: '40px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.2' }} title={movie.title}>
                     {movie.title}
                   </Title>
                 }
                 description={
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, justifyContent: 'flex-end' }}>
-                    <Text style={{ color: '#595959', fontSize: '13px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1, justifyContent: 'flex-end' }}>
+                    <Text style={{ color: '#595959', fontSize: '13px', textAlign: 'center', display: 'block' }}>
                       {movie.genre || 'Hành động'}
                     </Text>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
                       <Tag color="gold" style={{ border: 'none', marginRight: 0 }}>
                         <ClockCircleOutlined style={{ marginRight: 4 }} />
                         {movie.duration}p

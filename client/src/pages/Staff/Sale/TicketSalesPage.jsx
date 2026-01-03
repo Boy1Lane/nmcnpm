@@ -146,11 +146,28 @@ const TicketSalesPage = () => {
         seatIds: selectedSeats.map((s) => s.id),
       });
 
-      setBookingId(res.data.data.id);
-      loadFoods();
-      setStep(4);
-      message.success("Đã giữ ghế thành công!");
-    } catch {
+      const newBookingId = res.data.booking.id; // Corrected path based on typical API response
+      setBookingId(newBookingId);
+
+      Modal.confirm({
+        title: "Giữ ghế thành công!",
+        content: `Mã booking: ${newBookingId}. Trạng thái: PENDING (Chờ thanh toán).`,
+        okText: "Tiếp tục bán vé (Bắp nước/Thanh toán)",
+        cancelText: "Kết thúc (Chỉ giữ ghế)",
+        onOk: () => {
+          loadFoods();
+          setStep(4);
+        },
+        onCancel: () => {
+          // Reset page or just close modal? 
+          // If "Ket thuc", we imply the staff is done with this booking (it stays held).
+          // We can reload to clear state for next customer immediately.
+          window.location.reload();
+        }
+      });
+
+    } catch (err) {
+      console.error(err);
       message.error("Không thể giữ ghế. Vui lòng thử lại!");
     }
   };
@@ -553,7 +570,7 @@ const TicketSalesPage = () => {
                 ⬅ Quay lại
               </button>
               <button className="btn btn-primary" onClick={handleCreateBooking}>
-                Tiếp tục ➡
+                Giữ ghế ➡
               </button>
             </div>
           </div>

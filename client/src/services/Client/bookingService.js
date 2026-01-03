@@ -39,6 +39,11 @@ const bookingService = {
   getMyBookings: async () => {
     const response = await axiosClient.get('/bookings/my-bookings');
     return response.data;
+  },
+
+  cancelBooking: async (bookingId) => {
+    const response = await axiosClient.post(`/bookings/${bookingId}/cancel`);
+    return response.data;
   }
 };
 export default bookingService;

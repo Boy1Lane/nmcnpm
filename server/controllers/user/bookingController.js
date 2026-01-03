@@ -71,7 +71,8 @@ exports.createBooking = async (req, res) => {
           validFrom: { [Op.lte]: new Date() },
           validTo: { [Op.gte]: new Date() }
         },
-        transaction
+        transaction,
+        lock: transaction.LOCK.UPDATE // Lock for update
       });
 
       if (!promotion) {
@@ -89,8 +90,9 @@ exports.createBooking = async (req, res) => {
       discountAmount = (subtotal * promotion.discountPercentage) / 100;
       promotionId = promotion.id;
 
-      // Update promotion usage
-      await promotion.increment('timesUsed', { transaction });
+      // Update promotion usage explicitly
+      promotion.timesUsed += 1;
+      await promotion.save({ transaction });
     }
 
     const finalTotal = seatTotal + foodTotal - discountAmount;

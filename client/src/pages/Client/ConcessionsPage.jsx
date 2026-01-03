@@ -114,7 +114,7 @@ const ConcessionsPage = () => {
                     <div style={{ height: '150px', background: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
                       {/* Placeholder Image because API might not return image url yet */}
                       <img
-                        src={item.image || "https://images.unsplash.com/photo-1585647347483-22b66260dfff?q=80&w=2670&auto=format&fit=crop"}
+                        src={item.pictureUrl || "https://images.unsplash.com/photo-1585647347483-22b66260dfff?q=80&w=2670&auto=format&fit=crop"}
                         alt={item.name}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
