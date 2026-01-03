@@ -56,7 +56,11 @@ const HomePage = () => {
     fetchMovies();
   }, []);
 
-  const getMoviesByStatus = (status) => movies.filter((m) => m.status === status);
+  const getMoviesByStatus = (status) => {
+    return movies
+      .filter((m) => m.status === status)
+      .sort((a, b) => a.title.localeCompare(b.title));
+  };
 
   const renderMovieList = (movieList) => (
     <Row gutter={[24, 24]} style={{ marginTop: 20 }}>
