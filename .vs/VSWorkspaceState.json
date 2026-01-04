@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\client",
+    "\\client\\src",
+    "\\client\\src\\layout",
+    "\\client\\src\\pages",
+    "\\client\\src\\pages\\Admin",
+    "\\client\\src\\pages\\Admin\\Movie",
+    "\\server"
+  ],
+  "PreviewInSolutionExplorer": false
+}

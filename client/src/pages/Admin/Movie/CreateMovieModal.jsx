@@ -234,7 +234,7 @@ export default function CreateMovieModal({ open, movie, onClose, onSuccess }) {
               rules={[{ required: true }]}
             >
               <Select size="large">
-                <Option value="now_showing">Đang chiếu</Option>
+                <Option value="showing">Đang chiếu</Option>
                 <Option value="coming_soon">Sắp chiếu</Option>
                 <Option value="ended">Ngưng chiếu</Option>
               </Select>
