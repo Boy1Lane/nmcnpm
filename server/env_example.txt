@@ -1,0 +1,29 @@
+# ===== Server =====
+PORT=
+
+# ===== Database (PostgreSQL) =====
+DB_NAME=
+DB_USER=
+DB_PASSWORD=
+DB_HOST=
+DB_DIALECT=postgres
+DB_PORT=5432
+
+# ===== Google OAuth =====
+GOOGLE_CLIENT_ID=
+
+# ===== Email Service =====
+EMAIL_USER=
+EMAIL_PASS=
+
+# ===== Client =====
+CLIENT_URL=
+
+# ===== JWT =====
+ACCESS_TOKEN_SECRET=
+REFRESH_TOKEN_SECRET=
+
+# ===== Cloudinary =====
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
